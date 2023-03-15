@@ -1,0 +1,9 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="簡易倉儲系統.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="資料庫路徑" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Z:\data.db</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
