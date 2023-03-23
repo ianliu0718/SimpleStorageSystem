@@ -1096,6 +1096,7 @@
             this.checkBox2.Tag = "ShowMoney_ExportJapan";
             this.checkBox2.Text = "顯示金額";
             this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
             // 
             // dataGridView2
             // 
@@ -1462,6 +1463,7 @@
             this.checkBox3.Tag = "ShowMoney_ExportSupermarket";
             this.checkBox3.Text = "顯示金額";
             this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
             // 
             // dataGridView3
             // 

@@ -495,6 +495,8 @@ namespace 簡易倉儲系統
                     Inquire = "單號";
                     checkBox4.Enabled = false;  
                     checkBox4.Visible = false;
+                    panel21.Enabled = false;
+                    panel21.Visible = false;
                 }
                 else if (_Text == "姓名查詢")
                 {
