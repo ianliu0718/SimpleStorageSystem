@@ -126,7 +126,15 @@ namespace 簡易倉儲系統.DB
                     _data.SetValues(strings.ToArray());
                     DGV.Rows.Insert(0, _data);
                     DGV.Rows[0].Selected = true;
-                    DGV.CurrentCell = DGV.Rows[0].Cells[0];
+                    foreach(DataGridViewCell _cell in DGV.Rows[0].Cells)
+                    {
+                        if (_cell.Visible)
+                        {
+                            DGV.CurrentCell = _cell;
+                            break;
+                        }
+                    }
+                    //DGV.CurrentCell = DGV.Rows[0].Cells[0];
                 }
                 return true;
             }

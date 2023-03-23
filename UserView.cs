@@ -1,12 +1,17 @@
-﻿using System;
+﻿using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Information;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,22 +19,48 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using 簡易倉儲系統.DB;
 using 簡易倉儲系統.EssentialTool;
+using 簡易倉儲系統.EssentialTool.Excel;
 using static 簡易倉儲系統.EssentialTool.LogToText;
 
 namespace 簡易倉儲系統
 {
     public partial class UserView : Form
     {
-        LogToText log = new LogToText(@".\Log");
+        LogToText log = new LogToText(@".\Log"); 
+        DB_SQLite dB_SQLite = new DB_SQLite();
 
-        public static string Setting_Path = @".\";          //設定檔路徑
-        public static string VersionNumber = "";            //程式版號
-        public static string DB_Path = "";                  //資料庫路徑
-        public static string TableName = "";                //資料表名稱
-        public static string type = "";                     //類型
-        public static string salesArea = "";                //販售地點
-        public static string unit = "";                     //重量單位
-        public static string unitPrice = "";                //單價
+        /// <summary>
+        /// 設定檔路徑
+        /// </summary>
+        public static string Setting_Path = @".\";
+        /// <summary>
+        /// 程式版號
+        /// </summary>
+        public static string VersionNumber = "";
+        /// <summary>
+        /// 資料庫路徑
+        /// </summary>
+        public static string DB_Path = "";
+        /// <summary>
+        /// 資料表名稱
+        /// </summary>
+        public static string TableName = "";
+        /// <summary>
+        /// 類型
+        /// </summary>
+        public static string type = "";
+        /// <summary>
+        /// 販售地點
+        /// </summary>
+        public static string salesArea = "";
+        /// <summary>
+        /// 重量單位
+        /// </summary>
+        public static string unit = "";
+        /// <summary>
+        /// 單價
+        /// </summary>
+        public static string unitPrice = "";
 
         public UserView()
         {
@@ -41,8 +72,10 @@ namespace 簡易倉儲系統
             Settings.StartUp(Setting_Path);
             VersionNumber = Application.ProductVersion;
             this.Text += $"v.{VersionNumber} Bulid{File.GetLastWriteTime(Application.ExecutablePath).ToString("yyyyMMdd")}";
+            DB_Path = Settings.資料庫路徑 + @"data.db";
+            label5.Text = "";
 
-            //檢查時間為最新
+            #region 檢查時間為最新
             try
             {
                 log.LogMessage("檢查時間 開始", enumLogType.Info);
@@ -69,8 +102,9 @@ namespace 簡易倉儲系統
                 Application.Exit();
                 return;
             }
+            #endregion
 
-            //檢查程式是否符合效期內
+            #region 檢查程式是否符合效期內
             try
             {
                 log.LogMessage("檢查序號 開始", enumLogType.Info);
@@ -100,25 +134,27 @@ namespace 簡易倉儲系統
                 Application.Exit();
                 return;
             }
+            #endregion
 
-            //檢查程式是否有重複開啟
+            #region 檢查程式是否有重複開啟
             Process[] proc = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
             if (proc.Length > 1)
             {
                 //表示此程式已被開啟
                 Application.Exit();
-                return;
             }
             log.LogMessage("系統啓動", enumLogType.Trace);
             log.LogMessage("使用者介面啓動", enumLogType.Info);
+            #endregion
 
             try
             {
+                comboBox1.Items.Clear();
                 // 讀取資料
-                //DB_Path = Properties.Settings.Default.資料庫路徑 + @"/data.db";
-                DB_Path = Settings.資料庫路徑 + @"data.db";
-                DB_SQLite dB_SQLite = new DB_SQLite();
-                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, $@"SELECT * FROM SalesRecord WHERE Date > '{DateTime.Now.ToString("yyyy-MM-dd")}';"), dataGridView1);
+                foreach (DataRow item in dB_SQLite.GetDataTable(DB_Path, $@"SELECT CustomerName FROM CustomerProfile;").Rows)
+                {
+                    comboBox1.Items.Add(item[0].ToString());
+                }
                 log.LogMessage("讀取資料庫 成功。", enumLogType.Trace);
             }
             catch (Exception ee)
@@ -141,9 +177,16 @@ namespace 簡易倉儲系統
                     type = ((ButtonBase)sender).Text;
                     ((GroupBox)((RadioButton)sender).Parent).BackColor = SystemColors.Control;
 
+                    for (int i = 0; i < ((RadioButton)sender).Parent.Controls.Count; i++)
+                    {
+                        if (((RadioButton)((RadioButton)sender).Parent.Controls[i]).Checked)
+                            ((RadioButton)((RadioButton)sender).Parent.Controls[i]).BackColor = Color.GreenYellow;
+                        else
+                            ((RadioButton)((RadioButton)sender).Parent.Controls[i]).BackColor = SystemColors.Control;
+                    }
+
                     if (!string.IsNullOrEmpty(TableName))
                     {
-                        DB_SQLite dB_SQLite = new DB_SQLite();
                         DataTable DT = new DataTable();
                         try
                         {
@@ -158,6 +201,7 @@ namespace 簡易倉儲系統
                         }
                         if (DT.Rows.Count <= 0)
                         {
+                            panel1.BackColor = Color.IndianRed;
                             log.LogMessage("管理者尚未輸入當日價格", enumLogType.Info);
                             MessageBox.Show("管理者尚未輸入當日價格");
                             return;
@@ -167,15 +211,7 @@ namespace 簡易倉儲系統
                         panel1.BackColor = SystemColors.Control;
                     }
 
-                    for (int i = 0; i < ((RadioButton)sender).Parent.Controls.Count; i++)
-                    {
-                        if (((RadioButton)((RadioButton)sender).Parent.Controls[i]).Checked)
-                            ((RadioButton)((RadioButton)sender).Parent.Controls[i]).BackColor = Color.GreenYellow;
-                        else
-                            ((RadioButton)((RadioButton)sender).Parent.Controls[i]).BackColor = SystemColors.Control;
-                    }
-
-                    log.LogMessage("類型設定，單價設定 成功", enumLogType.Trace);
+                    log.LogMessage("類型設定，單價設定 成功：" + unitPrice, enumLogType.Trace);
                 }
             }
             catch (Exception ee)
@@ -209,12 +245,71 @@ namespace 簡易倉儲系統
                             return;
                     }
 
-                    salesArea = _Text;
-                    if (_Text.Contains("公斤"))
+                    //針對不同地區客製化功能
+                    if (_Text.Contains("外銷韓國"))
+                    {
+                        var item = dB_SQLite.GetDataTable(DB_Path, @"SELECT * FROM Setting WHERE SettingName = 'ShowMoney_ExportKorea'").Rows;
+                        if (item.Count > 0)
+                        {
+                            panel1.Enabled = Boolean.Parse(item[0][1].ToString());
+                            panel1.Visible = Boolean.Parse(item[0][1].ToString());
+                            dataGridView1.Columns[5].Visible = Boolean.Parse(item[0][1].ToString());
+                        }
                         unit = "公斤";
-                    else if (_Text.Contains("台斤"))
+                        radioButton1.Text = "9粒";
+                        radioButton2.Text = "12粒";
+                        radioButton3.Text = "14粒";
+                        radioButton4.Text = "16粒";
+                        radioButton5.Text = "20粒";
+                        radioButton6.Text = "24粒";
+                        radioButton7.Text = "小";
+                        radioButton7.Enabled = true;
+                        radioButton7.Visible = true;
+                    }
+                    else if (_Text.Contains("外銷日本"))
+                    {
+                        var item = dB_SQLite.GetDataTable(DB_Path, @"SELECT * FROM Setting WHERE SettingName = 'ShowMoney_ExportJapan'").Rows;
+                        if (item.Count > 0)
+                        {
+                            panel1.Enabled = Boolean.Parse(item[0][1].ToString());
+                            panel1.Visible = Boolean.Parse(item[0][1].ToString());
+                            dataGridView1.Columns[5].Visible = Boolean.Parse(item[0][1].ToString());
+                        }
+                        unit = "公斤";
+                        radioButton1.Text = "9粒";
+                        radioButton2.Text = "12粒";
+                        radioButton3.Text = "14粒";
+                        radioButton4.Text = "16粒";
+                        radioButton5.Text = "20粒";
+                        radioButton6.Text = "24粒";
+                        radioButton7.Text = "小";
+                        radioButton7.Enabled = true;
+                        radioButton7.Visible = true;
+                    }
+                    else if (_Text.Contains("超市"))
+                    {
+                        var item = dB_SQLite.GetDataTable(DB_Path, @"SELECT * FROM Setting WHERE SettingName = 'ShowMoney_ExportSupermarket'").Rows;
+                        if (item.Count > 0)
+                        {
+                            panel1.Enabled = Boolean.Parse(item[0][1].ToString());
+                            panel1.Visible = Boolean.Parse(item[0][1].ToString());
+                            dataGridView1.Columns[5].Visible = Boolean.Parse(item[0][1].ToString());
+                        }
                         unit = "台斤";
+                        radioButton1.Text = "12粒";
+                        radioButton2.Text = "15粒";
+                        radioButton3.Text = "18粒";
+                        radioButton4.Text = "20粒";
+                        radioButton5.Text = "24粒";
+                        radioButton6.Text = "28粒";
+                        radioButton7.Text = "小";
+                        radioButton7.Enabled = false;
+                        radioButton7.Visible = false;
+                    }
 
+                    unitPrice = "";
+                    type = "";
+                    salesArea = _Text;
                     label1.Text = unit;
                     ((GroupBox)((RadioButton)sender).Parent).BackColor = SystemColors.Control;
                     for (int i = 0; i < ((RadioButton)sender).Parent.Controls.Count; i++)
@@ -227,21 +322,6 @@ namespace 簡易倉儲系統
                 }
                 for (int i = 0; i < groupBox1.Controls.Count; i++)
                 {
-                    //針對不同地區客製化功能
-                    if (_Text.Contains("外銷韓國") || _Text.Contains("外銷日本"))
-                    {
-                        radioButton3.Text = "14粒";
-                        radioButton4.Text = "16粒";
-                        radioButton7.Enabled = true;
-                        radioButton7.Visible = true;
-                    }
-                    else if (_Text.Contains("超市"))
-                    {
-                        radioButton3.Text = "15粒";
-                        radioButton4.Text = "18粒";
-                        radioButton7.Enabled = false;
-                        radioButton7.Visible = false;
-                    }
 
                     //清空類型內選項
                     if (((RadioButton)(groupBox1.Controls[i])).Checked)
@@ -279,39 +359,33 @@ namespace 簡易倉儲系統
                 panel1.BackColor = Color.IndianRed;
                 _OK = false;
             }
+            if (string.IsNullOrEmpty(comboBox1.Text))
+            {
+                panel2.BackColor = Color.IndianRed;
+                _OK = false;
+            }
+            if (!string.IsNullOrEmpty(label5.Text))
+            {
+                dataGridView1.Rows.Clear();
+            }
 
             if (_OK && e.KeyChar == ((char)Keys.Enter))
             {
                 log.LogMessage("確認 開始", enumLogType.Trace);
 
+                label5.Text = "";
                 DataGridViewRow row = new DataGridViewRow();
                 DateTime now = DateTime.Now;
-
-                #region DB新增
-
-                // 插入資料
-                DB_SQLite dB_SQLite = new DB_SQLite();
-                string insertstring = $@"INSERT INTO SalesRecord (No, Date, Type, Count, UnitPrice, Unit, salesArea) 
-                         SELECT CASE WHEN MAX(No) ISNULL THEN '{now.ToString("yyyyMMdd") + "001"}' ELSE MAX(No)+1 END No, 
-                        '{now.ToString("yyyy-MM-dd HH:mm:ss")}' Date , '{type}' Type, '{((TextBox)sender).Text}' Count, 
-                        '{unitPrice}' UnitPrice, '{unit}' Unit, '{salesArea}' salesArea 
-                        FROM SalesRecord WHERE Date > '{now.ToString("yyyy-MM-dd")}';";
-                dB_SQLite.Manipulate(DB_Path, insertstring);
-
-
-                log.LogMessage("確認_DB新增 成功路徑：" + DB_Path + "\r\n語法：" + insertstring, enumLogType.Trace);
-                log.LogMessage("確認_DB新增 成功", enumLogType.Info);
-                #endregion
 
                 #region DataGridView修改
 
                 //重繪才能讀取到別的使用者登錄的資料
-                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, $@"SELECT * FROM SalesRecord WHERE Date > '{DateTime.Now.ToString("yyyy-MM-dd")}';"), dataGridView1);
-                //row.CreateCells(dataGridView1);
-                //row.SetValues(new string[] { now.ToString("yyyyMMdd") + "001", now.ToString("yyyy-MM-dd HH:mm:ss"), type, ((TextBox)sender).Text, unitPrice, unit, salesArea });
-                //dataGridView1.Rows.Insert(0, row);
-                //dataGridView1.Rows[0].Selected = true;
-                //dataGridView1.CurrentCell = dataGridView1.Rows[0].Cells[0];
+                //DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, $@"SELECT * FROM SalesRecord WHERE Date > '{DateTime.Now.ToString("yyyy-MM-dd")}';"), dataGridView1);
+                row.CreateCells(dataGridView1);
+                row.SetValues(new string[] { "", now.ToString("yyyy-MM-dd HH:mm:ss"), comboBox1.Text, type, ((TextBox)sender).Text, unitPrice, unit, salesArea });
+                dataGridView1.Rows.Insert(0, row);
+                dataGridView1.Rows[0].Selected = true;
+                dataGridView1.CurrentCell = dataGridView1.Rows[0].Cells[0];
 
                 textBox1.Text = "";
                 textBox1.Focus();
@@ -319,7 +393,7 @@ namespace 簡易倉儲系統
                 log.LogMessage("確認_DB新增 成功", enumLogType.Info);
                 #endregion
 
-                log.LogMessage("確認後寫入DB 成功", enumLogType.Trace);
+                log.LogMessage("確認後寫入DataGridView 成功", enumLogType.Trace);
             }
         }
 
@@ -328,7 +402,6 @@ namespace 簡易倉儲系統
             log.LogMessage("刪除失敗則還原 開始", enumLogType.Trace);
 
             //刪除失敗則還原
-            DB_SQLite dB_SQLite = new DB_SQLite();
             try
             {
                 dB_SQLite.Manipulate(DB_Path, $@"DELETE FROM SalesRecord WHERE No = '{e.Row.Cells[0].Value.ToString()}';");
@@ -340,6 +413,216 @@ namespace 簡易倉儲系統
                 log.LogMessage("刪除失敗則還原 失敗：" + ee.Message, enumLogType.Trace);
                 MessageBox.Show("刪除失敗：" + ee.Message);
             }
+        }
+
+        private void comboBox1_TextChanged(object sender, EventArgs e)
+        {
+            panel2.BackColor = SystemColors.Control;
+        }
+
+        //列印
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string _No = "";
+
+            #region DB新增
+            try
+            {
+                DateTime now = DateTime.Now;
+                ///取單號
+                DataTable dataTable = dB_SQLite.GetDataTable(DB_Path, $@"
+                    SELECT CASE WHEN MAX(No) ISNULL THEN '{now.ToString("yyyyMMdd") + "001"}' ELSE MAX(No)+1 END No
+                    FROM SalesRecord WHERE Date > '{now.ToString("yyyy-MM-dd")}';");
+                _No = dataTable.Rows[0][0].ToString();
+
+                string insertstring = $@"INSERT INTO SalesRecord (No, Date, Name, Type, Count, UnitPrice, Unit, salesArea) VALUES";
+                /// 插入資料
+                /// 可自動抓取新單號新增
+                foreach (DataGridViewRow row in dataGridView1.Rows)
+                {
+                    insertstring += $@" ('{_No}', '{row.Cells[1].Value.ToString()}', '{row.Cells[2].Value.ToString()}', 
+                        '{row.Cells[3].Value.ToString()}', '{row.Cells[4].Value.ToString()}', '{row.Cells[5].Value.ToString()}', 
+                        '{row.Cells[6].Value.ToString()}', '{row.Cells[7].Value.ToString()}') ,";
+                }
+                insertstring = insertstring.Remove(insertstring.Length - 1, 1);
+                dB_SQLite.Manipulate(DB_Path, insertstring);
+
+                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, $@"SELECT * FROM SalesRecord 
+                    WHERE Date > '{DateTime.Now.ToString("yyyy-MM-dd")}' AND No = '{_No}';"), dataGridView1);
+                
+                log.LogMessage("確認_DB新增 成功路徑：" + DB_Path + "\r\n語法：" + insertstring, enumLogType.Trace);
+                log.LogMessage("確認_DB新增 成功", enumLogType.Info);
+            }
+            catch (Exception ee)
+            {
+                log.LogMessage("確認_DB新增 失敗：\r\n" + ee.Message, enumLogType.Error);
+            }
+            #endregion
+
+            #region 列印
+            try
+            {
+                EPPlus ePPlus = new EPPlus();
+                List<List<MExcelCell>> excelCells = new List<List<MExcelCell>>();
+                List<MExcelCell> excelCell = new List<MExcelCell>();
+                DataGridView view = dataGridView1;
+
+                //頁首
+                foreach (DataGridViewColumn col in view.Columns)
+                {
+                    //列印隱藏單價
+                    if (col.HeaderText == "單價" && !panel1.Visible)
+                    {
+                        continue;
+                    }
+                    excelCell.Add(new MExcelCell()
+                    {
+                        Content = col.HeaderText
+                    });
+                }
+                //列印顯示價格
+                if (panel1.Visible)
+                {
+                    excelCell.Add(new MExcelCell()
+                    {
+                        Content = "價格"
+                    });
+                }
+                excelCells.Add(excelCell);
+
+                //內容
+                Double _ALLPrice = 0;
+                foreach (DataGridViewRow row in view.Rows)
+                {
+                    Double _unitPrice = 0;
+                    Double _count = 1;
+                    excelCell = new List<MExcelCell>();
+                    foreach (DataGridViewCell cell in row.Cells)
+                    {
+                        //列印隱藏單價/保存單價價格
+                        
+                        if (view.Columns[cell.ColumnIndex].HeaderText == "單價")
+                        {
+                            if (!panel1.Visible)
+                                continue;
+                            _unitPrice = Convert.ToDouble(cell.Value);
+                        }
+                        //保存數量
+                        else if (view.Columns[cell.ColumnIndex].HeaderText == "數量")
+                        {
+                            _count = Convert.ToDouble(cell.Value);
+                        }
+                        excelCell.Add(new MExcelCell()
+                        {
+                            Content = cell.Value
+                        });
+                    }
+                    //價格加總
+                    if (panel1.Visible)
+                    {
+                        _ALLPrice = _ALLPrice + Convert.ToDouble(_unitPrice * _count);
+                        excelCell.Add(new MExcelCell()
+                        {
+                            Content = _unitPrice * _count
+                        });
+                    }
+                    excelCells.Add(excelCell);
+                }
+                //總價
+                if (panel1.Visible)
+                {
+                    //空一行
+                    excelCells.Add(new List<MExcelCell>());
+                    excelCell = new List<MExcelCell>();
+                    for (int i = 0; i <= view.Columns.Count; i++)
+                    {
+                        if (i == (view.Columns.Count))
+                        {
+                            excelCell.Add(new MExcelCell()
+                            {
+                                Content = _ALLPrice
+                            });
+                            continue;
+                        }
+                        else if (i == (view.Columns.Count - 1))
+                        {
+                            excelCell.Add(new MExcelCell()
+                            {
+                                Content = "總價"
+                            });
+                            continue;
+                        }
+                        excelCell.Add(new MExcelCell());
+                    }
+                    excelCells.Add(excelCell);
+                }
+
+                //匯出成檔案
+                string _Path = $@"{Settings.Excel路徑}{_No}_{comboBox1.Text}.xlsx";
+                ePPlus.AddSheet(excelCells, _No);
+                ePPlus.Export(_Path);
+                ePPlus.ChangeExcel2Image(_Path, @".\ianimage.png");  //利用Spire將excel轉換成圖片
+
+                //宣告一個一表機
+                PrintDocument printDocument = new PrintDocument();
+                //設定印表機邊界
+                Margins margin = new Margins(0, 0, 0, 0);
+                printDocument.DefaultPageSettings.Margins = margin;
+                //印表機事件設定
+                printDocument.PrintPage += PrintDocument_PrintPage;
+                printDocument.PrinterSettings.PrinterName = Settings.印表機名稱;
+                //printDocument.DefaultPageSettings.Landscape = true;           //此处更改页面为横向打印 
+                printDocument.Print();   //列印
+
+                log.LogMessage("確認_列印 成功路徑：" + _Path, enumLogType.Trace);
+                log.LogMessage("確認_列印 成功", enumLogType.Info);
+            }
+            catch (Exception ee)
+            {
+                log.LogMessage("確認_列印 失敗：\r\n" + ee.Message, enumLogType.Error);
+            }
+            #endregion
+            comboBox1.SelectedIndex = -1;
+            label5.Text = _No;
+        }
+        private void PrintDocument_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            #region 
+            GC.Collect();
+            //e.HasMorePages = true; //此处打开多页打印属性
+            //imagepath是指 excel轉成的圖片的路徑
+            using (Bitmap bitmap = new Bitmap(@".\ianimage.png"))
+            {
+                //如何截取自己摸索
+                Rectangle newarea = new Rectangle();
+                newarea.X = 0;
+                newarea.Y = 0;
+                newarea.Width = bitmap.Width;
+                newarea.Height = bitmap.Height - 20;
+                using (Bitmap newbitmap = bitmap.Clone(newarea, bitmap.PixelFormat))
+                {
+                    int _width = newbitmap.Width;
+                    if (newbitmap.Width > 810)
+                        _width = 810;
+                    e.Graphics.DrawImage(newbitmap, 0, 0, _width, newbitmap.Height);
+                }
+                ////設定圖片列印的x,y座標
+                //int x = e.MarginBounds.X;
+                //int y = e.MarginBounds.Y;
+                //
+                ////圖片列印的大小
+                ////int width = bitmap.Width;//temp.Width;
+                ////int height = bitmap.Height;//temp.Height;
+                //int width = 810;//temp.Width;
+                //int height = 270;//temp.Height;
+                //Rectangle destRect = new Rectangle(x, y, width, height);
+                //
+                //var _DPIX = e.Graphics.DpiX;
+                //var _DPIY = e.Graphics.DpiY;
+                //e.Graphics.DrawImage(bitmap, destRect, 10, 10, bitmap.Width, bitmap.Height, GraphicsUnit.Pixel);
+                ////e.Graphics.DrawImage(bitmap, 0, 0);
+            }
+            #endregion
         }
     }
 }

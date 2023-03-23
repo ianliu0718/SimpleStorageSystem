@@ -22,14 +22,5 @@ namespace 簡易倉儲系統.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Z:\\data.db")]
-        public string 資料庫路徑 {
-            get {
-                return ((string)(this["資料庫路徑"]));
-            }
-        }
     }
 }
