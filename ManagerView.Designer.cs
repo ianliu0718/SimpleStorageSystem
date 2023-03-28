@@ -31,6 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManagerView));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.SelectPage = new System.Windows.Forms.TabPage();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label26 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
@@ -237,6 +239,8 @@
             // 
             // SelectPage
             // 
+            this.SelectPage.Controls.Add(this.label25);
+            this.SelectPage.Controls.Add(this.label26);
             this.SelectPage.Controls.Add(this.label23);
             this.SelectPage.Controls.Add(this.label22);
             this.SelectPage.Controls.Add(this.groupBox8);
@@ -250,11 +254,32 @@
             this.SelectPage.Text = "查詢";
             this.SelectPage.UseVisualStyleBackColor = true;
             // 
+            // 
+            // label25
+            // 
+            this.label25.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(122, 722);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(153, 30);
+            this.label25.TabIndex = 6;
+            this.label25.Text = "0000000000";
+            // 
+            // label26
+            // 
+            this.label26.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(13, 722);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(103, 30);
+            this.label26.TabIndex = 5;
+            this.label26.Text = "總重量";
+            // 
             // label23
             // 
             this.label23.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(118, 716);
+            this.label23.Location = new System.Drawing.Point(522, 722);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(153, 30);
             this.label23.TabIndex = 4;
@@ -264,7 +289,7 @@
             // 
             this.label22.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(9, 716);
+            this.label22.Location = new System.Drawing.Point(413, 722);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(103, 30);
             this.label22.TabIndex = 3;
@@ -1985,6 +2010,8 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.Label label26;
     }
 }
 

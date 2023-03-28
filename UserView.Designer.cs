@@ -30,6 +30,7 @@ namespace 簡易倉儲系統
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserView));
@@ -66,6 +67,7 @@ namespace 簡易倉儲系統
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.timer_ComboBoxSelect = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -96,84 +98,84 @@ namespace 簡易倉儲系統
             // radioButton7
             // 
             this.radioButton7.AutoSize = true;
-            this.radioButton7.Location = new System.Drawing.Point(916, 42);
+            this.radioButton7.Location = new System.Drawing.Point(1390, 42);
             this.radioButton7.Name = "radioButton7";
-            this.radioButton7.Size = new System.Drawing.Size(64, 34);
+            this.radioButton7.Size = new System.Drawing.Size(126, 34);
             this.radioButton7.TabIndex = 6;
             this.radioButton7.Tag = "7";
-            this.radioButton7.Text = "小";
+            this.radioButton7.Text = "小(F11)";
             this.radioButton7.UseVisualStyleBackColor = true;
             this.radioButton7.CheckedChanged += new System.EventHandler(this.radioButton_type_CheckedChanged);
             // 
             // radioButton6
             // 
             this.radioButton6.AutoSize = true;
-            this.radioButton6.Location = new System.Drawing.Point(749, 42);
+            this.radioButton6.Location = new System.Drawing.Point(1160, 42);
             this.radioButton6.Name = "radioButton6";
-            this.radioButton6.Size = new System.Drawing.Size(92, 34);
+            this.radioButton6.Size = new System.Drawing.Size(154, 34);
             this.radioButton6.TabIndex = 5;
             this.radioButton6.Tag = "6";
-            this.radioButton6.Text = "24粒";
+            this.radioButton6.Text = "24粒(F10)";
             this.radioButton6.UseVisualStyleBackColor = true;
             this.radioButton6.CheckedChanged += new System.EventHandler(this.radioButton_type_CheckedChanged);
             // 
             // radioButton5
             // 
             this.radioButton5.AutoSize = true;
-            this.radioButton5.Location = new System.Drawing.Point(595, 42);
+            this.radioButton5.Location = new System.Drawing.Point(930, 42);
             this.radioButton5.Name = "radioButton5";
-            this.radioButton5.Size = new System.Drawing.Size(92, 34);
+            this.radioButton5.Size = new System.Drawing.Size(140, 34);
             this.radioButton5.TabIndex = 4;
             this.radioButton5.Tag = "5";
-            this.radioButton5.Text = "20粒";
+            this.radioButton5.Text = "20粒(F9)";
             this.radioButton5.UseVisualStyleBackColor = true;
             this.radioButton5.CheckedChanged += new System.EventHandler(this.radioButton_type_CheckedChanged);
             // 
             // radioButton4
             // 
             this.radioButton4.AutoSize = true;
-            this.radioButton4.Location = new System.Drawing.Point(444, 42);
+            this.radioButton4.Location = new System.Drawing.Point(700, 42);
             this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(92, 34);
+            this.radioButton4.Size = new System.Drawing.Size(140, 34);
             this.radioButton4.TabIndex = 3;
             this.radioButton4.Tag = "4";
-            this.radioButton4.Text = "16粒";
+            this.radioButton4.Text = "16粒(F8)";
             this.radioButton4.UseVisualStyleBackColor = true;
             this.radioButton4.CheckedChanged += new System.EventHandler(this.radioButton_type_CheckedChanged);
             // 
             // radioButton3
             // 
             this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(292, 42);
+            this.radioButton3.Location = new System.Drawing.Point(470, 42);
             this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(92, 34);
+            this.radioButton3.Size = new System.Drawing.Size(140, 34);
             this.radioButton3.TabIndex = 2;
             this.radioButton3.Tag = "3";
-            this.radioButton3.Text = "14粒";
+            this.radioButton3.Text = "14粒(F7)";
             this.radioButton3.UseVisualStyleBackColor = true;
             this.radioButton3.CheckedChanged += new System.EventHandler(this.radioButton_type_CheckedChanged);
             // 
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(139, 42);
+            this.radioButton2.Location = new System.Drawing.Point(240, 42);
             this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(92, 34);
+            this.radioButton2.Size = new System.Drawing.Size(140, 34);
             this.radioButton2.TabIndex = 1;
             this.radioButton2.Tag = "2";
-            this.radioButton2.Text = "12粒";
+            this.radioButton2.Text = "12粒(F6)";
             this.radioButton2.UseVisualStyleBackColor = true;
             this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton_type_CheckedChanged);
             // 
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(13, 42);
+            this.radioButton1.Location = new System.Drawing.Point(10, 42);
             this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(78, 34);
+            this.radioButton1.Size = new System.Drawing.Size(126, 34);
             this.radioButton1.TabIndex = 0;
             this.radioButton1.Tag = "1";
-            this.radioButton1.Text = "9粒";
+            this.radioButton1.Text = "9粒(F5)";
             this.radioButton1.UseVisualStyleBackColor = true;
             this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton_type_CheckedChanged);
             // 
@@ -195,24 +197,24 @@ namespace 簡易倉儲系統
             // radioButton10
             // 
             this.radioButton10.AutoSize = true;
-            this.radioButton10.Location = new System.Drawing.Point(1143, 42);
+            this.radioButton10.Location = new System.Drawing.Point(1385, 42);
             this.radioButton10.Name = "radioButton10";
-            this.radioButton10.Size = new System.Drawing.Size(214, 34);
+            this.radioButton10.Size = new System.Drawing.Size(184, 34);
             this.radioButton10.TabIndex = 2;
             this.radioButton10.Tag = "3";
-            this.radioButton10.Text = "超市（台斤）";
+            this.radioButton10.Text = "超市（F3）";
             this.radioButton10.UseVisualStyleBackColor = true;
             this.radioButton10.CheckedChanged += new System.EventHandler(this.radioButton_salesArea_CheckedChanged);
             // 
             // radioButton9
             // 
             this.radioButton9.AutoSize = true;
-            this.radioButton9.Location = new System.Drawing.Point(533, 42);
+            this.radioButton9.Location = new System.Drawing.Point(660, 42);
             this.radioButton9.Name = "radioButton9";
-            this.radioButton9.Size = new System.Drawing.Size(274, 34);
+            this.radioButton9.Size = new System.Drawing.Size(244, 34);
             this.radioButton9.TabIndex = 1;
             this.radioButton9.Tag = "2";
-            this.radioButton9.Text = "外銷日本（公斤）";
+            this.radioButton9.Text = "外銷日本（F2）";
             this.radioButton9.UseVisualStyleBackColor = true;
             this.radioButton9.CheckedChanged += new System.EventHandler(this.radioButton_salesArea_CheckedChanged);
             // 
@@ -221,10 +223,10 @@ namespace 簡易倉儲系統
             this.radioButton8.AutoSize = true;
             this.radioButton8.Location = new System.Drawing.Point(13, 42);
             this.radioButton8.Name = "radioButton8";
-            this.radioButton8.Size = new System.Drawing.Size(274, 34);
+            this.radioButton8.Size = new System.Drawing.Size(244, 34);
             this.radioButton8.TabIndex = 0;
             this.radioButton8.Tag = "1";
-            this.radioButton8.Text = "外銷韓國（公斤）";
+            this.radioButton8.Text = "外銷韓國（F1）";
             this.radioButton8.UseVisualStyleBackColor = false;
             this.radioButton8.CheckedChanged += new System.EventHandler(this.radioButton_salesArea_CheckedChanged);
             // 
@@ -257,6 +259,7 @@ namespace 簡易倉儲系統
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(322, 151);
             this.textBox1.TabIndex = 0;
+            this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
             this.textBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox1_KeyPress);
             // 
             // dataGridView1
@@ -298,6 +301,7 @@ namespace 簡易倉儲系統
             this.dataGridView1.RowTemplate.Height = 27;
             this.dataGridView1.Size = new System.Drawing.Size(1234, 525);
             this.dataGridView1.TabIndex = 3;
+            this.dataGridView1.TabStop = false;
             this.dataGridView1.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView1_UserDeletedRow);
             // 
             // Column1
@@ -417,6 +421,7 @@ namespace 簡易倉儲系統
             // 
             // comboBox1
             // 
+            this.comboBox1.BackColor = System.Drawing.SystemColors.Window;
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.Font = new System.Drawing.Font("新細明體", 28.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.comboBox1.FormattingEnabled = true;
@@ -424,9 +429,12 @@ namespace 簡易倉儲系統
             "V0001_劉承鴻"});
             this.comboBox1.Location = new System.Drawing.Point(173, 10);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(600, 55);
+            this.comboBox1.Size = new System.Drawing.Size(914, 55);
             this.comboBox1.TabIndex = 6;
+            this.comboBox1.TabStop = false;
             this.comboBox1.TextChanged += new System.EventHandler(this.comboBox1_TextChanged);
+            this.comboBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.comboBox1_KeyDown);
+            this.comboBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.comboBox1_KeyPress);
             // 
             // label6
             // 
@@ -442,7 +450,7 @@ namespace 簡易倉儲系統
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("新細明體", 28.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label4.Location = new System.Drawing.Point(817, 18);
+            this.label4.Location = new System.Drawing.Point(1122, 18);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(161, 47);
             this.label4.TabIndex = 2;
@@ -452,7 +460,7 @@ namespace 簡易倉儲系統
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("新細明體", 28.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label5.Location = new System.Drawing.Point(984, 18);
+            this.label5.Location = new System.Drawing.Point(1289, 18);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(262, 47);
             this.label5.TabIndex = 4;
@@ -465,9 +473,14 @@ namespace 簡易倉儲系統
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(336, 95);
             this.button1.TabIndex = 7;
-            this.button1.Text = "列印";
+            this.button1.Text = "列印 (空白鍵)";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // timer_ComboBoxSelect
+            // 
+            this.timer_ComboBoxSelect.Interval = 10000;
+            this.timer_ComboBoxSelect.Tick += new System.EventHandler(this.timer_ComboBoxSelect_Tick);
             // 
             // UserView
             // 
@@ -482,11 +495,12 @@ namespace 簡易倉儲系統
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(1504, 710);
+            this.MinimumSize = new System.Drawing.Size(1616, 885);
             this.Name = "UserView";
             this.Text = "使用者介面";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.UserView_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.UserView_KeyDown);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -537,5 +551,6 @@ namespace 簡易倉儲系統
         private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
+        private Timer timer_ComboBoxSelect;
     }
 }

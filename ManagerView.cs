@@ -2,6 +2,7 @@
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using Spire.Pdf.Graphics;
+using Spire.Xls.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,7 +19,6 @@ using System.Windows.Forms;
 using 簡易倉儲系統.DB;
 using 簡易倉儲系統.EssentialTool;
 using 簡易倉儲系統.EssentialTool.Excel;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static 簡易倉儲系統.EssentialTool.LogToText;
 
 namespace 簡易倉儲系統
@@ -28,6 +28,10 @@ namespace 簡易倉儲系統
         LogToText log = new LogToText(@".\Log");
         DB_SQLite dB_SQLite = new DB_SQLite();
 
+        public static string _SelectType = "";
+        public static List<Control> _SelectControl;
+        public static Size _dataGridView4Size;
+        public static Point _dataGridView4Point;
         public static string IUDCustomerProfile = "";
         public static string Inquire = "";
         public static string Setting_Path = @".\";          //設定檔路徑
@@ -49,13 +53,31 @@ namespace 簡易倉儲系統
             this.Text += $"v.{VersionNumber} Bulid{File.GetLastWriteTime(Application.ExecutablePath).ToString("yyyyMMdd")}";
             textBox21.Text = "";
             label23.Text = "";
+            label25.Text = "";
+            //_SelectControl = new List<Control>() { radioButton11, radioButton12, radioButton13, radioButton14
+            //    , radioButton14, radioButton15, radioButton16, radioButton17};
+            //foreach (Control control in _SelectControl)
+            //{
+            //    control.Visible = false;
+            //    control.Enabled = false;
+            //}
+
+            #region 查詢框預設大小設定
+            //checkedListBox1.Items.Clear();
+            //checkedListBox1.Visible = false;
+            //checkedListBox1.Enabled = false;
+            //_dataGridView4Size = dataGridView4.Size;
+            //_dataGridView4Point = dataGridView4.Location;
+            //dataGridView4.Size = new Size(_dataGridView4Size.Width + _dataGridView4Point.X - checkedListBox1.Location.X, _dataGridView4Size.Height);
+            //dataGridView4.Location = new Point(checkedListBox1.Location.X, _dataGridView4Point.Y);
+            #endregion
 
             #region 檢查時間為最新
             try
             {
-                log.LogMessage("檢查時間 開始", enumLogType.Info);
+                log.LogMessage("檢查時間 開始", enumLogType.Trace);
 
-                if (@String.IsNullOrEmpty(Settings.每日檢查))
+                if (!String.IsNullOrEmpty(Settings.每日檢查))
                 {
                     string _TimeText = EncryptionDecryption.desDecryptBase64(Settings.每日檢查);
                     DateTime dateTime = DateTime.Parse(_TimeText);
@@ -69,6 +91,7 @@ namespace 簡易倉儲系統
                 }
                 Settings.每日檢查 = EncryptionDecryption.desEncryptBase64(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                 log.LogMessage("檢查時間 成功", enumLogType.Info);
+                log.LogMessage("檢查時間 成功", enumLogType.Trace);
             }
             catch (Exception ee)
             {
@@ -82,7 +105,7 @@ namespace 簡易倉儲系統
             #region 檢查程式是否符合效期內
             try
             {
-                log.LogMessage("檢查序號 開始", enumLogType.Info);
+                log.LogMessage("檢查序號 開始", enumLogType.Trace);
                 if (String.IsNullOrEmpty(Settings.序號))
                 {
                     log.LogMessage("請於設定檔內輸入序號", enumLogType.Info);
@@ -101,6 +124,7 @@ namespace 簡易倉儲系統
                     return;
                 }
                 log.LogMessage("檢查序號 成功", enumLogType.Info);
+                log.LogMessage("檢查序號 成功", enumLogType.Trace);
             }
             catch (Exception ee)
             {
@@ -117,9 +141,46 @@ namespace 簡易倉儲系統
             {
                 //表示此程式已被開啟
                 Application.Exit();
+                return;
             }
             log.LogMessage("系統啓動", enumLogType.Trace);
-            log.LogMessage("管理者介面啓動", enumLogType.Info);
+            #endregion
+
+            #region 比對 CPU ID 是否吻合
+            try
+            {
+                log.LogMessage("比對 CPU ID 是否吻合 開始", enumLogType.Trace);
+                if (String.IsNullOrEmpty(Settings.主機序號))
+                {
+                    log.LogMessage("未綁定主機，請聯絡相關資訊人員。", enumLogType.Info);
+                    MessageBox.Show("未綁定主機，請聯絡相關資訊人員。");
+                    Application.Exit();
+                    return;
+                }
+                else if (Settings.主機序號 == GetPCMacID.GetCpuID())
+                {
+                    Settings.主機序號 = EncryptionDecryption.desEncryptBase64(Settings.主機序號);
+                    MessageBox.Show("綁定成功");
+                    log.LogMessage("比對 CPU ID 綁定 成功", enumLogType.Info);
+                    log.LogMessage("比對 CPU ID 綁定 成功", enumLogType.Trace);
+                }
+                else if (EncryptionDecryption.desDecryptBase64(Settings.主機序號) != GetPCMacID.GetCpuID())
+                {
+                    log.LogMessage("程式已綁定，無法在此電腦執行！", enumLogType.Info);
+                    MessageBox.Show("程式已綁定，無法在此電腦執行！");
+                    Application.Exit();
+                    return;
+                }
+                log.LogMessage("比對 CPU ID 是否吻合 成功", enumLogType.Info);
+                log.LogMessage("比對 CPU ID 是否吻合 成功", enumLogType.Trace);
+            }
+            catch (Exception ee)
+            {
+                log.LogMessage("比對 CPU ID 失敗" + ee.Message, enumLogType.Error);
+                MessageBox.Show("比對 CPU ID 失敗");
+                Application.Exit();
+                return;
+            }
             #endregion
 
             try
@@ -208,6 +269,7 @@ namespace 簡易倉儲系統
                 MessageBox.Show("連線資料庫 失敗\r\n" + ee.Message);
                 return;
             }
+            log.LogMessage("管理者介面啓動", enumLogType.Info);
         }
 
         /// <summary>
@@ -382,7 +444,7 @@ namespace 簡易倉儲系統
                     dB_SQLite.Manipulate(DB_Path, insertstring);
 
                     log.LogMessage("新增/修改_DB修改 成功路徑：" + DB_Path + "\r\n語法：" + insertstring, enumLogType.Trace);
-                    log.LogMessage("新增/修改_DB修改 成功", enumLogType.Info);
+                    log.LogMessage("新增/修改_DB修改 成功路徑：" + DB_Path + "\r\n語法：" + insertstring, enumLogType.Info);
                     #endregion
 
                     #region DataGridView修改
@@ -391,7 +453,7 @@ namespace 簡易倉儲系統
                     _data.SetValues(_typeList.ToArray());
 
                     log.LogMessage("新增/修改_DataGridView修改 成功資料：[" + string.Join(", ", _typeList.ToArray()) + "]", enumLogType.Trace);
-                    log.LogMessage("新增/修改_DataGridView修改 成功", enumLogType.Info);
+                    log.LogMessage("新增/修改_DataGridView修改 成功資料：[" + string.Join(", ", _typeList.ToArray()) + "]", enumLogType.Info);
                     #endregion
                 }
                 else if (_state == "I")
@@ -411,7 +473,7 @@ namespace 簡易倉儲系統
                     dB_SQLite.Manipulate(DB_Path, insertstring);
 
                     log.LogMessage("新增/修改_DB新增 成功路徑：" + DB_Path + "\r\n語法：" + insertstring, enumLogType.Trace);
-                    log.LogMessage("新增/修改_DB新增 成功", enumLogType.Info);
+                    log.LogMessage("新增/修改_DB新增 成功路徑：" + DB_Path + "\r\n語法：" + insertstring, enumLogType.Info);
                     #endregion
                     //// 讀取資料_20230313_Ian_先採用各別新增加入的方式，防止未來資料過大需要重繪DataGridView時，造成吃掉大量記憶體
                     //var dataTable = dB_SQLite.GetDataTable(DB_Path, $@"SELECT * FROM {_TableName}");
@@ -430,7 +492,7 @@ namespace 簡易倉儲系統
                     ((Control)sender).Parent.Controls[0].Controls[1].Focus();
 
                     log.LogMessage("新增/修改_DataGridView新增 成功資料：[" + string.Join(", ", _typeList.ToArray()) + "]", enumLogType.Trace);
-                    log.LogMessage("新增/修改_DataGridView新增 成功", enumLogType.Info);
+                    log.LogMessage("新增/修改_DataGridView新增 成功資料：[" + string.Join(", ", _typeList.ToArray()) + "]", enumLogType.Info);
                     #endregion
 
                 }
@@ -493,16 +555,26 @@ namespace 簡易倉儲系統
                 if (_Text == "單號查詢")
                 {
                     Inquire = "單號";
+                    checkBox4.Checked = false;
                     checkBox4.Enabled = false;  
                     checkBox4.Visible = false;
                     panel21.Enabled = false;
                     panel21.Visible = false;
+                    //checkedListBox1.Visible = false;
+                    //checkedListBox1.Enabled = false;
+
+                    //dataGridView4.Size = new Size(_dataGridView4Size.Width + _dataGridView4Point.X - checkedListBox1.Location.X, _dataGridView4Size.Height);
+                    //dataGridView4.Location = new Point(checkedListBox1.Location.X, _dataGridView4Point.Y);
                 }
                 else if (_Text == "姓名查詢")
                 {
                     Inquire = "姓名";
                     checkBox4.Enabled = true;
                     checkBox4.Visible = true;
+                    //checkedListBox1.Visible = true;
+                    //checkedListBox1.Enabled = true;
+                    //dataGridView4.Size = _dataGridView4Size;
+                    //dataGridView4.Location = _dataGridView4Point;
                 }
 
                 ((GroupBox)((RadioButton)sender).Parent).BackColor = Color.Transparent;
@@ -522,7 +594,7 @@ namespace 簡易倉儲系統
         {
             if (e.KeyCode == Keys.Enter)
             {
-                if (textBox21.Text == "")
+                if (Inquire == "單號" && textBox21.Text == "")
                 {
                     return;
                 }
@@ -536,24 +608,39 @@ namespace 簡易倉儲系統
                 {
                     log.LogMessage("確認搜尋 開始", enumLogType.Trace);
                     string _SQL = "";
-                    string _ALLPriceSQL = "";
                     if (Inquire == "單號")
                     {
-                        _ALLPriceSQL = $@"SELECT SUM(Count * UnitPrice)AS ALLPrice FROM SalesRecord WHERE No LIKE '{textBox21.Text}%'";
                         _SQL = $@"SELECT *, (Count * UnitPrice)AS Price FROM SalesRecord WHERE No LIKE '{textBox21.Text}%'";
                     }
                     if (Inquire == "姓名")
                     {
-                        _ALLPriceSQL = $@"SELECT SUM(Count * UnitPrice)AS Price FROM SalesRecord WHERE Name LIKE '%{textBox21.Text}%'";
+                        //checkedListBox1.Items.Clear();
                         _SQL = $@"SELECT *, (Count * UnitPrice)AS Price FROM SalesRecord WHERE Name LIKE '%{textBox21.Text}%'";
                         if (checkBox4.Checked)
                         {
-                            _ALLPriceSQL += $@" AND Date between '{dateTimePicker1.Value.ToString("yyyy-MM-dd")}' AND '{dateTimePicker2.Value.AddDays(1).ToString("yyyy-MM-dd")}'";
                             _SQL += $@" AND Date between '{dateTimePicker1.Value.ToString("yyyy-MM-dd")}' AND '{dateTimePicker2.Value.AddDays(1).ToString("yyyy-MM-dd")}'";
                         }
                     }
-                    DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, _SQL), dataGridView4);
-                    label23.Text = dB_SQLite.GetDataTable(DB_Path, _ALLPriceSQL).Rows[0][0].ToString();
+                    DataTable dataTable = dB_SQLite.GetDataTable(DB_Path, _SQL);
+                    DB_SQLite.DatatableToDatagridview(dataTable, dataGridView4);
+
+                    //總計算   //類型選單建立
+                    Double _ALLUnitPrice = 0;
+                    Double _ALLCount = 0;
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        //類型匯入
+                        string _Type = row.Field<String>("Type");
+                        //if (!checkedListBox1.Items.Contains(_Type))
+                        //    checkedListBox1.Items.Add(_Type);
+                        //單價加總
+                        _ALLUnitPrice += row.Field<Double>("Price");
+                        //重量加總
+                        _ALLCount += row.Field<Double>("Count");
+                    }
+                    label23.Text = _ALLUnitPrice.ToString();
+                    label25.Text = _ALLCount.ToString();
+
                     log.LogMessage("確認搜尋 成功 總金額：" + label23.Text + "\r\n語法：" + _SQL, enumLogType.Trace);
                 }
                 catch (Exception ee)
@@ -709,7 +796,7 @@ namespace 簡易倉儲系統
                 log.LogMessage("刪除 客戶 失敗：" + ee.Message, enumLogType.Error);
             }
         }
-
+        //更新人員前的代入
         private void dataGridView5_Click(object sender, EventArgs e)
         {
             if (IUDCustomerProfile == "U")
@@ -719,5 +806,27 @@ namespace 簡易倉儲系統
                 textBox22.Text = ((DataGridView)sender).Rows[((DataGridView)sender).CurrentRow.Index].Cells[2].Value.ToString();
             }
         }
+
+        //保留寫法，可一次關閉多個開關
+        //private void checkBox5_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        log.LogMessage("查詢類型 開始", enumLogType.Trace);
+        //
+        //        Boolean _Checked = ((CheckBox)sender).Checked;
+        //        foreach (Control control in _SelectControl)
+        //        {
+        //            control.Visible = _Checked;
+        //            control.Enabled = _Checked;
+        //        }
+        //        log.LogMessage("查詢類型 成功 ：" + _Checked, enumLogType.Info);
+        //        log.LogMessage("查詢類型 成功 ：" + _Checked, enumLogType.Trace);
+        //    }
+        //    catch (Exception ee)
+        //    {
+        //        log.LogMessage("查詢類型 失敗：" + ee.Message, enumLogType.Error);
+        //    }
+        //}
     }
 }

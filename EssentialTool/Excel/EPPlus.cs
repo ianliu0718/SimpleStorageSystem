@@ -66,7 +66,7 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                 Sheet.Column(i).Width += 2;
             }
             //高度設定
-            for (int i = 3; i <= Table.Count; i++)
+            for (int i = 1; i <= Table.Count; i++)
             {
                 Sheet.Row(i).Height = 20;
             }
@@ -140,20 +140,6 @@ namespace 簡易倉儲系統.EssentialTool.Excel
             FileInfo file = new FileInfo(fileName);
             Epackage.SaveAs(file);
             Epackage.Dispose();
-        }
-        public void Print()
-        {
-            //OfficeOpenXml.ExcelPackage expackage = new OfficeOpenXml.ExcelPackage();
-            OfficeOpenXml.ExcelWorkbook workbook = Epackage.Workbook;
-            OfficeOpenXml.ExcelWorksheet worksheetfabric = workbook.Worksheets.Add("需求单");
-
-            //打印方向：横向
-            //worksheetfabric.PrinterSettings.Orientation = eOrientation.Landscape;
-            //集中在一页里打印
-            worksheetfabric.PrinterSettings.FitToPage = true;
-            //使用A4纸
-            worksheetfabric.PrinterSettings.PaperSize = ePaperSize.A4;
-
         }
         public void ChangeExcel2Image(string filename, string ImageName)
         {

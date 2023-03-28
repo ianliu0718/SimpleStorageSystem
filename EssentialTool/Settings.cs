@@ -34,6 +34,7 @@ namespace 簡易倉儲系統.EssentialTool
                     XmlWriter writer = XmlWriter.Create(SettingsPath, settings);
                     writer.WriteStartElement("Setup");
                     writer.WriteElementString("每日檢查", _每日檢查);
+                    writer.WriteElementString("主機序號", _主機序號);
                     writer.WriteElementString("序號", _序號);
                     writer.WriteElementString("資料庫路徑", _資料庫路徑);
                     writer.WriteElementString("Excel路徑", _Excel路徑);
@@ -46,6 +47,38 @@ namespace 簡易倉儲系統.EssentialTool
             catch// (Exception ex)
             {
                 throw;
+            }
+        }
+
+        private static string _主機序號 = "";
+        /// <summary>
+        /// 主機序號
+        /// </summary>
+        public static String 主機序號
+        {
+            get
+            {
+                String tmpValue = null;
+                try
+                {
+                    Config.getConfigValue("主機序號", out tmpValue);
+                }
+                catch (Exception ee)
+                {
+                    if (ee.Message == "查無主機序號此參數設定")
+                    {
+                        Config.setConfigValue("主機序號", _主機序號);
+                        tmpValue = _主機序號;
+                    }
+                }
+
+                return tmpValue;
+            }
+            set
+            {
+                try
+                { Config.setConfigValue("主機序號", value); }
+                catch { }
             }
         }
 
