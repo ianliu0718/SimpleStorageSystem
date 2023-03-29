@@ -533,7 +533,7 @@ namespace 簡易倉儲系統
             }
             catch (Exception ee)
             {
-                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, $@"SELECT * FROM SalesRecord WHERE Date > '{DateTime.Now.ToString("yyyy-MM-dd")}';"), dataGridView1);
+                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, $@"SELECT No, Date, Name, Type, Count, UnitPrice, Unit, SalesArea FROM SalesRecord WHERE Date > '{DateTime.Now.ToString("yyyy-MM-dd")}';"), dataGridView1);
                 log.LogMessage("刪除失敗則還原 失敗：" + ee.Message, enumLogType.Trace);
                 MessageBox.Show("刪除失敗：" + ee.Message);
                 return;
@@ -610,7 +610,8 @@ namespace 簡易倉儲系統
                 if (!RepeatPrinting) insertstring = insertstring.Remove(insertstring.Length - 1, 1);
                 if (!RepeatPrinting) dB_SQLite.Manipulate(DB_Path, insertstring);
 
-                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, $@"SELECT * FROM SalesRecord 
+                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, $@"SELECT No, Date, Name, Type, 
+                    Count, UnitPrice, Unit, salesArea FROM SalesRecord 
                     WHERE Date > '{DateTime.Now.ToString("yyyy-MM-dd")}' AND No = '{_No}';"), dataGridView1);
 
                 if (RepeatPrinting)

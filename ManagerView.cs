@@ -13,6 +13,7 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -28,6 +29,7 @@ namespace 簡易倉儲系統
         LogToText log = new LogToText(@".\Log");
         DB_SQLite dB_SQLite = new DB_SQLite();
 
+        public static DataTable _SelectDT = new DataTable();
         public static string _SelectType = "";
         public static List<Control> _SelectControl;
         public static Size _dataGridView4Size;
@@ -53,24 +55,8 @@ namespace 簡易倉儲系統
             this.Text += $"v.{VersionNumber} Bulid{File.GetLastWriteTime(Application.ExecutablePath).ToString("yyyyMMdd")}";
             textBox21.Text = "";
             label23.Text = "";
-            label25.Text = "";
-            //_SelectControl = new List<Control>() { radioButton11, radioButton12, radioButton13, radioButton14
-            //    , radioButton14, radioButton15, radioButton16, radioButton17};
-            //foreach (Control control in _SelectControl)
-            //{
-            //    control.Visible = false;
-            //    control.Enabled = false;
-            //}
-
-            #region 查詢框預設大小設定
-            //checkedListBox1.Items.Clear();
-            //checkedListBox1.Visible = false;
-            //checkedListBox1.Enabled = false;
-            //_dataGridView4Size = dataGridView4.Size;
-            //_dataGridView4Point = dataGridView4.Location;
-            //dataGridView4.Size = new Size(_dataGridView4Size.Width + _dataGridView4Point.X - checkedListBox1.Location.X, _dataGridView4Size.Height);
-            //dataGridView4.Location = new Point(checkedListBox1.Location.X, _dataGridView4Point.Y);
-            #endregion
+            label25.Text = ""; 
+            checkedListBox1.Items.Clear();
 
             #region 檢查時間為最新
             try
@@ -211,7 +197,7 @@ namespace 簡易倉儲系統
 
                     // 建立資料表 販售紀錄 SalesRecord
                     createtablestring = @"CREATE TABLE SalesRecord (No Integer, Date DateTime, Name TEXT, Type TEXT, Count double
-                    , UnitPrice double, Unit TEXT, salesArea TEXT);";
+                    , UnitPrice double, Unit TEXT, SalesArea TEXT, Paid double, PaidTime DateTime);";
                     dB_SQLite.CreateTable(DB_Path, createtablestring);
 
                     // 建立資料表 外銷韓國 ExportKoreaUnitPrice
@@ -318,6 +304,11 @@ namespace 簡易倉儲系統
         {
             log.LogMessage("換分頁時清空資料 開始", enumLogType.Trace);
 
+            //清空搜尋頁
+            dataGridView4.Rows.Clear();
+            checkedListBox1.Items.Clear();
+            _SelectDT = new DataTable();
+
             //清空暫存
             type = new string[][] { new string[] { "", "", "", "", "", "", "" }
                                   , new string[] { "", "", "", "", "", "", "" }
@@ -326,7 +317,7 @@ namespace 簡易倉儲系統
             //要清空的TextBox元件
             System.Windows.Forms.TextBox[] _textBoxes = { textBox1, textBox2, textBox3, textBox4, textBox5, textBox6, textBox7
                     , textBox8, textBox9, textBox10, textBox11, textBox12, textBox13, textBox14
-                    , textBox15, textBox16, textBox17, textBox18, textBox19, textBox20, textBox21};
+                    , textBox15, textBox16, textBox17, textBox18, textBox19, textBox20, textBox21, textBox22};
             foreach (var _textBox in _textBoxes)
             {
                 _textBox.Text = "";
@@ -557,25 +548,16 @@ namespace 簡易倉儲系統
                 {
                     Inquire = "單號";
                     checkBox4.Checked = false;
-                    checkBox4.Enabled = false;  
+                    checkBox4.Enabled = false;
                     checkBox4.Visible = false;
                     panel21.Enabled = false;
                     panel21.Visible = false;
-                    //checkedListBox1.Visible = false;
-                    //checkedListBox1.Enabled = false;
-
-                    //dataGridView4.Size = new Size(_dataGridView4Size.Width + _dataGridView4Point.X - checkedListBox1.Location.X, _dataGridView4Size.Height);
-                    //dataGridView4.Location = new Point(checkedListBox1.Location.X, _dataGridView4Point.Y);
                 }
                 else if (_Text == "姓名查詢")
                 {
                     Inquire = "姓名";
                     checkBox4.Enabled = true;
                     checkBox4.Visible = true;
-                    //checkedListBox1.Visible = true;
-                    //checkedListBox1.Enabled = true;
-                    //dataGridView4.Size = _dataGridView4Size;
-                    //dataGridView4.Location = _dataGridView4Point;
                 }
 
                 ((GroupBox)((RadioButton)sender).Parent).BackColor = Color.Transparent;
@@ -599,6 +581,10 @@ namespace 簡易倉儲系統
                 {
                     return;
                 }
+                if (Inquire == "姓名" && textBox21.Text == "" && !checkBox4.Checked)
+                {
+                    return;
+                }
                 if (Inquire == "")
                 {
                     groupBox7.BackColor = Color.IndianRed;
@@ -608,40 +594,50 @@ namespace 簡易倉儲系統
                 try
                 {
                     log.LogMessage("確認搜尋 開始", enumLogType.Trace);
-                    string _SQL = "";
+                    string _SQL = $@"SELECT No, Date, Name, Type, Count, UnitPrice, Unit, 
+                        SalesArea, Paid, (Count * UnitPrice)AS Unpaid FROM SalesRecord ";
                     if (Inquire == "單號")
                     {
-                        _SQL = $@"SELECT *, (Count * UnitPrice)AS Price FROM SalesRecord WHERE No LIKE '{textBox21.Text}%'";
+                        _SQL += $@" WHERE No LIKE '{textBox21.Text}%' ";
                     }
                     if (Inquire == "姓名")
                     {
-                        //checkedListBox1.Items.Clear();
-                        _SQL = $@"SELECT *, (Count * UnitPrice)AS Price FROM SalesRecord WHERE Name LIKE '%{textBox21.Text}%'";
+                        _SQL += $@" WHERE 1 = 1 ";
+                        if (textBox21.Text != "")
+                        {
+                            _SQL += $@" AND Name LIKE '%{textBox21.Text}%' ";
+                        }
                         if (checkBox4.Checked)
                         {
-                            _SQL += $@" AND Date between '{dateTimePicker1.Value.ToString("yyyy-MM-dd")}' AND '{dateTimePicker2.Value.AddDays(1).ToString("yyyy-MM-dd")}'";
+                            _SQL += $@" AND Date between '{dateTimePicker1.Value.ToString("yyyy-MM-dd")}' AND '{dateTimePicker2.Value.AddDays(1).ToString("yyyy-MM-dd")}' ";
                         }
                     }
-                    DataTable dataTable = dB_SQLite.GetDataTable(DB_Path, _SQL);
-                    DB_SQLite.DatatableToDatagridview(dataTable, dataGridView4);
+                    _SelectDT = dB_SQLite.GetDataTable(DB_Path, _SQL);
+                    DB_SQLite.DatatableToDatagridview(_SelectDT, dataGridView4);
 
                     //總計算   //類型選單建立
                     Double _ALLUnitPrice = 0;
                     Double _ALLCount = 0;
-                    foreach (DataRow row in dataTable.Rows)
+                    checkedListBox1.Items.Clear();
+                    checkedListBox1.Items.Add("已付款", true);
+                    checkedListBox1.Items.Add("未付款", true);
+                    foreach (DataRow row in _SelectDT.Rows)
                     {
                         //類型匯入
                         string _Type = row.Field<String>("Type");
-                        //if (!checkedListBox1.Items.Contains(_Type))
-                        //    checkedListBox1.Items.Add(_Type);
+                        if (!checkedListBox1.Items.Contains(_Type))
+                        {
+                            checkedListBox1.Items.Add(_Type, true);
+                        }
                         //單價加總
-                        _ALLUnitPrice += row.Field<Double>("Price");
+                        _ALLUnitPrice += row.Field<Double>("Unpaid");
                         //重量加總
                         _ALLCount += row.Field<Double>("Count");
                     }
                     label23.Text = _ALLUnitPrice.ToString();
                     label25.Text = _ALLCount.ToString();
 
+                    log.LogMessage("確認搜尋 成功 總金額：" + label23.Text + "\r\n語法：" + _SQL, enumLogType.Info);
                     log.LogMessage("確認搜尋 成功 總金額：" + label23.Text + "\r\n語法：" + _SQL, enumLogType.Trace);
                 }
                 catch (Exception ee)
@@ -649,6 +645,73 @@ namespace 簡易倉儲系統
                     log.LogMessage("確認搜尋 失敗：" + ee.Message, enumLogType.Error);
                 }
             }
+        }
+
+        //類型匯入後，點選變更
+        private void checkedListBox1_Click(object sender, EventArgs e)
+        {
+            timer_SelectType.Start();
+        }
+        private void timer_SelectType_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                log.LogMessage("類型點選變更 開始", enumLogType.Trace);
+                string strCollected = string.Empty;
+                Double _ALLUnitPrice = 0;
+                Double _ALLCount = 0;
+                DataTable dt = _SelectDT.Clone();
+                Boolean _已付款 = false;
+                Boolean _未付款 = false;
+                for (int i = 0; i < checkedListBox1.Items.Count; i++)
+                {
+                    if (checkedListBox1.GetItemChecked(i))
+                    {
+                        DataRow[] rows;
+                        string _Text = checkedListBox1.GetItemText(checkedListBox1.Items[i]);
+                        string _SelectText = "Type = '" + _Text + "' ";
+                        if (_Text == "已付款")
+                        {
+                            _已付款 = true;
+                            continue;
+                        }
+                        else if (_Text == "未付款")
+                        {
+                            _未付款 = true;
+                            continue;
+                        }
+
+                        if (_已付款 && _未付款)
+                            rows = _SelectDT.Select(_SelectText);
+                        else if (_已付款)
+                            rows = _SelectDT.Select(_SelectText + "AND (Paid is not null OR Paid <> '')");
+                        else if (_未付款)
+                            rows = _SelectDT.Select(_SelectText + "AND (Paid is null OR Paid = '')");
+                        else
+                            break;
+
+                        foreach (DataRow row in rows)
+                        {
+                            //單價加總
+                            _ALLUnitPrice += row.Field<Double>("Unpaid");
+                            //重量加總
+                            _ALLCount += row.Field<Double>("Count");
+                            dt.ImportRow(row);
+                        }
+                    }
+                }
+                label23.Text = _ALLUnitPrice.ToString();
+                label25.Text = _ALLCount.ToString();
+                DB_SQLite.DatatableToDatagridview(dt, dataGridView4);
+
+                log.LogMessage("類型點選變更 成功 總金額：" + label23.Text + "  總重量：" + label25.Text, enumLogType.Info);
+                log.LogMessage("類型點選變更 成功 總金額：" + label23.Text + "\f總重量：" + label25.Text, enumLogType.Trace);
+            }
+            catch (Exception ee)
+            {
+                log.LogMessage("類型點選變更 失敗：" + ee.Message, enumLogType.Error);
+            }
+            finally { timer_SelectType.Stop(); }
         }
 
         //日期是否顯示
