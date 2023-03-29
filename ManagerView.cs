@@ -113,6 +113,7 @@ namespace 簡易倉儲系統
                     Application.Exit();
                     return;
                 }
+                string _ianNo = EncryptionDecryption.desEncryptBase64("ian/2023-03-28/2023-04-20/ian");
                 string _SerialNumber = EncryptionDecryption.desDecryptBase64(Settings.序號);
                 if (DateTime.Now < DateTime.Parse(_SerialNumber.Split('/')[1])
                     || DateTime.Now > DateTime.Parse(_SerialNumber.Split('/')[2]))

@@ -214,7 +214,7 @@ namespace 簡易倉儲系統
                 {
                     log.LogMessage("類型設定，單價設定 開始", enumLogType.Trace);
 
-                    type = ((ButtonBase)sender).Text;
+                    type = ((ButtonBase)sender).Text.Split('(')[0];
                     ((GroupBox)((RadioButton)sender).Parent).BackColor = SystemColors.Control;
                     ((RadioButton)sender).BackColor = Color.GreenYellow;
 
@@ -258,11 +258,41 @@ namespace 簡易倉儲系統
         }
 
         //販售地點設定，資料表名稱設定，重量單位設定，針對不同地區客製化功能
+        int salesArea_Checked_OK = -3;  //-3第一次設定 //-2設定中 //-1未設定 //0設定為No //1設定為Yes
         private void radioButton_salesArea_CheckedChanged(object sender, EventArgs e)
         {
             try
             {
                 log.LogMessage("販售地點設定，資料表名稱設定，重量單位設定，針對不同地區客製化功能 開始", enumLogType.Trace);
+                if (salesArea_Checked_OK == -1)
+                {
+                    if (DialogResult.No == MessageBox.Show("是否需要更改販售地區", "更改販售地區", MessageBoxButtons.YesNo))
+                    {
+                        salesArea_Checked_OK = -2;
+                        ((RadioButton)sender).Checked = !((RadioButton)sender).Checked;
+                        salesArea_Checked_OK = 0;
+                        return;
+                    }
+                    salesArea_Checked_OK = 1;
+                }
+                else if (salesArea_Checked_OK == -2)
+                {
+                    return;
+                }
+                else if (salesArea_Checked_OK == -3)
+                {
+                    salesArea_Checked_OK = -1;
+                }
+                else if (salesArea_Checked_OK == 0)
+                {
+                    salesArea_Checked_OK = -2;
+                    ((RadioButton)sender).Checked = false;
+                    salesArea_Checked_OK = -1;
+                }
+                else if (salesArea_Checked_OK == 1)
+                {
+                    salesArea_Checked_OK = -1;
+                }
 
                 string _Text = ((ButtonBase)sender).Text;
                 if (((RadioButton)sender).Checked)
@@ -349,20 +379,20 @@ namespace 簡易倉儲系統
                         else
                             ((RadioButton)((RadioButton)sender).Parent.Controls[i]).BackColor = SystemColors.Control;
                     }
-                }
-                for (int i = 0; i < groupBox1.Controls.Count; i++)
-                {
-
-                    //清空類型內選項
-                    if (((RadioButton)(groupBox1.Controls[i])).Checked)
+                    for (int i = 0; i < groupBox1.Controls.Count; i++)
                     {
-                        ((RadioButton)(groupBox1.Controls[i])).Checked = false;
-                        ((RadioButton)(groupBox1.Controls[i])).BackColor = SystemColors.Control;
-                    }
-                    label3.Text = "0";
-                }
 
-                log.LogMessage("販售地點設定，資料表名稱設定，重量單位設定，針對不同地區客製化功能 成功", enumLogType.Trace);
+                        //清空類型內選項
+                        if (((RadioButton)(groupBox1.Controls[i])).Checked)
+                        {
+                            ((RadioButton)(groupBox1.Controls[i])).Checked = false;
+                            ((RadioButton)(groupBox1.Controls[i])).BackColor = SystemColors.Control;
+                        }
+                        label3.Text = "0";
+                    }
+
+                    log.LogMessage("販售地點設定，資料表名稱設定，重量單位設定，針對不同地區客製化功能 成功", enumLogType.Trace);
+                }
             }
             catch (Exception ee)
             {
@@ -386,6 +416,8 @@ namespace 簡易倉儲系統
             }
             if (string.IsNullOrEmpty(unitPrice) || unitPrice == "0")
             {
+                if (!panel1.Visible)    //隱藏單價情況就跳出通知
+                    MessageBox.Show("請等待管理者輸入單價！");
                 panel1.BackColor = Color.IndianRed;
                 _OK = false;
             }
@@ -482,11 +514,6 @@ namespace 簡易倉儲系統
                     }
                     break;
                 case ((char)Keys.Space):
-                    if (button1.Visible)
-                    {
-                        button1.PerformClick();
-                        return;
-                    }
                     break;
                 default:
                     break;
@@ -521,6 +548,8 @@ namespace 簡易倉儲系統
         //列印
         private void button1_Click(object sender, EventArgs e)
         {
+            textBox1.Focus();
+
             Boolean RepeatPrinting = false;
             if (label5.Text != "")
             {
@@ -816,7 +845,7 @@ namespace 簡易倉儲系統
                 }
                 e.Graphics.DrawImage(bitmap, newarea, 0, _Y, _width, newarea.Height, GraphicsUnit.Pixel);
                 _Page++;
-                if (e.HasMorePages)
+                if (!e.HasMorePages)
                     button1.Enabled = true;
             }
             #endregion
