@@ -197,7 +197,7 @@ namespace 簡易倉儲系統
             // radioButton10
             // 
             this.radioButton10.AutoSize = true;
-            this.radioButton10.Location = new System.Drawing.Point(1385, 42);
+            this.radioButton10.Location = new System.Drawing.Point(1283, 42);
             this.radioButton10.Name = "radioButton10";
             this.radioButton10.Size = new System.Drawing.Size(184, 34);
             this.radioButton10.TabIndex = 2;
@@ -209,7 +209,7 @@ namespace 簡易倉儲系統
             // radioButton9
             // 
             this.radioButton9.AutoSize = true;
-            this.radioButton9.Location = new System.Drawing.Point(660, 42);
+            this.radioButton9.Location = new System.Drawing.Point(620, 42);
             this.radioButton9.Name = "radioButton9";
             this.radioButton9.Size = new System.Drawing.Size(244, 34);
             this.radioButton9.TabIndex = 1;

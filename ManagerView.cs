@@ -1,6 +1,7 @@
 ﻿using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
 using Spire.Pdf.Graphics;
 using Spire.Xls.Core;
 using System;
@@ -13,13 +14,16 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using 簡易倉儲系統.DB;
 using 簡易倉儲系統.EssentialTool;
 using 簡易倉儲系統.EssentialTool.Excel;
+using static System.Windows.Forms.AxHost;
 using static 簡易倉儲系統.EssentialTool.LogToText;
 
 namespace 簡易倉儲系統
@@ -55,7 +59,8 @@ namespace 簡易倉儲系統
             this.Text += $"v.{VersionNumber} Bulid{File.GetLastWriteTime(Application.ExecutablePath).ToString("yyyyMMdd")}";
             textBox21.Text = "";
             label23.Text = "";
-            label25.Text = ""; 
+            label25.Text = "";
+            label28.Text = ""; 
             checkedListBox1.Items.Clear();
 
             #region 檢查時間為最新
@@ -170,6 +175,49 @@ namespace 簡易倉儲系統
             }
             #endregion
 
+            #region 取得類型設定參數
+            try
+            {
+                log.LogMessage("取得類型設定參數 開始", enumLogType.Trace);
+                this.tabPage1.Text = Settings.販售地區1.Split('/')[0];
+                string _Type1 = Settings.類型1;
+                label1.Text = this.Column2.HeaderText = _Type1.Split('/')[0];
+                label2.Text = this.Column3.HeaderText = _Type1.Split('/')[1];
+                label3.Text = this.Column4.HeaderText = _Type1.Split('/')[2];
+                label4.Text = this.Column5.HeaderText = _Type1.Split('/')[3];
+                label5.Text = this.Column6.HeaderText = _Type1.Split('/')[4];
+                label6.Text = this.Column7.HeaderText = _Type1.Split('/')[5];
+                label7.Text = this.Column8.HeaderText = _Type1.Split('/')[6];
+                this.tabPage2.Text = Settings.販售地區2.Split('/')[0];
+                string _Type2 = Settings.類型2;
+                label8.Text = dataGridViewTextBoxColumn2.HeaderText = _Type2.Split('/')[0];
+                label9.Text = dataGridViewTextBoxColumn3.HeaderText = _Type2.Split('/')[1];
+                label10.Text = dataGridViewTextBoxColumn4.HeaderText = _Type2.Split('/')[2];
+                label11.Text = dataGridViewTextBoxColumn5.HeaderText = _Type2.Split('/')[3];
+                label12.Text = dataGridViewTextBoxColumn6.HeaderText = _Type2.Split('/')[4];
+                label13.Text = dataGridViewTextBoxColumn7.HeaderText = _Type2.Split('/')[5];
+                label14.Text = dataGridViewTextBoxColumn8.HeaderText = _Type2.Split('/')[6];
+                this.tabPage3.Text = Settings.販售地區3.Split('/')[0];
+                string _Type3 = Settings.類型3;
+                label15.Text = dataGridViewTextBoxColumn10.HeaderText = _Type3.Split('/')[0];
+                label16.Text = dataGridViewTextBoxColumn11.HeaderText = _Type3.Split('/')[1];
+                label17.Text = dataGridViewTextBoxColumn12.HeaderText = _Type3.Split('/')[2];
+                label18.Text = dataGridViewTextBoxColumn13.HeaderText = _Type3.Split('/')[3];
+                label19.Text = dataGridViewTextBoxColumn14.HeaderText = _Type3.Split('/')[4];
+                label20.Text = dataGridViewTextBoxColumn15.HeaderText = _Type3.Split('/')[5];
+                log.LogMessage("取得類型設定參數 成功\r\n" + this.tabPage1.Text + " / " + 
+                    this.tabPage2.Text + " / " + this.tabPage3.Text, enumLogType.Info);
+                log.LogMessage("取得類型設定參數 成功\r\n" + this.tabPage1.Text + $@"：{_Type1}" + " / " +
+                    this.tabPage2.Text + $@"：{_Type2}" + " / " + this.tabPage3.Text + $@"：{_Type3}", enumLogType.Trace);
+            }
+            catch (Exception ee)
+            {
+                log.LogMessage("取得類型設定參數 失敗\r\n" + ee.Message, enumLogType.Error);
+                MessageBox.Show("取得類型設定參數 失敗\r\n" + ee.Message);
+                return;
+            }
+            #endregion
+
             try
             {
                 DB_Path = Settings.資料庫路徑 + @"data.db";
@@ -196,8 +244,8 @@ namespace 簡易倉儲系統
                     ");
 
                     // 建立資料表 販售紀錄 SalesRecord
-                    createtablestring = @"CREATE TABLE SalesRecord (No Integer, Date DateTime, Name TEXT, Type TEXT, Count double
-                    , UnitPrice double, Unit TEXT, SalesArea TEXT, Paid double, PaidTime DateTime);";
+                    createtablestring = @"CREATE TABLE SalesRecord (No Integer, Time DateTime, Name TEXT, Type TEXT, Count double
+                    , UnitPrice double, Unit TEXT, SalesArea TEXT, Paid Integer, PaidTime DateTime);";
                     dB_SQLite.CreateTable(DB_Path, createtablestring);
 
                     // 建立資料表 外銷韓國 ExportKoreaUnitPrice
@@ -280,8 +328,10 @@ namespace 簡易倉儲系統
                     for (int j = 0; j < DT.Columns.Count; j++)
                     {
                         string _value = DT.Rows[i][j].ToString();
-                        if (j == 0)
+                        if (DT.Columns[j].ColumnName == "Date")
                             _value = DateTime.Parse(_value).ToString("yyyy-MM-dd");
+                        if (DT.Columns[j].ColumnName == "Unpaid")
+                            _value = ((int)Math.Round(Convert.ToDouble(_value), 0, MidpointRounding.AwayFromZero)).ToString();
                         strings.Insert(j, _value);
                     }
                     _data.SetValues(strings.ToArray());
@@ -294,7 +344,8 @@ namespace 簡易倉儲系統
             }
             catch (Exception ee)
             {
-                log.LogMessage("Datatable轉出Datagridview 失敗：\r\n" + ee.Message, enumLogType.Error);
+                log.LogMessage("Datatable轉出Datagridview 失敗：" + ee.Message, enumLogType.Error);
+                MessageBox.Show("Datatable轉出Datagridview 失敗：" + ee.Message);
                 return false;
             }
         }
@@ -491,7 +542,8 @@ namespace 簡易倉儲系統
             }
             catch (Exception ee)
             {
-                MessageBox.Show("新增修改失敗\r\n" + ee.Message);
+                log.LogMessage("新增修改 失敗：" + ee.Message, enumLogType.Error);
+                MessageBox.Show("新增修改 失敗：" + ee.Message);
             }
         }
 
@@ -526,6 +578,7 @@ namespace 簡易倉儲系統
             catch (Exception ee)
             {
                 log.LogMessage("dataGridView轉出 失敗：" + ee.Message, enumLogType.Error);
+                MessageBox.Show("dataGridView轉出 失敗：" + ee.Message);
             }
         }
 
@@ -543,6 +596,7 @@ namespace 簡易倉儲系統
             string _Text = ((ButtonBase)sender).Text;
             if (((RadioButton)sender).Checked)
             {
+                this.dataGridView4.Columns.Clear();
                 groupBox8.Text = _Text.Replace("查詢", "");
                 if (_Text == "單號查詢")
                 {
@@ -552,12 +606,43 @@ namespace 簡易倉儲系統
                     checkBox4.Visible = false;
                     panel21.Enabled = false;
                     panel21.Visible = false;
+                    button7.Enabled = true;
+                    button7.Visible = true;
+                    button8.Enabled = true;
+                    button8.Visible = true;
+                    this.Column10.HeaderText = "時間";
+                    this.dataGridView4.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+                        this.Column9, this.Column10, this.Column16, this.Column11, this.Column12, this.Column13,
+                        this.Column14, this.Column15, this.Column21, this.Column17});
                 }
                 else if (_Text == "姓名查詢")
                 {
                     Inquire = "姓名";
+                    checkBox4.Checked = false;
                     checkBox4.Enabled = true;
                     checkBox4.Visible = true;
+                    button7.Enabled = false;
+                    button7.Visible = false;
+                    button8.Enabled = false;
+                    button8.Visible = false;
+                    this.Column10.HeaderText = "時間";
+                    this.dataGridView4.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+                        this.Column9, this.Column10, this.Column16, this.Column11, this.Column12, this.Column13,
+                        this.Column14, this.Column15, this.Column21, this.Column17});
+                }
+                else if (_Text == "整合查詢")
+                {
+                    Inquire = "整合";
+                    checkBox4.Checked = true;
+                    checkBox4.Enabled = true;
+                    checkBox4.Visible = true;
+                    button7.Enabled = false;
+                    button7.Visible = false;
+                    button8.Enabled = false;
+                    button8.Visible = false;
+                    this.Column10.HeaderText = "日期";
+                    this.dataGridView4.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+                        this.Column9, this.Column10, this.Column21, this.Column17});
                 }
 
                 ((GroupBox)((RadioButton)sender).Parent).BackColor = Color.Transparent;
@@ -585,6 +670,10 @@ namespace 簡易倉儲系統
                 {
                     return;
                 }
+                if (Inquire == "整合" && textBox21.Text == "" && !checkBox4.Checked)
+                {
+                    return;
+                }
                 if (Inquire == "")
                 {
                     groupBox7.BackColor = Color.IndianRed;
@@ -594,13 +683,14 @@ namespace 簡易倉儲系統
                 try
                 {
                     log.LogMessage("確認搜尋 開始", enumLogType.Trace);
-                    string _SQL = $@"SELECT No, Date, Name, Type, Count, UnitPrice, Unit, 
+                    Int32 _ALLUnitPrice = 0;
+                    string _SQL = $@"SELECT No, Time, Name, Type, Count, UnitPrice, Unit, 
                         SalesArea, Paid, (Count * UnitPrice)AS Unpaid FROM SalesRecord ";
                     if (Inquire == "單號")
                     {
-                        _SQL += $@" WHERE No LIKE '{textBox21.Text}%' ";
+                        _SQL += $@" WHERE No = '{textBox21.Text}' ";
                     }
-                    if (Inquire == "姓名")
+                    else if (Inquire == "姓名")
                     {
                         _SQL += $@" WHERE 1 = 1 ";
                         if (textBox21.Text != "")
@@ -609,18 +699,69 @@ namespace 簡易倉儲系統
                         }
                         if (checkBox4.Checked)
                         {
-                            _SQL += $@" AND Date between '{dateTimePicker1.Value.ToString("yyyy-MM-dd")}' AND '{dateTimePicker2.Value.AddDays(1).ToString("yyyy-MM-dd")}' ";
+                            _SQL += $@" AND Time between '{dateTimePicker1.Value.ToString("yyyy-MM-dd")}' AND '{dateTimePicker2.Value.AddDays(1).ToString("yyyy-MM-dd")}' ";
                         }
                     }
+                    else if (Inquire == "整合")
+                    {
+                        label25.Text = "";
+                        label23.Text = "";
+                        label28.Text = "";
+                        checkedListBox1.Items.Clear();
+                        _SQL = $@"SELECT No, Time, Paid, (Count * UnitPrice)AS Unpaid FROM SalesRecord WHERE 1 = 1 ";
+                        if (textBox21.Text != "")
+                        {
+                            _SQL += $@" AND Name LIKE '%{textBox21.Text}%' ";
+                        }
+                        if (checkBox4.Checked)
+                        {
+                            _SQL += $@" AND Time between '{dateTimePicker1.Value.ToString("yyyy-MM-dd")}' AND '{dateTimePicker2.Value.AddDays(1).ToString("yyyy-MM-dd")}' ";
+                        }
+                        _SelectDT = dB_SQLite.GetDataTable(DB_Path, _SQL);
+                        DataGridView view = dataGridView4;
+                        List<Integrate> _integrate = new List<Integrate>();
+                        for (int i = 0; i < _SelectDT.Rows.Count; i++)
+                        {
+                            Integrate _item = _integrate.Find(f => f.No == _SelectDT.Rows[i][0].ToString());
+                            if (_item == null)
+                            {
+                                _item = new Integrate()
+                                {
+                                    No = _SelectDT.Rows[i][0].ToString(),
+                                    Date = DateTime.Parse(_SelectDT.Rows[i][1].ToString()).ToString("yyyy-MM-dd"),
+                                    Paid = _SelectDT.Rows[i][2].ToString()
+                                };
+                                _integrate.Add(_item);
+                            }
+                            _item.Unpaid += ((int)Math.Round(Convert.ToDouble(_SelectDT.Rows[i][3].ToString()), 0, MidpointRounding.AwayFromZero));
+                        }
+                        foreach (Integrate integrate in _integrate)
+                        {
+                            //每一列分開寫入DataGridView
+                            DataGridViewRow _data = new DataGridViewRow();
+                            _data.CreateCells(view);
+                            List<string> strings = new List<string>();
+                            strings.Insert(0, integrate.No.ToString());
+                            strings.Insert(1, integrate.Date.ToString());
+                            strings.Insert(2, integrate.Paid.ToString());
+                            strings.Insert(3, integrate.Unpaid.ToString());
+                            _data.SetValues(strings.ToArray());
+                            view.Rows.Insert(0, _data);
+                            view.Rows[0].Selected = true;
+                            view.CurrentCell = view.Rows[0].Cells[0];
+                        }
+                        return;
+                    }
                     _SelectDT = dB_SQLite.GetDataTable(DB_Path, _SQL);
-                    DB_SQLite.DatatableToDatagridview(_SelectDT, dataGridView4);
+                    DatatableToDatagridview(_SelectDT, dataGridView4);
 
                     //總計算   //類型選單建立
-                    Double _ALLUnitPrice = 0;
                     Double _ALLCount = 0;
+                    label28.Text = "";
                     checkedListBox1.Items.Clear();
                     checkedListBox1.Items.Add("已付款", true);
                     checkedListBox1.Items.Add("未付款", true);
+                    List<ALLTypeModel> typeModels = new List<ALLTypeModel>();
                     foreach (DataRow row in _SelectDT.Rows)
                     {
                         //類型匯入
@@ -628,11 +769,20 @@ namespace 簡易倉儲系統
                         if (!checkedListBox1.Items.Contains(_Type))
                         {
                             checkedListBox1.Items.Add(_Type, true);
+                            typeModels.Add(new ALLTypeModel() { Type = _Type });
                         }
-                        //單價加總
-                        _ALLUnitPrice += row.Field<Double>("Unpaid");
+                        //單價金額加總
+                        _ALLUnitPrice += (int)Math.Round(row.Field<Double>("Unpaid"), 0, MidpointRounding.AwayFromZero);
+                        //單筆重量加總
+                        typeModels.Find(f => f.Type == _Type)._ALLCount += row.Field<Double>("Count");
                         //重量加總
                         _ALLCount += row.Field<Double>("Count");
+                    }
+                    if (typeModels.Count <= 0)
+                        label28.Text = "";
+                    foreach (ALLTypeModel item in typeModels)
+                    {
+                        label28.Text += "【" + item.Type + "：" + item._ALLCount + "】";
                     }
                     label23.Text = _ALLUnitPrice.ToString();
                     label25.Text = _ALLCount.ToString();
@@ -643,6 +793,7 @@ namespace 簡易倉儲系統
                 catch (Exception ee)
                 {
                     log.LogMessage("確認搜尋 失敗：" + ee.Message, enumLogType.Error);
+                    MessageBox.Show("確認搜尋 失敗：" + ee.Message);
                 }
             }
         }
@@ -663,6 +814,7 @@ namespace 簡易倉儲系統
                 DataTable dt = _SelectDT.Clone();
                 Boolean _已付款 = false;
                 Boolean _未付款 = false;
+                List<ALLTypeModel> typeModels = new List<ALLTypeModel>();
                 for (int i = 0; i < checkedListBox1.Items.Count; i++)
                 {
                     if (checkedListBox1.GetItemChecked(i))
@@ -684,34 +836,46 @@ namespace 簡易倉儲系統
                         if (_已付款 && _未付款)
                             rows = _SelectDT.Select(_SelectText);
                         else if (_已付款)
-                            rows = _SelectDT.Select(_SelectText + "AND (Paid is not null OR Paid <> '')");
+                            rows = _SelectDT.Select(_SelectText + "AND (Paid is not null)");
                         else if (_未付款)
-                            rows = _SelectDT.Select(_SelectText + "AND (Paid is null OR Paid = '')");
+                            rows = _SelectDT.Select(_SelectText + "AND (Paid is null)");
                         else
                             break;
 
+                        label28.Text = "";
+                        typeModels.Add(new ALLTypeModel() { Type = _Text });
                         foreach (DataRow row in rows)
                         {
                             //單價加總
-                            _ALLUnitPrice += row.Field<Double>("Unpaid");
+                            _ALLUnitPrice += (int)Math.Round(row.Field<Double>("Unpaid"), 0, MidpointRounding.AwayFromZero);
+                            //單筆重量加總
+                            typeModels.Find(f => f.Type == _Text)._ALLCount += row.Field<Double>("Count");
                             //重量加總
                             _ALLCount += row.Field<Double>("Count");
                             dt.ImportRow(row);
                         }
                     }
                 }
+                if (typeModels.Count <= 0)
+                    label28.Text = "";
+                foreach (ALLTypeModel item in typeModels)
+                {
+                    label28.Text += "【" + item.Type + "：" + item._ALLCount + "】";
+                }
                 label23.Text = _ALLUnitPrice.ToString();
                 label25.Text = _ALLCount.ToString();
-                DB_SQLite.DatatableToDatagridview(dt, dataGridView4);
+                DatatableToDatagridview(dt, dataGridView4);
 
-                log.LogMessage("類型點選變更 成功 總金額：" + label23.Text + "  總重量：" + label25.Text, enumLogType.Info);
-                log.LogMessage("類型點選變更 成功 總金額：" + label23.Text + "\f總重量：" + label25.Text, enumLogType.Trace);
+                log.LogMessage("類型點選變更 成功 總金額：" + label23.Text + "\t總重量：" + label25.Text, enumLogType.Info);
+                log.LogMessage("類型點選變更 成功 總金額：" + label23.Text + "\t總重量：" + label25.Text, enumLogType.Trace);
+                timer_SelectType.Stop();
             }
             catch (Exception ee)
             {
                 log.LogMessage("類型點選變更 失敗：" + ee.Message, enumLogType.Error);
+                timer_SelectType.Stop();
+                MessageBox.Show("類型點選變更 失敗：" + ee.Message);
             }
-            finally { timer_SelectType.Stop(); }
         }
 
         //日期是否顯示
@@ -829,6 +993,7 @@ namespace 簡易倉儲系統
             catch (Exception ee)
             {
                 log.LogMessage("新增/修改 客戶 失敗：" + ee.Message, enumLogType.Error);
+                MessageBox.Show("新增/修改 客戶 失敗：" + ee.Message);
             }
         }
         //新增/修改 客戶資料
@@ -858,6 +1023,7 @@ namespace 簡易倉儲系統
             catch (Exception ee)
             {
                 log.LogMessage("刪除 客戶 失敗：" + ee.Message, enumLogType.Error);
+                MessageBox.Show("刪除 客戶 失敗：" + ee.Message);
             }
         }
         //更新人員前的代入
@@ -871,26 +1037,194 @@ namespace 簡易倉儲系統
             }
         }
 
-        //保留寫法，可一次關閉多個開關
-        //private void checkBox5_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        log.LogMessage("查詢類型 開始", enumLogType.Trace);
-        //
-        //        Boolean _Checked = ((CheckBox)sender).Checked;
-        //        foreach (Control control in _SelectControl)
-        //        {
-        //            control.Visible = _Checked;
-        //            control.Enabled = _Checked;
-        //        }
-        //        log.LogMessage("查詢類型 成功 ：" + _Checked, enumLogType.Info);
-        //        log.LogMessage("查詢類型 成功 ：" + _Checked, enumLogType.Trace);
-        //    }
-        //    catch (Exception ee)
-        //    {
-        //        log.LogMessage("查詢類型 失敗：" + ee.Message, enumLogType.Error);
-        //    }
-        //}
+        //已付
+        private void button7_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                log.LogMessage("已付修改 開始", enumLogType.Trace);
+                DateTime _now = DateTime.Now;
+                string _No = dataGridView4.Rows[0].Cells[0].Value.ToString();
+                string _UpdateSQL = $@"UPDATE SalesRecord SET PaidTime = '{_now.ToString("yyyy-MM-dd HH:mm:ss")}'
+                            , Paid = '{(int)Math.Round(Convert.ToDouble(label23.Text), 0, MidpointRounding.AwayFromZero)}'
+                            WHERE No = '{_No}'";
+
+                dB_SQLite.Manipulate(DB_Path, _UpdateSQL);
+                string _SelectSQL = $@"SELECT No, Time, Name, Type, Count, UnitPrice, Unit, 
+                        SalesArea, Paid, (Count * UnitPrice)AS Unpaid FROM SalesRecord  
+                        WHERE No = '{_No}';";
+                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, _SelectSQL), dataGridView4);
+
+                log.LogMessage("已付修改 成功路徑：" + DB_Path + "\r\n語法：" + _UpdateSQL, enumLogType.Trace);
+                log.LogMessage("已付修改 成功路徑：" + DB_Path + "\r\n語法：" + _UpdateSQL, enumLogType.Info);
+            }
+            catch (Exception ee)
+            {
+                log.LogMessage("已付修改 失敗：" + ee.Message, enumLogType.Error);
+                MessageBox.Show("已付修改 失敗：" + ee.Message);
+            }
+        }
+
+        //匯出Excel
+        private void button8_Click(object sender, EventArgs e)
+        {
+            #region 匯出Excel
+            try
+            {
+                log.LogMessage("匯出Excel 開始", enumLogType.Trace);
+                //選取指定的資料夾
+                FolderBrowserDialog folder = new FolderBrowserDialog();
+                if (folder.ShowDialog() != DialogResult.OK)
+                    return;
+
+                EPPlus ePPlus = new EPPlus();
+                List<List<MExcelCell>> excelCells = new List<List<MExcelCell>>();
+                List<MExcelCell> excelCell = new List<MExcelCell>();
+                DataGridView view = dataGridView4;
+                string _No = view.Rows[0].Cells[0].Value.ToString();
+                DateTime _Now = Convert.ToDateTime(view.Rows[0].Cells[1].Value.ToString());
+                string _Name = view.Rows[0].Cells[2].Value.ToString();
+                string _Unit = view.Rows[0].Cells[6].Value.ToString();
+                string _SalesArea = view.Rows[0].Cells[7].Value.ToString();
+
+                //標頭
+                excelCell.Add(new MExcelCell() { Content = "單號" });
+                excelCell.Add(new MExcelCell() { Content = _No });
+                excelCells.Add(excelCell);
+                excelCell = new List<MExcelCell>();
+                excelCell.Add(new MExcelCell() { Content = "日期" });
+                excelCell.Add(new MExcelCell() { Content = _Now.ToString("yyyy-MM-dd") });
+                excelCells.Add(excelCell);
+                excelCell = new List<MExcelCell>();
+                excelCell.Add(new MExcelCell() { Content = "姓名" });
+                excelCell.Add(new MExcelCell() { Content = _Name });
+                excelCells.Add(excelCell);
+                excelCell = new List<MExcelCell>();
+                excelCell.Add(new MExcelCell() { Content = "單位" });
+                excelCell.Add(new MExcelCell() { Content = _Unit });
+                excelCells.Add(excelCell);
+                excelCell = new List<MExcelCell>();
+                excelCell.Add(new MExcelCell() { Content = "販售地區" });
+                excelCell.Add(new MExcelCell() { Content = _SalesArea });
+                excelCells.Add(excelCell);
+                //空一行
+                excelCells.Add(new List<MExcelCell>());
+
+
+                //頁首
+                List<string> _HideHeader = new List<string>() { "單號", "時間", "姓名", "單位", "販售地區" };
+                excelCell = new List<MExcelCell>();
+                foreach (DataGridViewColumn col in view.Columns)
+                {
+                    //隱藏
+                    if (_HideHeader.Contains(col.HeaderText))
+                    {
+                        continue;
+                    }
+                    excelCell.Add(new MExcelCell()
+                    {
+                        Content = col.HeaderText
+                    });
+                }
+                excelCell.Add(new MExcelCell()
+                {
+                    Content = "價格"
+                });
+                excelCells.Add(excelCell);
+
+                //內容
+                Int32 _ALLPrice = 0;
+                foreach (DataGridViewRow row in view.Rows)
+                {
+                    Double _unitPrice = 0;
+                    Double _count = 1;
+                    excelCell = new List<MExcelCell>();
+                    foreach (DataGridViewCell cell in row.Cells)
+                    {
+                        //隱藏
+                        if (_HideHeader.Contains(view.Columns[cell.ColumnIndex].HeaderText))
+                        {
+                            continue;
+                        }
+                        //列印隱藏單價/保存單價價格
+                        if (view.Columns[cell.ColumnIndex].HeaderText == "單價")
+                        {
+                            _unitPrice = Convert.ToDouble(cell.Value);
+                        }
+                        //保存數量
+                        else if (view.Columns[cell.ColumnIndex].HeaderText == "數量")
+                        {
+                            _count = Convert.ToDouble(cell.Value);
+                        }
+                        excelCell.Add(new MExcelCell()
+                        {
+                            Content = cell.Value
+                        });
+                    }
+                    //價格加總
+                    _ALLPrice += (int)Math.Round(Convert.ToDouble(_unitPrice * _count), 0, MidpointRounding.AwayFromZero);
+                    excelCell.Add(new MExcelCell()
+                    {
+                        Content = (int)Math.Round(Convert.ToDouble(_unitPrice * _count), 0, MidpointRounding.AwayFromZero)
+                    });
+                    excelCells.Add(excelCell);
+                }
+                //總價
+                excelCells.Add(new List<MExcelCell>()); //空一行
+                excelCell = new List<MExcelCell>();
+                for (int i = 0; i < view.Columns.Count; i++)
+                {
+                    //隱藏
+                    if (_HideHeader.Contains(view.Columns[i].HeaderText))
+                    {
+                        continue;
+                    }
+                    excelCell.Add(new MExcelCell());
+                }
+                //只要扣掉一列就好，因為有一列是加總出來的價格，不會在列表裡
+                excelCell.Remove(excelCell[excelCell.Count - 1]);
+                excelCell.Add(new MExcelCell() { Content = "總價" });
+                excelCell.Add(new MExcelCell() { Content = _ALLPrice });
+                excelCells.Add(excelCell);
+
+                //匯出成檔案
+                string _Path = folder.SelectedPath + $@"\{_No}_{_Name}.xlsx";
+                ePPlus.AddSheet(excelCells, _No);
+                ePPlus.Export(_Path);
+
+                log.LogMessage("匯出Excel 成功路徑：" + _Path, enumLogType.Trace);
+                log.LogMessage("匯出Excel 成功", enumLogType.Info);
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("匯出Excel 失敗：\r\n" + ee.Message);
+                log.LogMessage("匯出Excel 失敗：\r\n" + ee.Message, enumLogType.Error);
+                button1.Enabled = true;
+                return;
+            }
+            #endregion
+        }
+    }
+    public class ALLTypeModel
+    {
+        /// <summary>各類型名稱</summary>
+        public string Type { get; set; } = string.Empty;
+
+        /// <summary>各類型總重量</summary>
+        public Double _ALLCount { get; set; } = 0;
+    }
+    public class Integrate
+    {
+        /// <summary>序號</summary>
+        public string No { get; set; } = string.Empty;
+
+        /// <summary>日期</summary>
+        public string Date { get; set; } = string.Empty;
+
+        /// <summary>已付金額</summary>
+        public string Paid { get; set; } = string.Empty;
+
+        /// <summary>未付金額</summary>
+        public Int32 Unpaid { get; set; } = 0;
     }
 }

@@ -12,6 +12,7 @@ using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -186,6 +187,33 @@ namespace 簡易倉儲系統
             }
             #endregion
 
+            #region 取得類型設定參數
+            try
+            {
+                log.LogMessage("取得類型設定參數 開始", enumLogType.Trace);
+                radioButton8.Text = Settings.販售地區1.Split('/')[0] + "(F1)";
+                label1.Text = Settings.販售地區1.Split('/')[1];
+                string _Type = Settings.類型1;
+                radioButton1.Text = _Type.Split('/')[0] + "(F5)";
+                radioButton2.Text = _Type.Split('/')[1] + "(F6)";
+                radioButton3.Text = _Type.Split('/')[2] + "(F7)";
+                radioButton4.Text = _Type.Split('/')[3] + "(F8)";
+                radioButton5.Text = _Type.Split('/')[4] + "(F9)";
+                radioButton6.Text = _Type.Split('/')[5] + "(F10)";
+                radioButton7.Text = _Type.Split('/')[6] + "(F11)";
+                radioButton9.Text = Settings.販售地區2.Split('/')[0] + "(F2)";
+                radioButton10.Text = Settings.販售地區3.Split('/')[0] + "(F3)";
+                log.LogMessage("取得類型設定參數 成功\r\n" + radioButton8.Text.Split('(')[0] + $@"：{_Type}", enumLogType.Info);
+                log.LogMessage("取得類型設定參數 成功\r\n" + radioButton8.Text.Split('(')[0] + $@"：{_Type}", enumLogType.Trace);
+            }
+            catch (Exception ee)
+            {
+                log.LogMessage("取得類型設定參數 失敗\r\n" + ee.Message, enumLogType.Error);
+                MessageBox.Show("取得類型設定參數 失敗\r\n" + ee.Message);
+                return;
+            }
+            #endregion
+
             try
             {
                 comboBox1.Items.Clear();
@@ -294,15 +322,14 @@ namespace 簡易倉儲系統
                     salesArea_Checked_OK = -1;
                 }
 
-                string _Text = ((ButtonBase)sender).Text;
+                string _Text = "";
                 if (((RadioButton)sender).Checked)
                 {
                     dataGridView1.Rows.Clear();
 
                     //針對不同地區客製化功能
-                    if (_Text.Contains("外銷韓國"))
+                    if (((ButtonBase)sender).Text.Contains("F1"))
                     {
-                        _Text = "外銷韓國";
                         TableName = "ExportKoreaUnitPrice";
                         var item = dB_SQLite.GetDataTable(DB_Path, @"SELECT * FROM Setting WHERE SettingName = 'ShowMoney_ExportKorea'").Rows;
                         if (item.Count > 0)
@@ -311,20 +338,22 @@ namespace 簡易倉儲系統
                             panel1.Visible = Boolean.Parse(item[0][1].ToString());
                             dataGridView1.Columns[5].Visible = Boolean.Parse(item[0][1].ToString());
                         }
-                        unit = "公斤";
-                        radioButton1.Text = "9粒(F5)";
-                        radioButton2.Text = "12粒(F6)";
-                        radioButton3.Text = "14粒(F7)";
-                        radioButton4.Text = "16粒(F8)";
-                        radioButton5.Text = "20粒(F9)";
-                        radioButton6.Text = "24粒(F10)";
-                        radioButton7.Text = "小(F11)";
+                        _Text = Settings.販售地區1.Split('/')[0];
+                        unit = Settings.販售地區1.Split('/')[1];
+                        label1.Text = unit;
+                        string _Type = Settings.類型1;
+                        radioButton1.Text = _Type.Split('/')[0] + "(F5)";
+                        radioButton2.Text = _Type.Split('/')[1] + "(F6)";
+                        radioButton3.Text = _Type.Split('/')[2] + "(F7)";
+                        radioButton4.Text = _Type.Split('/')[3] + "(F8)";
+                        radioButton5.Text = _Type.Split('/')[4] + "(F9)";
+                        radioButton6.Text = _Type.Split('/')[5] + "(F10)";
+                        radioButton7.Text = _Type.Split('/')[6] + "(F11)";
                         radioButton7.Enabled = true;
                         radioButton7.Visible = true;
                     }
-                    else if (_Text.Contains("外銷日本"))
+                    else if (((ButtonBase)sender).Text.Contains("F2"))
                     {
-                        _Text = "外銷日本";
                         TableName = "ExportJapanUnitPrice";
                         var item = dB_SQLite.GetDataTable(DB_Path, @"SELECT * FROM Setting WHERE SettingName = 'ShowMoney_ExportJapan'").Rows;
                         if (item.Count > 0)
@@ -333,20 +362,22 @@ namespace 簡易倉儲系統
                             panel1.Visible = Boolean.Parse(item[0][1].ToString());
                             dataGridView1.Columns[5].Visible = Boolean.Parse(item[0][1].ToString());
                         }
-                        unit = "公斤";
-                        radioButton1.Text = "9粒(F5)";
-                        radioButton2.Text = "12粒(F6)";
-                        radioButton3.Text = "14粒(F7)";
-                        radioButton4.Text = "16粒(F8)";
-                        radioButton5.Text = "20粒(F9)";
-                        radioButton6.Text = "24粒(F10)";
-                        radioButton7.Text = "小(F11)";
+                        _Text = Settings.販售地區2.Split('/')[0];
+                        unit = Settings.販售地區2.Split('/')[1];
+                        label1.Text = unit;
+                        string _Type = Settings.類型2;
+                        radioButton1.Text = _Type.Split('/')[0] + "(F5)";
+                        radioButton2.Text = _Type.Split('/')[1] + "(F6)";
+                        radioButton3.Text = _Type.Split('/')[2] + "(F7)";
+                        radioButton4.Text = _Type.Split('/')[3] + "(F8)";
+                        radioButton5.Text = _Type.Split('/')[4] + "(F9)";
+                        radioButton6.Text = _Type.Split('/')[5] + "(F10)";
+                        radioButton7.Text = _Type.Split('/')[6] + "(F11)";
                         radioButton7.Enabled = true;
                         radioButton7.Visible = true;
                     }
-                    else if (_Text.Contains("超市"))
+                    else if (((ButtonBase)sender).Text.Contains("F3"))
                     {
-                        _Text = "超市";
                         TableName = "ExportSupermarketUnitPrice";
                         var item = dB_SQLite.GetDataTable(DB_Path, @"SELECT * FROM Setting WHERE SettingName = 'ShowMoney_ExportSupermarket'").Rows;
                         if (item.Count > 0)
@@ -355,14 +386,17 @@ namespace 簡易倉儲系統
                             panel1.Visible = Boolean.Parse(item[0][1].ToString());
                             dataGridView1.Columns[5].Visible = Boolean.Parse(item[0][1].ToString());
                         }
-                        unit = "台斤";
-                        radioButton1.Text = "12粒(F5)";
-                        radioButton2.Text = "15粒(F6)";
-                        radioButton3.Text = "18粒(F7)";
-                        radioButton4.Text = "20粒(F8)";
-                        radioButton5.Text = "24粒(F9)";
-                        radioButton6.Text = "28粒(F10)";
-                        radioButton7.Text = "小(F11)";
+                        _Text = Settings.販售地區3.Split('/')[0];
+                        unit = Settings.販售地區3.Split('/')[1];
+                        label1.Text = unit;
+                        string _Type = Settings.類型3;
+                        radioButton1.Text = _Type.Split('/')[0] + "(F5)";
+                        radioButton2.Text = _Type.Split('/')[1] + "(F6)";
+                        radioButton3.Text = _Type.Split('/')[2] + "(F7)";
+                        radioButton4.Text = _Type.Split('/')[3] + "(F8)";
+                        radioButton5.Text = _Type.Split('/')[4] + "(F9)";
+                        radioButton6.Text = _Type.Split('/')[5] + "(F10)";
+                        radioButton7.Text = "";
                         radioButton7.Enabled = false;
                         radioButton7.Visible = false;
                     }
@@ -533,7 +567,7 @@ namespace 簡易倉儲系統
             }
             catch (Exception ee)
             {
-                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, $@"SELECT No, Date, Name, Type, Count, UnitPrice, Unit, SalesArea FROM SalesRecord WHERE Date > '{DateTime.Now.ToString("yyyy-MM-dd")}';"), dataGridView1);
+                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, $@"SELECT No, Time, Name, Type, Count, UnitPrice, Unit, SalesArea FROM SalesRecord WHERE Date > '{DateTime.Now.ToString("yyyy-MM-dd")}';"), dataGridView1);
                 log.LogMessage("刪除失敗則還原 失敗：" + ee.Message, enumLogType.Trace);
                 MessageBox.Show("刪除失敗：" + ee.Message);
                 return;
@@ -579,11 +613,11 @@ namespace 簡易倉儲系統
                 {
                     DataTable dataTable = dB_SQLite.GetDataTable(DB_Path, $@"
                     SELECT CASE WHEN MAX(No) ISNULL THEN '{_Now.ToString("yyyyMMdd") + "001"}' ELSE MAX(No)+1 END No
-                    FROM SalesRecord WHERE Date > '{_Now.ToString("yyyy-MM-dd")}';");
+                    FROM SalesRecord WHERE Time > '{_Now.ToString("yyyy-MM-dd")}';");
                     _No = dataTable.Rows[0][0].ToString();
                 }
 
-                string insertstring = $@"INSERT INTO SalesRecord (No, Date, Name, Type, Count, UnitPrice, Unit, salesArea) VALUES";
+                string insertstring = $@"INSERT INTO SalesRecord (No, Time, Name, Type, Count, UnitPrice, Unit, salesArea) VALUES";
                 /// 插入資料
                 /// 可自動抓取新單號新增
                 foreach (DataGridViewRow row in dataGridView1.Rows)
@@ -610,9 +644,9 @@ namespace 簡易倉儲系統
                 if (!RepeatPrinting) insertstring = insertstring.Remove(insertstring.Length - 1, 1);
                 if (!RepeatPrinting) dB_SQLite.Manipulate(DB_Path, insertstring);
 
-                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, $@"SELECT No, Date, Name, Type, 
+                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, $@"SELECT No, Time, Name, Type, 
                     Count, UnitPrice, Unit, salesArea FROM SalesRecord 
-                    WHERE Date > '{DateTime.Now.ToString("yyyy-MM-dd")}' AND No = '{_No}';"), dataGridView1);
+                    WHERE Time > '{DateTime.Now.ToString("yyyy-MM-dd")}' AND No = '{_No}';"), dataGridView1);
 
                 if (RepeatPrinting)
                     insertstring = "重複列印單號：" + _No;
@@ -691,7 +725,7 @@ namespace 簡易倉儲系統
                 excelCells.Add(excelCell);
 
                 //內容
-                Double _ALLPrice = 0;
+                Int32 _ALLPrice = 0;
                 foreach (DataGridViewRow row in view.Rows)
                 {
                     Double _unitPrice = 0;
@@ -724,10 +758,10 @@ namespace 簡易倉儲系統
                     //價格加總
                     if (panel1.Visible)
                     {
-                        _ALLPrice = _ALLPrice + Convert.ToDouble(_unitPrice * _count);
+                        _ALLPrice += (int)Math.Round(Convert.ToDouble(_unitPrice * _count), 0, MidpointRounding.AwayFromZero);
                         excelCell.Add(new MExcelCell()
                         {
-                            Content = _unitPrice * _count
+                            Content = (int)Math.Round(Convert.ToDouble(_unitPrice * _count), 0, MidpointRounding.AwayFromZero)
                         });
                     }
                     excelCells.Add(excelCell);
@@ -792,8 +826,6 @@ namespace 簡易倉儲系統
         {
             #region 
             GC.Collect();
-            //e.HasMorePages = true; //此处打开多页打印属性
-            //imagepath是指 excel轉成的圖片的路徑
             using (Bitmap bitmap = new Bitmap(@".\ianimage.png"))
             {
                 int _Y = 0; //輸出圖片時要從Y軸哪個點開始

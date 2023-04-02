@@ -39,6 +39,12 @@ namespace 簡易倉儲系統.EssentialTool
                     writer.WriteElementString("資料庫路徑", _資料庫路徑);
                     writer.WriteElementString("Excel路徑", _Excel路徑);
                     writer.WriteElementString("印表機名稱", _印表機名稱);
+                    writer.WriteElementString("販售地區1", _販售地區1);
+                    writer.WriteElementString("類型1", _類型1);
+                    writer.WriteElementString("販售地區2", _販售地區2);
+                    writer.WriteElementString("類型2", _類型2);
+                    writer.WriteElementString("販售地區3", _販售地區3);
+                    writer.WriteElementString("類型3", _類型3);
                     writer.WriteEndElement();
                     writer.Flush();
                     writer.Close();
@@ -47,6 +53,198 @@ namespace 簡易倉儲系統.EssentialTool
             catch// (Exception ex)
             {
                 throw;
+            }
+        }
+
+        private static string _類型3 = "12粒/15粒/18粒/20粒/24粒/28粒";
+        /// <summary>
+        /// 類型3
+        /// </summary>
+        public static String 類型3
+        {
+            get
+            {
+                String tmpValue = null;
+                try
+                {
+                    Config.getConfigValue("類型3", out tmpValue);
+                }
+                catch (Exception ee)
+                {
+                    if (ee.Message == "查無類型3此參數設定")
+                    {
+                        Config.setConfigValue("類型3", _類型3);
+                        tmpValue = 類型3;
+                    }
+                }
+
+                return tmpValue;
+            }
+            set
+            {
+                try
+                { Config.setConfigValue("類型3", value); }
+                catch { }
+            }
+        }
+
+        private static string _販售地區3 = "超市/台斤";
+        /// <summary>
+        /// 販售地區3
+        /// </summary>
+        public static String 販售地區3
+        {
+            get
+            {
+                String tmpValue = null;
+                try
+                {
+                    Config.getConfigValue("販售地區3", out tmpValue);
+                }
+                catch (Exception ee)
+                {
+                    if (ee.Message == "查無販售地區3此參數設定")
+                    {
+                        Config.setConfigValue("販售地區3", _販售地區3);
+                        tmpValue = _販售地區3;
+                    }
+                }
+
+                return tmpValue;
+            }
+            set
+            {
+                try
+                { Config.setConfigValue("販售地區3", value); }
+                catch { }
+            }
+        }
+
+        private static string _類型2 = "9粒/12粒/14粒/16粒/20粒/24粒/小";
+        /// <summary>
+        /// 類型2
+        /// </summary>
+        public static String 類型2
+        {
+            get
+            {
+                String tmpValue = null;
+                try
+                {
+                    Config.getConfigValue("類型2", out tmpValue);
+                }
+                catch (Exception ee)
+                {
+                    if (ee.Message == "查無類型2此參數設定")
+                    {
+                        Config.setConfigValue("類型2", _類型2);
+                        tmpValue = 類型2;
+                    }
+                }
+
+                return tmpValue;
+            }
+            set
+            {
+                try
+                { Config.setConfigValue("類型2", value); }
+                catch { }
+            }
+        }
+
+        private static string _販售地區2 = "外銷日本/公斤";
+        /// <summary>
+        /// 販售地區2
+        /// </summary>
+        public static String 販售地區2
+        {
+            get
+            {
+                String tmpValue = null;
+                try
+                {
+                    Config.getConfigValue("販售地區2", out tmpValue);
+                }
+                catch (Exception ee)
+                {
+                    if (ee.Message == "查無販售地區2此參數設定")
+                    {
+                        Config.setConfigValue("販售地區2", _販售地區2);
+                        tmpValue = _販售地區2;
+                    }
+                }
+
+                return tmpValue;
+            }
+            set
+            {
+                try
+                { Config.setConfigValue("販售地區2", value); }
+                catch { }
+            }
+        }
+
+        private static string _類型1 = "9粒/12粒/14粒/16粒/20粒/24粒/小";
+        /// <summary>
+        /// 類型1
+        /// </summary>
+        public static String 類型1
+        {
+            get
+            {
+                String tmpValue = null;
+                try
+                {
+                    Config.getConfigValue("類型1", out tmpValue);
+                }
+                catch (Exception ee)
+                {
+                    if (ee.Message == "查無類型1此參數設定")
+                    {
+                        Config.setConfigValue("類型1", _類型1);
+                        tmpValue = 類型1;
+                    }
+                }
+
+                return tmpValue;
+            }
+            set
+            {
+                try
+                { Config.setConfigValue("類型1", value); }
+                catch { }
+            }
+        }
+
+        private static string _販售地區1 = "外銷韓國/公斤";
+        /// <summary>
+        /// 販售地區1
+        /// </summary>
+        public static String 販售地區1
+        {
+            get
+            {
+                String tmpValue = null;
+                try
+                {
+                    Config.getConfigValue("販售地區1", out tmpValue);
+                }
+                catch (Exception ee)
+                {
+                    if (ee.Message == "查無販售地區1此參數設定")
+                    {
+                        Config.setConfigValue("販售地區1", _販售地區1);
+                        tmpValue = _販售地區1;
+                    }
+                }
+
+                return tmpValue;
+            }
+            set
+            {
+                try
+                { Config.setConfigValue("販售地區1", value); }
+                catch { }
             }
         }
 
