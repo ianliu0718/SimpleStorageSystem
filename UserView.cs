@@ -286,7 +286,7 @@ namespace 簡易倉儲系統
         }
 
         //販售地點設定，資料表名稱設定，重量單位設定，針對不同地區客製化功能
-        int salesArea_Checked_OK = -3;  //-3第一次設定 //-2設定中 //-1未設定 //0設定為No //1設定為Yes
+        int salesArea_Checked_OK = -3;  //-4重複點選 //-3第一次設定 //-2設定中 //-1未設定 //0設定為No //1設定為Yes
         private void radioButton_salesArea_CheckedChanged(object sender, EventArgs e)
         {
             try
@@ -431,6 +431,30 @@ namespace 簡易倉儲系統
             catch (Exception ee)
             {
                 log.LogMessage("販售地點設定，資料表名稱設定，重量單位設定，針對不同地區客製化功能 失敗：\r\n" + ee.Message, enumLogType.Error);
+            }
+        }
+        private void radioButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (salesArea_Checked_OK == -1)
+                {
+                    log.LogMessage("更新客戶姓名資料庫 開始", enumLogType.Trace);
+                    comboBox1.Items.Clear();
+                    // 讀取資料
+                    foreach (DataRow item in dB_SQLite.GetDataTable(DB_Path, $@"SELECT CustomerID, CustomerName FROM CustomerProfile;").Rows)
+                    {
+                        comboBox1.Items.Add(item[0].ToString() + "_" + item[1].ToString());
+                    }
+                    log.LogMessage("更新客戶姓名資料庫 成功", enumLogType.Info);
+                    log.LogMessage("更新客戶姓名資料庫 成功", enumLogType.Trace);
+                }
+            }
+            catch (Exception ee)
+            {
+                log.LogMessage("更新客戶姓名 失敗\r\n" + ee.Message, enumLogType.Error);
+                MessageBox.Show("更新客戶姓名 失敗\r\n" + ee.Message);
+                return;
             }
         }
 
@@ -937,6 +961,12 @@ namespace 簡易倉儲系統
                 }
             }
             _comboBoxKeyPressSet = false;
+        }
+
+        private void timer_FocusTextBox1_Tick(object sender, EventArgs e)
+        {
+            if (!textBox1.Focused)
+                textBox1.Focus();
         }
     }
 }

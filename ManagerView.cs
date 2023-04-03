@@ -99,8 +99,8 @@ namespace 簡易倉儲系統
                 log.LogMessage("檢查序號 開始", enumLogType.Trace);
                 if (String.IsNullOrEmpty(Settings.序號))
                 {
-                    log.LogMessage("請於設定檔內輸入序號", enumLogType.Info);
-                    MessageBox.Show("請於設定檔內輸入序號");
+                    log.LogMessage("請於設定檔內輸入序號：" + Setting_Path + @"\Setting.xml", enumLogType.Info);
+                    MessageBox.Show("請於設定檔內輸入序號：" + Setting_Path + @"\Setting.xml");
                     Application.Exit();
                     return;
                 }
@@ -596,7 +596,6 @@ namespace 簡易倉儲系統
             string _Text = ((ButtonBase)sender).Text;
             if (((RadioButton)sender).Checked)
             {
-                this.dataGridView4.Columns.Clear();
                 groupBox8.Text = _Text.Replace("查詢", "");
                 if (_Text == "單號查詢")
                 {
@@ -611,9 +610,24 @@ namespace 簡易倉儲系統
                     button8.Enabled = true;
                     button8.Visible = true;
                     this.Column10.HeaderText = "時間";
-                    this.dataGridView4.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-                        this.Column9, this.Column10, this.Column16, this.Column11, this.Column12, this.Column13,
-                        this.Column14, this.Column15, this.Column21, this.Column17});
+                    dataGridView4.Columns[3].Visible = true;
+                    dataGridView4.Columns[4].Visible = true;
+                    dataGridView4.Columns[5].Visible = true;
+                    dataGridView4.Columns[6].Visible = true;
+                    dataGridView4.Columns[7].Visible = true;
+                    //this.dataGridView4.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+                    //    this.Column9, this.Column10, this.Column16, this.Column11, this.Column12, this.Column13,
+                    //    this.Column14, this.Column15, this.Column21, this.Column17});
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column9)].DisplayIndex = 0;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column10)].DisplayIndex = 1;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column16)].DisplayIndex = 2;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column11)].DisplayIndex = 3;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column12)].DisplayIndex = 4;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column13)].DisplayIndex = 5;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column14)].DisplayIndex = 6;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column15)].DisplayIndex = 7;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column21)].DisplayIndex = 8;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column17)].DisplayIndex = 9;
                 }
                 else if (_Text == "姓名查詢")
                 {
@@ -626,9 +640,24 @@ namespace 簡易倉儲系統
                     button8.Enabled = false;
                     button8.Visible = false;
                     this.Column10.HeaderText = "時間";
-                    this.dataGridView4.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-                        this.Column9, this.Column10, this.Column16, this.Column11, this.Column12, this.Column13,
-                        this.Column14, this.Column15, this.Column21, this.Column17});
+                    dataGridView4.Columns[3].Visible = true;
+                    dataGridView4.Columns[4].Visible = true;
+                    dataGridView4.Columns[5].Visible = true;
+                    dataGridView4.Columns[6].Visible = true;
+                    dataGridView4.Columns[7].Visible = true;
+                    //this.dataGridView4.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+                    //    this.Column9, this.Column10, this.Column16, this.Column11, this.Column12, this.Column13,
+                    //    this.Column14, this.Column15, this.Column21, this.Column17});
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column9)].DisplayIndex = 0;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column10)].DisplayIndex = 1;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column16)].DisplayIndex = 2;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column11)].DisplayIndex = 3;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column12)].DisplayIndex = 4;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column13)].DisplayIndex = 5;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column14)].DisplayIndex = 6;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column15)].DisplayIndex = 7;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column21)].DisplayIndex = 8;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column17)].DisplayIndex = 9;
                 }
                 else if (_Text == "整合查詢")
                 {
@@ -639,10 +668,24 @@ namespace 簡易倉儲系統
                     button7.Enabled = false;
                     button7.Visible = false;
                     button8.Enabled = false;
-                    button8.Visible = false;
+                    button8.Visible = false; 
                     this.Column10.HeaderText = "日期";
-                    this.dataGridView4.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-                        this.Column9, this.Column10, this.Column21, this.Column17});
+                    dataGridView4.Rows.Clear();
+                    checkedListBox1.Items.Clear();
+                    label28.Text = "";
+                    label25.Text = "";
+                    label23.Text = "";
+                    dataGridView4.Columns[3].Visible = false;
+                    dataGridView4.Columns[4].Visible = false;
+                    dataGridView4.Columns[5].Visible = false;
+                    dataGridView4.Columns[6].Visible = false;
+                    dataGridView4.Columns[7].Visible = false;
+                    //this.dataGridView4.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+                    //    this.Column9, this.Column10, this.Column21, this.Column17});
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column9)].DisplayIndex = 0;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column10)].DisplayIndex = 1;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column21)].DisplayIndex = 2;
+                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column17)].DisplayIndex = 3;
                 }
 
                 ((GroupBox)((RadioButton)sender).Parent).BackColor = Color.Transparent;
@@ -707,8 +750,9 @@ namespace 簡易倉儲系統
                         label25.Text = "";
                         label23.Text = "";
                         label28.Text = "";
+                        dataGridView4.Rows.Clear();
                         checkedListBox1.Items.Clear();
-                        _SQL = $@"SELECT No, Time, Paid, (Count * UnitPrice)AS Unpaid FROM SalesRecord WHERE 1 = 1 ";
+                        _SQL = $@"SELECT No, Time, Name, Paid, (Count * UnitPrice)AS Unpaid FROM SalesRecord WHERE 1 = 1 ";
                         if (textBox21.Text != "")
                         {
                             _SQL += $@" AND Name LIKE '%{textBox21.Text}%' ";
@@ -729,11 +773,12 @@ namespace 簡易倉儲系統
                                 {
                                     No = _SelectDT.Rows[i][0].ToString(),
                                     Date = DateTime.Parse(_SelectDT.Rows[i][1].ToString()).ToString("yyyy-MM-dd"),
-                                    Paid = _SelectDT.Rows[i][2].ToString()
+                                    Name = _SelectDT.Rows[i][2].ToString(),
+                                    Paid = _SelectDT.Rows[i][3].ToString()
                                 };
                                 _integrate.Add(_item);
                             }
-                            _item.Unpaid += ((int)Math.Round(Convert.ToDouble(_SelectDT.Rows[i][3].ToString()), 0, MidpointRounding.AwayFromZero));
+                            _item.Unpaid += ((int)Math.Round(Convert.ToDouble(_SelectDT.Rows[i][4].ToString()), 0, MidpointRounding.AwayFromZero));
                         }
                         foreach (Integrate integrate in _integrate)
                         {
@@ -743,8 +788,14 @@ namespace 簡易倉儲系統
                             List<string> strings = new List<string>();
                             strings.Insert(0, integrate.No.ToString());
                             strings.Insert(1, integrate.Date.ToString());
-                            strings.Insert(2, integrate.Paid.ToString());
-                            strings.Insert(3, integrate.Unpaid.ToString());
+                            strings.Insert(2, integrate.Name.ToString());
+                            strings.Insert(3, "");
+                            strings.Insert(4, "");
+                            strings.Insert(5, "");
+                            strings.Insert(6, "");
+                            strings.Insert(7, "");
+                            strings.Insert(8, integrate.Paid.ToString());
+                            strings.Insert(9, integrate.Unpaid.ToString());
                             _data.SetValues(strings.ToArray());
                             view.Rows.Insert(0, _data);
                             view.Rows[0].Selected = true;
@@ -1220,6 +1271,9 @@ namespace 簡易倉儲系統
 
         /// <summary>日期</summary>
         public string Date { get; set; } = string.Empty;
+
+        /// <summary>客戶名稱</summary>
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>已付金額</summary>
         public string Paid { get; set; } = string.Empty;
