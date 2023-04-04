@@ -270,8 +270,10 @@ namespace 簡易倉儲系統
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(322, 151);
             this.textBox1.TabIndex = 0;
+            this.textBox1.Enter += new System.EventHandler(this.textBox1_Enter);
             this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
             this.textBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox1_KeyPress);
+            this.textBox1.Leave += new System.EventHandler(this.textBox1_Leave);
             // 
             // dataGridView1
             // 
@@ -487,6 +489,8 @@ namespace 簡易倉儲系統
             this.button1.Text = "列印";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Enter += new System.EventHandler(this.button1_Enter);
+            this.button1.Leave += new System.EventHandler(this.button1_Leave);
             // 
             // timer_ComboBoxSelect
             // 
@@ -517,7 +521,7 @@ namespace 簡易倉儲系統
             this.Text = "使用者介面";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.UserView_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.UserView_KeyDown);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

@@ -242,6 +242,8 @@ namespace 簡易倉儲系統
                 {
                     log.LogMessage("類型設定，單價設定 開始", enumLogType.Trace);
 
+                    //radioButton6 選擇後會被不知名原因卡住，所以多按一下"ESC"解除
+                    SendKeys.SendWait("{ESC}");
                     type = ((ButtonBase)sender).Text.Split('(')[0];
                     ((GroupBox)((RadioButton)sender).Parent).BackColor = SystemColors.Control;
                     ((RadioButton)sender).BackColor = Color.GreenYellow;
@@ -278,6 +280,8 @@ namespace 簡易倉儲系統
                 {
                     ((RadioButton)sender).BackColor = SystemColors.Control;
                 }
+                //使用者視窗_Tab其他移除，保留輸入框與列印
+                ((RadioButton)sender).TabStop = false;
             }
             catch (Exception ee)
             {
@@ -415,7 +419,6 @@ namespace 簡易倉儲系統
                     }
                     for (int i = 0; i < groupBox1.Controls.Count; i++)
                     {
-
                         //清空類型內選項
                         if (((RadioButton)(groupBox1.Controls[i])).Checked)
                         {
@@ -427,6 +430,8 @@ namespace 簡易倉儲系統
 
                     log.LogMessage("販售地點設定，資料表名稱設定，重量單位設定，針對不同地區客製化功能 成功", enumLogType.Trace);
                 }
+                //使用者視窗_Tab其他移除，保留輸入框與列印
+                ((RadioButton)sender).TabStop = false;
             }
             catch (Exception ee)
             {
@@ -576,18 +581,21 @@ namespace 簡易倉儲系統
                 default:
                     break;
             }
+            //radioButton6 選擇後會被不知名原因卡住，所以多按一下"ESC"解除
+            SendKeys.SendWait("{ESC}");
             textBox1.Focus();
         }
 
         private void dataGridView1_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
         {
-            log.LogMessage("刪除失敗則還原 開始", enumLogType.Trace);
-
             //刪除失敗則還原
             try
             {
+                log.LogMessage("刪除失敗則還原 開始", enumLogType.Trace);
                 dB_SQLite.Manipulate(DB_Path, $@"DELETE FROM SalesRecord WHERE No = '{e.Row.Cells[0].Value.ToString()}';");
-                log.LogMessage("刪除失敗則還原 成功", enumLogType.Trace);
+                log.LogMessage($@"刪除失敗則還原 成功：No = '{e.Row.Cells[0].Value.ToString()}'", enumLogType.Trace);
+                log.LogMessage($@"刪除失敗則還原 成功：No = '{e.Row.Cells[0].Value.ToString()}'", enumLogType.Info);
+                textBox1.Focus();
             }
             catch (Exception ee)
             {
@@ -908,19 +916,14 @@ namespace 簡易倉儲系統
             #endregion
         }
 
-        private void UserView_KeyDown(object sender, KeyEventArgs e)
-        {
-            textBox1.Focus();
-        }
-
         string _comboBoxSelectText = "";
         Boolean _comboBoxKeyPressSet = false;
         private void timer_ComboBoxSelect_Tick(object sender, EventArgs e)
         {
-            textBox1.Text = _comboBoxSelectText = "";
-            timer_ComboBoxSelect.Stop();
-            panel2.BackColor = SystemColors.Control;
-            textBox1.Focus();
+            //textBox1.Text = _comboBoxSelectText = "";
+            //timer_ComboBoxSelect.Stop();
+            //panel2.BackColor = SystemColors.Control;
+            //textBox1.Focus();
         }
 
 
@@ -936,15 +939,18 @@ namespace 簡易倉儲系統
             {
                 if (e.KeyChar == (char)Keys.Enter)
                 {
-                    timer_ComboBoxSelect.Stop();
-                    timer_ComboBoxSelect_Tick(sender, e);
+                    textBox1.Text = _comboBoxSelectText = "";
+                    panel2.BackColor = SystemColors.Control;
+                    textBox1.Focus();
+                    //timer_ComboBoxSelect.Stop();
+                    //timer_ComboBoxSelect_Tick(sender, e);
                     return;
                 }
                 int _key = -1;
-                if (!timer_ComboBoxSelect.Enabled)
-                {
-                    timer_ComboBoxSelect.Start();
-                }
+                //if (!timer_ComboBoxSelect.Enabled)
+                //{
+                //    timer_ComboBoxSelect.Start();
+                //}
                 if (Int32.TryParse(e.KeyChar.ToString(), out _key))
                 {
                     _comboBoxSelectText += _key;
@@ -965,8 +971,31 @@ namespace 簡易倉儲系統
 
         private void timer_FocusTextBox1_Tick(object sender, EventArgs e)
         {
+            if (comboBox1.Focused)
+                return;
+            else if (button1.Focused)
+                return;
+            else if (dataGridView1.Focused)
+                return;
             if (!textBox1.Focused)
                 textBox1.Focus();
+        }
+
+        private void button1_Enter(object sender, EventArgs e)
+        {
+            button1.BackColor = SystemColors.ActiveCaption;
+        }
+        private void button1_Leave(object sender, EventArgs e)
+        {
+            button1.BackColor = SystemColors.Control;
+        }
+        private void textBox1_Enter(object sender, EventArgs e)
+        {
+            groupBox3.BackColor = SystemColors.ActiveCaption;
+        }
+        private void textBox1_Leave(object sender, EventArgs e)
+        {
+            groupBox3.BackColor = SystemColors.Control;
         }
     }
 }

@@ -615,19 +615,6 @@ namespace 簡易倉儲系統
                     dataGridView4.Columns[5].Visible = true;
                     dataGridView4.Columns[6].Visible = true;
                     dataGridView4.Columns[7].Visible = true;
-                    //this.dataGridView4.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-                    //    this.Column9, this.Column10, this.Column16, this.Column11, this.Column12, this.Column13,
-                    //    this.Column14, this.Column15, this.Column21, this.Column17});
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column9)].DisplayIndex = 0;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column10)].DisplayIndex = 1;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column16)].DisplayIndex = 2;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column11)].DisplayIndex = 3;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column12)].DisplayIndex = 4;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column13)].DisplayIndex = 5;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column14)].DisplayIndex = 6;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column15)].DisplayIndex = 7;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column21)].DisplayIndex = 8;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column17)].DisplayIndex = 9;
                 }
                 else if (_Text == "姓名查詢")
                 {
@@ -645,19 +632,6 @@ namespace 簡易倉儲系統
                     dataGridView4.Columns[5].Visible = true;
                     dataGridView4.Columns[6].Visible = true;
                     dataGridView4.Columns[7].Visible = true;
-                    //this.dataGridView4.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-                    //    this.Column9, this.Column10, this.Column16, this.Column11, this.Column12, this.Column13,
-                    //    this.Column14, this.Column15, this.Column21, this.Column17});
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column9)].DisplayIndex = 0;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column10)].DisplayIndex = 1;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column16)].DisplayIndex = 2;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column11)].DisplayIndex = 3;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column12)].DisplayIndex = 4;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column13)].DisplayIndex = 5;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column14)].DisplayIndex = 6;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column15)].DisplayIndex = 7;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column21)].DisplayIndex = 8;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column17)].DisplayIndex = 9;
                 }
                 else if (_Text == "整合查詢")
                 {
@@ -680,12 +654,6 @@ namespace 簡易倉儲系統
                     dataGridView4.Columns[5].Visible = false;
                     dataGridView4.Columns[6].Visible = false;
                     dataGridView4.Columns[7].Visible = false;
-                    //this.dataGridView4.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-                    //    this.Column9, this.Column10, this.Column21, this.Column17});
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column9)].DisplayIndex = 0;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column10)].DisplayIndex = 1;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column21)].DisplayIndex = 2;
-                    //dataGridView4.Columns[dataGridView4.Columns.IndexOf(this.Column17)].DisplayIndex = 3;
                 }
 
                 ((GroupBox)((RadioButton)sender).Parent).BackColor = Color.Transparent;
