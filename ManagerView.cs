@@ -25,6 +25,7 @@ using 簡易倉儲系統.EssentialTool;
 using 簡易倉儲系統.EssentialTool.Excel;
 using static System.Windows.Forms.AxHost;
 using static 簡易倉儲系統.EssentialTool.LogToText;
+using Label = System.Windows.Forms.Label;
 
 namespace 簡易倉儲系統
 {
@@ -43,9 +44,9 @@ namespace 簡易倉儲系統
         public static string Setting_Path = @".\";          //設定檔路徑
         public static string VersionNumber = "";            //程式版號
         public static string DB_Path = "";    //DB路徑
-        public static string[][] type = { new string[] { "", "", "", "", "", "", "" }
-                                        , new string[] { "", "", "", "", "", "", "" }
-                                        , new string[] { "", "", "", "", "", "" } };
+        public static string[][] type = { new string[] { "", "", "", "", "", "", "", "" }
+                                        , new string[] { "", "", "", "", "", "", "", "" }
+                                        , new string[] { "", "", "", "", "", "", "", "" } };
 
         public ManagerView()
         {
@@ -62,6 +63,24 @@ namespace 簡易倉儲系統
             label25.Text = "";
             label28.Text = ""; 
             checkedListBox1.Items.Clear();
+            if (string.IsNullOrEmpty(Settings.SQL語法))
+            {
+                try
+                {
+                    log.LogMessage("執行SQL語法 開始", enumLogType.Trace);
+                    dB_SQLite.Manipulate(DB_Path, $@"{Settings.SQL語法}");
+                    Settings.SQL語法 = "";
+                    log.LogMessage($@"執行SQL語法 成功：{Settings.SQL語法}", enumLogType.Info);
+                    log.LogMessage($@"執行SQL語法 成功：{Settings.SQL語法}", enumLogType.Trace);
+                    MessageBox.Show($@"執行SQL語法 成功：{Settings.SQL語法}");
+                }
+                catch (Exception ee)
+                {
+                    log.LogMessage("執行SQL語法 失敗" + ee.Message, enumLogType.Error);
+                    MessageBox.Show("執行SQL語法 失敗" + ee.Message);
+                }
+                Application.Exit();
+            }
 
             #region 檢查時間為最新
             try
@@ -179,36 +198,61 @@ namespace 簡易倉儲系統
             try
             {
                 log.LogMessage("取得類型設定參數 開始", enumLogType.Trace);
-                this.tabPage1.Text = Settings.販售地區1.Split('/')[0];
-                string _Type1 = Settings.類型1;
-                label1.Text = this.Column2.HeaderText = _Type1.Split('/')[0];
-                label2.Text = this.Column3.HeaderText = _Type1.Split('/')[1];
-                label3.Text = this.Column4.HeaderText = _Type1.Split('/')[2];
-                label4.Text = this.Column5.HeaderText = _Type1.Split('/')[3];
-                label5.Text = this.Column6.HeaderText = _Type1.Split('/')[4];
-                label6.Text = this.Column7.HeaderText = _Type1.Split('/')[5];
-                label7.Text = this.Column8.HeaderText = _Type1.Split('/')[6];
-                this.tabPage2.Text = Settings.販售地區2.Split('/')[0];
-                string _Type2 = Settings.類型2;
-                label8.Text = dataGridViewTextBoxColumn2.HeaderText = _Type2.Split('/')[0];
-                label9.Text = dataGridViewTextBoxColumn3.HeaderText = _Type2.Split('/')[1];
-                label10.Text = dataGridViewTextBoxColumn4.HeaderText = _Type2.Split('/')[2];
-                label11.Text = dataGridViewTextBoxColumn5.HeaderText = _Type2.Split('/')[3];
-                label12.Text = dataGridViewTextBoxColumn6.HeaderText = _Type2.Split('/')[4];
-                label13.Text = dataGridViewTextBoxColumn7.HeaderText = _Type2.Split('/')[5];
-                label14.Text = dataGridViewTextBoxColumn8.HeaderText = _Type2.Split('/')[6];
-                this.tabPage3.Text = Settings.販售地區3.Split('/')[0];
-                string _Type3 = Settings.類型3;
-                label15.Text = dataGridViewTextBoxColumn10.HeaderText = _Type3.Split('/')[0];
-                label16.Text = dataGridViewTextBoxColumn11.HeaderText = _Type3.Split('/')[1];
-                label17.Text = dataGridViewTextBoxColumn12.HeaderText = _Type3.Split('/')[2];
-                label18.Text = dataGridViewTextBoxColumn13.HeaderText = _Type3.Split('/')[3];
-                label19.Text = dataGridViewTextBoxColumn14.HeaderText = _Type3.Split('/')[4];
-                label20.Text = dataGridViewTextBoxColumn15.HeaderText = _Type3.Split('/')[5];
-                log.LogMessage("取得類型設定參數 成功\r\n" + this.tabPage1.Text + " / " + 
-                    this.tabPage2.Text + " / " + this.tabPage3.Text, enumLogType.Info);
-                log.LogMessage("取得類型設定參數 成功\r\n" + this.tabPage1.Text + $@"：{_Type1}" + " / " +
-                    this.tabPage2.Text + $@"：{_Type2}" + " / " + this.tabPage3.Text + $@"：{_Type3}", enumLogType.Trace);
+
+                string _Type = "";
+                string LogMessage = "";
+                List<Control[]> _LabelList = new List<Control[]>();
+
+                tabPage1.Text = Settings.販售地區1.Split('/')[0];
+                _Type = Settings.類型1;
+                _LabelList = new List<Control[]>() {new Control[] { panel1, label1 }
+                    , new Control[] { panel2, label2 }, new Control[] { panel3, label3 }
+                    , new Control[] { panel4, label4 }, new Control[] { panel5, label5 }
+                    , new Control[] { panel6, label6 }, new Control[] { panel7, label7 }
+                    , new Control[] { panel22, label27 } };
+                if (ConvectTypeText(_Type, _LabelList, dataGridView1))
+                    LogMessage += tabPage1.Text + $@"：{_Type}";
+                //label1.Text = Column2.HeaderText = _Type1.Split('/')[0];
+                //label2.Text = Column3.HeaderText = _Type1.Split('/')[1];
+                //label3.Text = Column4.HeaderText = _Type1.Split('/')[2];
+                //label4.Text = Column5.HeaderText = _Type1.Split('/')[3];
+                //label5.Text = Column6.HeaderText = _Type1.Split('/')[4];
+                //label6.Text = Column7.HeaderText = _Type1.Split('/')[5];
+                //label7.Text = Column8.HeaderText = _Type1.Split('/')[6];
+                tabPage2.Text = Settings.販售地區2.Split('/')[0];
+                _Type = Settings.類型2;
+                _LabelList = new List<Control[]>() {new Control[] { panel8, label8 }
+                    , new Control[] { panel9, label9 }, new Control[] { panel10, label10 }
+                    , new Control[] { panel11, label11 }, new Control[] { panel12, label12 }
+                    , new Control[] { panel13, label13 }, new Control[] { panel14, label14 }
+                    , new Control[] { panel23, label29 } };
+                if (ConvectTypeText(_Type, _LabelList, dataGridView2))
+                    LogMessage += " / " + tabPage2.Text + $@"：{_Type}";
+                //label8.Text = dataGridViewTextBoxColumn2.HeaderText = _Type2.Split('/')[0];
+                //label9.Text = dataGridViewTextBoxColumn3.HeaderText = _Type2.Split('/')[1];
+                //label10.Text = dataGridViewTextBoxColumn4.HeaderText = _Type2.Split('/')[2];
+                //label11.Text = dataGridViewTextBoxColumn5.HeaderText = _Type2.Split('/')[3];
+                //label12.Text = dataGridViewTextBoxColumn6.HeaderText = _Type2.Split('/')[4];
+                //label13.Text = dataGridViewTextBoxColumn7.HeaderText = _Type2.Split('/')[5];
+                //label14.Text = dataGridViewTextBoxColumn8.HeaderText = _Type2.Split('/')[6];
+                tabPage3.Text = Settings.販售地區3.Split('/')[0];
+                _Type = Settings.類型3;
+                _LabelList = new List<Control[]>() {new Control[] { panel15, label15 }
+                    , new Control[] { panel16, label16 }, new Control[] { panel17, label17 }
+                    , new Control[] { panel18, label18 }, new Control[] { panel19, label19 }
+                    , new Control[] { panel20, label20 }, new Control[] { panel24, label20 }
+                    , new Control[] { panel25, label31 } };
+                if (ConvectTypeText(_Type, _LabelList, dataGridView3))
+                    LogMessage += " / " + tabPage3.Text + $@"：{_Type}";
+                //label15.Text = dataGridViewTextBoxColumn10.HeaderText = _Type3.Split('/')[0];
+                //label16.Text = dataGridViewTextBoxColumn11.HeaderText = _Type3.Split('/')[1];
+                //label17.Text = dataGridViewTextBoxColumn12.HeaderText = _Type3.Split('/')[2];
+                //label18.Text = dataGridViewTextBoxColumn13.HeaderText = _Type3.Split('/')[3];
+                //label19.Text = dataGridViewTextBoxColumn14.HeaderText = _Type3.Split('/')[4];
+                //label20.Text = dataGridViewTextBoxColumn15.HeaderText = _Type3.Split('/')[5];
+                log.LogMessage("取得類型設定參數 成功\r\n" + tabPage1.Text + " / " + 
+                    tabPage2.Text + " / " + tabPage3.Text, enumLogType.Info);
+                log.LogMessage("取得類型設定參數 成功\r\n" + LogMessage, enumLogType.Trace);
             }
             catch (Exception ee)
             {
@@ -307,6 +351,31 @@ namespace 簡易倉儲系統
             log.LogMessage("管理者介面啓動", enumLogType.Info);
         }
 
+        private bool ConvectTypeText(string TypeText, List<Control[]> labelList, DataGridView dataGridView)
+        {
+            int _TypeCount = TypeText.Split('/').Count();
+            #region 8個類型的位置調整
+            for (int i = 0; i < 8; i++)
+            {
+                if (_TypeCount > i)
+                {
+                    ((Panel)labelList[i][0]).Enabled = true;
+                    ((Panel)labelList[i][0]).Visible = true;
+                    ((Label)labelList[i][1]).Text = TypeText.Split('/')[i];
+                    dataGridView.Columns[i + 1].HeaderText = TypeText.Split('/')[i];
+                    dataGridView.Columns[i + 1].Visible = true;
+                }
+                else
+                {
+                    ((Panel)labelList[i][0]).Enabled = false;
+                    ((Panel)labelList[i][0]).Visible = false;
+                    dataGridView.Columns[i + 1].Visible = false;
+                }
+            }
+            #endregion
+            return true;
+        }
+
         /// <summary>
         /// Datatable轉出Datagridview
         /// 全部刪除重繪
@@ -361,14 +430,15 @@ namespace 簡易倉儲系統
             _SelectDT = new DataTable();
 
             //清空暫存
-            type = new string[][] { new string[] { "", "", "", "", "", "", "" }
-                                  , new string[] { "", "", "", "", "", "", "" }
-                                  , new string[] { "", "", "", "", "", "" } };
+            type = new string[][] { new string[] { "", "", "", "", "", "", "", "" }
+                                  , new string[] { "", "", "", "", "", "", "", "" }
+                                  , new string[] { "", "", "", "", "", "", "", "" } };
 
             //要清空的TextBox元件
-            System.Windows.Forms.TextBox[] _textBoxes = { textBox1, textBox2, textBox3, textBox4, textBox5, textBox6, textBox7
-                    , textBox8, textBox9, textBox10, textBox11, textBox12, textBox13, textBox14
-                    , textBox15, textBox16, textBox17, textBox18, textBox19, textBox20, textBox21, textBox22};
+            System.Windows.Forms.TextBox[] _textBoxes = { textBox1, textBox2, textBox3, textBox4, textBox5
+                    , textBox6, textBox7, textBox8, textBox9, textBox10, textBox11, textBox12, textBox13
+                    , textBox14, textBox15, textBox16, textBox17, textBox18, textBox19, textBox20, textBox21
+                    , textBox22, textBox23, textBox24, textBox25, textBox26};
             foreach (var _textBox in _textBoxes)
             {
                 _textBox.Text = "";

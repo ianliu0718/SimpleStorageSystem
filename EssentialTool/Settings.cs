@@ -45,6 +45,7 @@ namespace 簡易倉儲系統.EssentialTool
                     writer.WriteElementString("類型2", _類型2);
                     writer.WriteElementString("販售地區3", _販售地區3);
                     writer.WriteElementString("類型3", _類型3);
+                    writer.WriteElementString("SQL語法", _SQL語法);
                     writer.WriteEndElement();
                     writer.Flush();
                     writer.Close();
@@ -53,6 +54,38 @@ namespace 簡易倉儲系統.EssentialTool
             catch// (Exception ex)
             {
                 throw;
+            }
+        }
+
+        private static string _SQL語法 = "";
+        /// <summary>
+        /// SQL語法
+        /// </summary>
+        public static String SQL語法
+        {
+            get
+            {
+                String tmpValue = null;
+                try
+                {
+                    Config.getConfigValue("SQL語法", out tmpValue);
+                }
+                catch (Exception ee)
+                {
+                    if (ee.Message == "查無SQL語法此參數設定")
+                    {
+                        Config.setConfigValue("SQL語法", _SQL語法);
+                        tmpValue = SQL語法;
+                    }
+                }
+
+                return tmpValue;
+            }
+            set
+            {
+                try
+                { Config.setConfigValue("SQL語法", value); }
+                catch { }
             }
         }
 

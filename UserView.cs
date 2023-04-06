@@ -1,6 +1,7 @@
 ﻿using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Information;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+using Spire.Pdf.Exporting.XPS.Schema;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -75,6 +77,8 @@ namespace 簡易倉儲系統
             this.Text += $"v.{VersionNumber} Bulid{File.GetLastWriteTime(Application.ExecutablePath).ToString("yyyyMMdd")}";
             DB_Path = Settings.資料庫路徑 + @"data.db";
             label5.Text = "";
+            comboBox2.SelectedIndex = 0;
+            comboBox2.Location = new Point(radioButton9.Location.X + radioButton9.Size.Width + 10, comboBox2.Location.Y);
 
             #region 檢查時間為最新
             try
@@ -194,13 +198,105 @@ namespace 簡易倉儲系統
                 radioButton8.Text = Settings.販售地區1.Split('/')[0] + "(F1)";
                 label1.Text = Settings.販售地區1.Split('/')[1];
                 string _Type = Settings.類型1;
-                radioButton1.Text = _Type.Split('/')[0] + "(F5)";
-                radioButton2.Text = _Type.Split('/')[1] + "(F6)";
-                radioButton3.Text = _Type.Split('/')[2] + "(F7)";
-                radioButton4.Text = _Type.Split('/')[3] + "(F8)";
-                radioButton5.Text = _Type.Split('/')[4] + "(F9)";
-                radioButton6.Text = _Type.Split('/')[5] + "(F10)";
-                radioButton7.Text = _Type.Split('/')[6] + "(F11)";
+                int _TypeCount = _Type.Split('/').Count();
+                int _Space = 10;
+                #region 8個類型的位置調整
+                if (_TypeCount >= 1)
+                {
+                    radioButton1.Text = _Type.Split('/')[0] + "(F4)";
+                    radioButton1.Enabled = true;
+                    radioButton1.Visible = true;
+                }
+                else
+                {
+                    radioButton1.Enabled = false;
+                    radioButton1.Visible = false;
+                }
+                if (_TypeCount >= 2)
+                {
+                    radioButton2.Text = _Type.Split('/')[1] + "(F5)";
+                    radioButton2.Location = new Point(radioButton1.Location.X + radioButton1.Size.Width + _Space, radioButton2.Location.Y);
+                    radioButton2.Enabled = true;
+                    radioButton2.Visible = true;
+                }
+                else
+                {
+                    radioButton2.Enabled = false;
+                    radioButton2.Visible = false;
+                }
+                if (_TypeCount >= 3)
+                {
+                    radioButton3.Text = _Type.Split('/')[2] + "(F6)";
+                    radioButton3.Location = new Point(radioButton2.Location.X + radioButton2.Size.Width + _Space, radioButton2.Location.Y);
+                    radioButton3.Enabled = true;
+                    radioButton3.Visible = true;
+                }
+                else
+                {
+                    radioButton3.Enabled = false;
+                    radioButton3.Visible = false;
+                }
+                if (_TypeCount >= 4)
+                {
+                    radioButton4.Text = _Type.Split('/')[3] + "(F7)";
+                    radioButton4.Location = new Point(radioButton3.Location.X + radioButton3.Size.Width + _Space, radioButton3.Location.Y);
+                    radioButton4.Enabled = true;
+                    radioButton4.Visible = true;
+                }
+                else
+                {
+                    radioButton4.Enabled = false;
+                    radioButton4.Visible = false;
+                }
+                if (_TypeCount >= 5)
+                {
+                    radioButton5.Text = _Type.Split('/')[4] + "(F8)";
+                    radioButton5.Location = new Point(radioButton4.Location.X + radioButton4.Size.Width + _Space, radioButton4.Location.Y);
+                    radioButton5.Enabled = true;
+                    radioButton5.Visible = true;
+                }
+                else
+                {
+                    radioButton5.Enabled = false;
+                    radioButton5.Visible = false;
+                }
+                if (_TypeCount >= 6)
+                {
+                    radioButton6.Text = _Type.Split('/')[5] + "(F9)";
+                    radioButton6.Location = new Point(radioButton5.Location.X + radioButton5.Size.Width + _Space, radioButton5.Location.Y);
+                    radioButton6.Enabled = true;
+                    radioButton6.Visible = true;
+                }
+                else
+                {
+                    radioButton6.Enabled = false;
+                    radioButton6.Visible = false;
+                }
+                if (_TypeCount >= 7)
+                {
+                    radioButton7.Text = _Type.Split('/')[6] + "(F10)";
+                    radioButton7.Location = new Point(radioButton6.Location.X + radioButton6.Size.Width + _Space, radioButton6.Location.Y);
+                    radioButton7.Enabled = true;
+                    radioButton7.Visible = true;
+                }
+                else
+                {
+                    radioButton7.Enabled = false;
+                    radioButton7.Visible = false;
+                }
+                if (_TypeCount >= 8)
+                {
+                    radioButton11.Text = _Type.Split('/')[7] + "(F11)";
+                    radioButton11.Location = new Point(radioButton7.Location.X + radioButton7.Size.Width + _Space, radioButton7.Location.Y);
+                    radioButton11.Enabled = true;
+                    radioButton11.Visible = true;
+                }
+                else
+                {
+                    radioButton11.Enabled = false;
+                    radioButton11.Visible = false;
+                }
+                #endregion
                 radioButton9.Text = Settings.販售地區2.Split('/')[0] + "(F2)";
                 radioButton10.Text = Settings.販售地區3.Split('/')[0] + "(F3)";
                 log.LogMessage("取得類型設定參數 成功\r\n" + radioButton8.Text.Split('(')[0] + $@"：{_Type}", enumLogType.Info);
@@ -230,6 +326,7 @@ namespace 簡易倉儲系統
                 MessageBox.Show("連線資料庫 失敗\r\n" + ee.Message);
                 return;
             }
+            textBox1.Focus();
             log.LogMessage("使用者介面啓動", enumLogType.Info);
         }
 
@@ -242,8 +339,8 @@ namespace 簡易倉儲系統
                 {
                     log.LogMessage("類型設定，單價設定 開始", enumLogType.Trace);
 
-                    //radioButton6 選擇後會被不知名原因卡住，所以多按一下"ESC"解除
-                    SendKeys.SendWait("{ESC}");
+                    ////radioButton6 選擇後會被不知名原因卡住，所以多按一下"ESC"解除
+                    //SendKeys.SendWait("{ESC}");
                     type = ((ButtonBase)sender).Text.Split('(')[0];
                     ((GroupBox)((RadioButton)sender).Parent).BackColor = SystemColors.Control;
                     ((RadioButton)sender).BackColor = Color.GreenYellow;
@@ -331,6 +428,7 @@ namespace 簡易倉儲系統
                 {
                     dataGridView1.Rows.Clear();
 
+                    string _Type = "";
                     //針對不同地區客製化功能
                     if (((ButtonBase)sender).Text.Contains("F1"))
                     {
@@ -344,17 +442,7 @@ namespace 簡易倉儲系統
                         }
                         _Text = Settings.販售地區1.Split('/')[0];
                         unit = Settings.販售地區1.Split('/')[1];
-                        label1.Text = unit;
-                        string _Type = Settings.類型1;
-                        radioButton1.Text = _Type.Split('/')[0] + "(F5)";
-                        radioButton2.Text = _Type.Split('/')[1] + "(F6)";
-                        radioButton3.Text = _Type.Split('/')[2] + "(F7)";
-                        radioButton4.Text = _Type.Split('/')[3] + "(F8)";
-                        radioButton5.Text = _Type.Split('/')[4] + "(F9)";
-                        radioButton6.Text = _Type.Split('/')[5] + "(F10)";
-                        radioButton7.Text = _Type.Split('/')[6] + "(F11)";
-                        radioButton7.Enabled = true;
-                        radioButton7.Visible = true;
+                        _Type = Settings.類型1;
                     }
                     else if (((ButtonBase)sender).Text.Contains("F2"))
                     {
@@ -368,17 +456,7 @@ namespace 簡易倉儲系統
                         }
                         _Text = Settings.販售地區2.Split('/')[0];
                         unit = Settings.販售地區2.Split('/')[1];
-                        label1.Text = unit;
-                        string _Type = Settings.類型2;
-                        radioButton1.Text = _Type.Split('/')[0] + "(F5)";
-                        radioButton2.Text = _Type.Split('/')[1] + "(F6)";
-                        radioButton3.Text = _Type.Split('/')[2] + "(F7)";
-                        radioButton4.Text = _Type.Split('/')[3] + "(F8)";
-                        radioButton5.Text = _Type.Split('/')[4] + "(F9)";
-                        radioButton6.Text = _Type.Split('/')[5] + "(F10)";
-                        radioButton7.Text = _Type.Split('/')[6] + "(F11)";
-                        radioButton7.Enabled = true;
-                        radioButton7.Visible = true;
+                        _Type = Settings.類型2;
                     }
                     else if (((ButtonBase)sender).Text.Contains("F3"))
                     {
@@ -392,18 +470,108 @@ namespace 簡易倉儲系統
                         }
                         _Text = Settings.販售地區3.Split('/')[0];
                         unit = Settings.販售地區3.Split('/')[1];
-                        label1.Text = unit;
-                        string _Type = Settings.類型3;
-                        radioButton1.Text = _Type.Split('/')[0] + "(F5)";
-                        radioButton2.Text = _Type.Split('/')[1] + "(F6)";
-                        radioButton3.Text = _Type.Split('/')[2] + "(F7)";
-                        radioButton4.Text = _Type.Split('/')[3] + "(F8)";
-                        radioButton5.Text = _Type.Split('/')[4] + "(F9)";
-                        radioButton6.Text = _Type.Split('/')[5] + "(F10)";
-                        radioButton7.Text = "";
+                        _Type = Settings.類型3;
+                    }
+                    label1.Text = unit;
+                    int _TypeCount = _Type.Split('/').Count();
+                    int _Space = 10;
+                    #region 8個類型的位置調整
+                    if (_TypeCount >= 1)
+                    {
+                        radioButton1.Text = _Type.Split('/')[0] + "(F4)";
+                        radioButton1.Enabled = true;
+                        radioButton1.Visible = true;
+                    }
+                    else
+                    {
+                        radioButton1.Enabled = false;
+                        radioButton1.Visible = false;
+                    }
+                    if (_TypeCount >= 2)
+                    {
+                        radioButton2.Text = _Type.Split('/')[1] + "(F5)";
+                        radioButton2.Location = new Point(radioButton1.Location.X + radioButton1.Size.Width + _Space, radioButton2.Location.Y);
+                        radioButton2.Enabled = true;
+                        radioButton2.Visible = true;
+                    }
+                    else
+                    {
+                        radioButton2.Enabled = false;
+                        radioButton2.Visible = false;
+                    }
+                    if (_TypeCount >= 3)
+                    {
+                        radioButton3.Text = _Type.Split('/')[2] + "(F6)";
+                        radioButton3.Location = new Point(radioButton2.Location.X + radioButton2.Size.Width + _Space, radioButton2.Location.Y);
+                        radioButton3.Enabled = true;
+                        radioButton3.Visible = true;
+                    }
+                    else
+                    {
+                        radioButton3.Enabled = false;
+                        radioButton3.Visible = false;
+                    }
+                    if (_TypeCount >= 4)
+                    {
+                        radioButton4.Text = _Type.Split('/')[3] + "(F7)";
+                        radioButton4.Location = new Point(radioButton3.Location.X + radioButton3.Size.Width + _Space, radioButton3.Location.Y);
+                        radioButton4.Enabled = true;
+                        radioButton4.Visible = true;
+                    }
+                    else
+                    {
+                        radioButton4.Enabled = false;
+                        radioButton4.Visible = false;
+                    }
+                    if (_TypeCount >= 5)
+                    {
+                        radioButton5.Text = _Type.Split('/')[4] + "(F8)";
+                        radioButton5.Location = new Point(radioButton4.Location.X + radioButton4.Size.Width + _Space, radioButton4.Location.Y);
+                        radioButton5.Enabled = true;
+                        radioButton5.Visible = true;
+                    }
+                    else
+                    {
+                        radioButton5.Enabled = false;
+                        radioButton5.Visible = false;
+                    }
+                    if (_TypeCount >= 6)
+                    {
+                        radioButton6.Text = _Type.Split('/')[5] + "(F9)";
+                        radioButton6.Location = new Point(radioButton5.Location.X + radioButton5.Size.Width + _Space, radioButton5.Location.Y);
+                        radioButton6.Enabled = true;
+                        radioButton6.Visible = true;
+                    }
+                    else
+                    {
+                        radioButton6.Enabled = false;
+                        radioButton6.Visible = false;
+                    }
+                    if (_TypeCount >= 7)
+                    {
+                        radioButton7.Text = _Type.Split('/')[6] + "(F10)";
+                        radioButton7.Location = new Point(radioButton6.Location.X + radioButton6.Size.Width + _Space, radioButton6.Location.Y);
+                        radioButton7.Enabled = true;
+                        radioButton7.Visible = true;
+                    }
+                    else
+                    {
                         radioButton7.Enabled = false;
                         radioButton7.Visible = false;
                     }
+                    if (_TypeCount >= 8)
+                    {
+                        radioButton11.Text = _Type.Split('/')[7] + "(F11)";
+                        radioButton11.Location = new Point(radioButton7.Location.X + radioButton7.Size.Width + _Space, radioButton7.Location.Y);
+                        radioButton11.Enabled = true;
+                        radioButton11.Visible = true;
+                    }
+                    else
+                    {
+                        radioButton11.Enabled = false;
+                        radioButton11.Visible = false;
+                    }
+                    #endregion
 
                     unitPrice = "";
                     type = "";
@@ -412,6 +580,8 @@ namespace 簡易倉儲系統
                     ((GroupBox)((RadioButton)sender).Parent).BackColor = SystemColors.Control;
                     for (int i = 0; i < ((RadioButton)sender).Parent.Controls.Count; i++)
                     {
+                        if (((RadioButton)sender).Parent.Controls[i].GetType().Name == "ComboBox")
+                            continue;
                         if (((RadioButton)((RadioButton)sender).Parent.Controls[i]).Checked)
                             ((RadioButton)((RadioButton)sender).Parent.Controls[i]).BackColor = Color.GreenYellow;
                         else
@@ -493,6 +663,10 @@ namespace 簡易倉儲系統
             {
                 dataGridView1.Rows.Clear();
             }
+            if (string.IsNullOrEmpty(textBox1.Text))
+            {
+                _OK = false;
+            }
 
             if (_OK && e.KeyChar == ((char)Keys.Enter))
             {
@@ -520,7 +694,6 @@ namespace 簡易倉儲系統
                 log.LogMessage("確認後寫入DataGridView 成功", enumLogType.Trace);
             }
         }
-
         //快捷鍵指向
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -539,34 +712,39 @@ namespace 簡易倉儲系統
                         radioButton10.Checked = true;
                     break;
                 case ((char)Keys.F4):
-                    break;
-                case ((char)Keys.F5):
                     if (radioButton1.Visible)
                         radioButton1.Checked = true;
                     break;
-                case ((char)Keys.F6):
+                case ((char)Keys.F5):
                     if (radioButton2.Visible)
                         radioButton2.Checked = true;
                     break;
-                case ((char)Keys.F7):
+                case ((char)Keys.F6):
                     if (radioButton3.Visible)
                         radioButton3.Checked = true;
                     break;
-                case ((char)Keys.F8):
+                case ((char)Keys.F7):
                     if (radioButton4.Visible)
                         radioButton4.Checked = true;
                     break;
-                case ((char)Keys.F9):
+                case ((char)Keys.F8):
                     if (radioButton5.Visible)
                         radioButton5.Checked = true;
                     break;
-                case ((char)Keys.F10):
+                case ((char)Keys.F9):
                     if (radioButton6.Visible)
                         radioButton6.Checked = true;
                     break;
-                case ((char)Keys.F11):
+                case ((char)Keys.F10):
                     if (radioButton7.Visible)
                         radioButton7.Checked = true;
+                    //F10會呼叫出控制列視窗，需要按兩次ESC做取消
+                    SendKeys.SendWait("{ESC}");
+                    SendKeys.SendWait("{ESC}");
+                    break;
+                case ((char)Keys.F11):
+                    if (radioButton11.Visible)
+                        radioButton11.Checked = true;
                     break;
                 case ((char)Keys.F12):
                     if (comboBox1.Visible)
@@ -581,9 +759,23 @@ namespace 簡易倉儲系統
                 default:
                     break;
             }
-            //radioButton6 選擇後會被不知名原因卡住，所以多按一下"ESC"解除
-            SendKeys.SendWait("{ESC}");
             textBox1.Focus();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox1.Text == "")
+                return;
+            if (!Double.TryParse(textBox1.Text, out Double _buffDouble))
+            {
+                MessageBox.Show("請輸入數字");
+                textBox1.Text = "";
+            }
+            if (!Int32.TryParse((_buffDouble * 100).ToString(), out Int32 _buffInt))
+            {
+                MessageBox.Show("小數點最多兩位數");
+                textBox1.Text = (Convert.ToDouble((int)(_buffDouble * 100)) / 100).ToString();
+            }
         }
 
         private void dataGridView1_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
@@ -606,24 +798,30 @@ namespace 簡易倉儲系統
             }
         }
 
-        private void comboBox1_TextChanged(object sender, EventArgs e)
-        {
-            //panel2.BackColor = SystemColors.Control;
-        }
-
         //列印
         private void button1_Click(object sender, EventArgs e)
         {
             textBox1.Focus();
 
-            Boolean RepeatPrinting = false;
             if (label5.Text != "")
             {
-                if (DialogResult.No == MessageBox.Show("是否重複列印", "重複列印", MessageBoxButtons.YesNo))
+                if (DialogResult.Yes == MessageBox.Show("是否重複列印", "重複列印", MessageBoxButtons.YesNo))
                 {
-                    return;
+                    _Page = 1;
+                    //宣告一個印表機
+                    PrintDocument printDocument = new PrintDocument();
+                    //設定印表機邊界
+                    Margins margin = new Margins(0, 0, 0, 0);
+                    printDocument.DefaultPageSettings.Margins = margin;
+                    //印表機事件設定
+                    printDocument.PrintPage += PrintDocument_PrintPage;
+                    printDocument.PrinterSettings.PrinterName = Settings.印表機名稱;
+                    printDocument.Print();   //列印
+
+                    log.LogMessage("重複列印 成功", enumLogType.Trace);
+                    log.LogMessage("重複列印 成功", enumLogType.Info);
                 }
-                RepeatPrinting = true;
+                return;
             }
 
             button1.Enabled = false;
@@ -637,17 +835,10 @@ namespace 簡易倉儲系統
             try
             {
                 ///取單號
-                if (RepeatPrinting)
-                {
-                    _No = label5.Text;
-                }
-                else
-                {
-                    DataTable dataTable = dB_SQLite.GetDataTable(DB_Path, $@"
+                DataTable dataTable = dB_SQLite.GetDataTable(DB_Path, $@"
                     SELECT CASE WHEN MAX(No) ISNULL THEN '{_Now.ToString("yyyyMMdd") + "001"}' ELSE MAX(No)+1 END No
                     FROM SalesRecord WHERE Time > '{_Now.ToString("yyyy-MM-dd")}';");
-                    _No = dataTable.Rows[0][0].ToString();
-                }
+                _No = dataTable.Rows[0][0].ToString();
 
                 string insertstring = $@"INSERT INTO SalesRecord (No, Time, Name, Type, Count, UnitPrice, Unit, salesArea) VALUES";
                 /// 插入資料
@@ -668,20 +859,18 @@ namespace 簡易倉儲系統
                     else if (!row.Cells[7].Value.ToString().Split('，').Contains(row.Cells[7].Value.ToString()))
                         _SalesArea += row.Cells[7].Value.ToString();
 
-                    if (!RepeatPrinting)
-                        insertstring += $@" ('{_No}', '{Convert.ToDateTime(row.Cells[1].Value).ToString("yyyy-MM-dd HH:mm:ss")}', '{row.Cells[2].Value.ToString()}', 
+                    insertstring += $@" ('{_No}', '{Convert.ToDateTime(row.Cells[1].Value).ToString("yyyy-MM-dd HH:mm:ss")}', '{row.Cells[2].Value.ToString()}', 
                             '{row.Cells[3].Value.ToString()}', '{row.Cells[4].Value.ToString()}', '{row.Cells[5].Value.ToString()}', 
                             '{row.Cells[6].Value.ToString()}', '{row.Cells[7].Value.ToString()}') ,";
                 }
-                if (!RepeatPrinting) insertstring = insertstring.Remove(insertstring.Length - 1, 1);
-                if (!RepeatPrinting) dB_SQLite.Manipulate(DB_Path, insertstring);
+                insertstring = insertstring.Remove(insertstring.Length - 1, 1);
+                dB_SQLite.Manipulate(DB_Path, insertstring);
 
                 DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, $@"SELECT No, Time, Name, Type, 
                     Count, UnitPrice, Unit, salesArea FROM SalesRecord 
                     WHERE Time > '{DateTime.Now.ToString("yyyy-MM-dd")}' AND No = '{_No}';"), dataGridView1);
 
-                if (RepeatPrinting)
-                    insertstring = "重複列印單號：" + _No;
+                insertstring = "重複列印單號：" + _No;
                 log.LogMessage("確認_DB新增 成功路徑：" + DB_Path + "\r\n語法：" + insertstring, enumLogType.Trace);
                 log.LogMessage("確認_DB新增 成功單號：" + _No, enumLogType.Info);
             }
@@ -698,6 +887,7 @@ namespace 簡易倉儲系統
             try
             {
                 EPPlus ePPlus = new EPPlus();
+                string _Path = $@"{Settings.Excel路徑}{_No}_{comboBox1.Text}.xlsx";
                 List<List<MExcelCell>> excelCells = new List<List<MExcelCell>>();
                 List<MExcelCell> excelCell = new List<MExcelCell>();
                 DataGridView view = dataGridView1;
@@ -821,7 +1011,6 @@ namespace 簡易倉儲系統
                 }
 
                 //匯出成檔案
-                string _Path = $@"{Settings.Excel路徑}{_No}_{comboBox1.Text}.xlsx";
                 ePPlus.AddSheet(excelCells, _No);
                 ePPlus.Export(_Path);
                 ePPlus.ChangeExcel2Image(_Path, @".\ianimage.png");  //利用Spire將excel轉換成圖片
@@ -851,6 +1040,7 @@ namespace 簡易倉儲系統
 
             comboBox1.SelectedIndex = -1;
             label5.Text = _No;
+            _Page = 1;
         }
         int _Page = 1;
         int _PageHeight = 0;
@@ -977,7 +1167,9 @@ namespace 簡易倉儲系統
                 return;
             else if (dataGridView1.Focused)
                 return;
-            if (!textBox1.Focused)
+            else if (comboBox2.Focused)
+                return;
+            if (!textBox1.Focused) 
                 textBox1.Focus();
         }
 
@@ -996,6 +1188,13 @@ namespace 簡易倉儲系統
         private void textBox1_Leave(object sender, EventArgs e)
         {
             groupBox3.BackColor = SystemColors.Control;
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (salesArea == radioButton9.Text.Split('(')[0])
+                salesArea += "_" + comboBox2.Text;
+            textBox1.Focus();
         }
     }
 }
