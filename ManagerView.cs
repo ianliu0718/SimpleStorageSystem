@@ -63,7 +63,9 @@ namespace 簡易倉儲系統
             label25.Text = "";
             label28.Text = ""; 
             checkedListBox1.Items.Clear();
-            if (string.IsNullOrEmpty(Settings.SQL語法))
+            DB_Path = Settings.資料庫路徑 + @"data.db";
+
+            if (!string.IsNullOrEmpty(Settings.SQL語法))
             {
                 try
                 {
@@ -264,8 +266,6 @@ namespace 簡易倉儲系統
 
             try
             {
-                DB_Path = Settings.資料庫路徑 + @"data.db";
-
                 if (!File.Exists(DB_Path))
                 {
                     log.LogMessage("偵測到無資料庫，準備開始建立。", enumLogType.Debug);

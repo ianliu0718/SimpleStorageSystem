@@ -518,6 +518,7 @@ namespace 簡易倉儲系統
             this.radioButton11.Tag = "7";
             this.radioButton11.Text = "小小(F11)";
             this.radioButton11.UseVisualStyleBackColor = true;
+            this.radioButton11.CheckedChanged += new System.EventHandler(this.radioButton_type_CheckedChanged);
             // 
             // comboBox2
             // 

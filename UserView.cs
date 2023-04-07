@@ -766,6 +766,8 @@ namespace 簡易倉儲系統
         {
             if (textBox1.Text == "")
                 return;
+            if (textBox1.Text == "0")
+                return;
             if (!Double.TryParse(textBox1.Text, out Double _buffDouble))
             {
                 MessageBox.Show("請輸入數字");
@@ -1192,8 +1194,10 @@ namespace 簡易倉儲系統
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (salesArea == radioButton9.Text.Split('(')[0])
-                salesArea += "_" + comboBox2.Text;
+            if (comboBox2.SelectedIndex == 0)
+                salesArea = radioButton9.Text.Split('(')[0];
+            else if (salesArea.Split('_')[0] == radioButton9.Text.Split('(')[0])
+                salesArea = radioButton9.Text.Split('(')[0] + "_" + comboBox2.Text;
             textBox1.Focus();
         }
     }
