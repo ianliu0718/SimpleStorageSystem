@@ -1171,8 +1171,8 @@ namespace 簡易倉儲系統
                 return;
             else if (comboBox2.Focused)
                 return;
-            if (!textBox1.Focused) 
-                textBox1.Focus();
+            //if (!textBox1.Focused) 
+            //    textBox1.Focus();
         }
 
         private void button1_Enter(object sender, EventArgs e)

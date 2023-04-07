@@ -1,6 +1,7 @@
 ﻿using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
 using Spire.Pdf.Graphics;
 using Spire.Xls.Core;
@@ -709,8 +710,8 @@ namespace 簡易倉儲系統
                     checkBox4.Checked = true;
                     checkBox4.Enabled = true;
                     checkBox4.Visible = true;
-                    button7.Enabled = false;
-                    button7.Visible = false;
+                    button7.Enabled = true;
+                    button7.Visible = true;
                     button8.Enabled = false;
                     button8.Visible = false; 
                     this.Column10.HeaderText = "日期";
@@ -1132,25 +1133,53 @@ namespace 簡易倉儲系統
             try
             {
                 log.LogMessage("已付修改 開始", enumLogType.Trace);
-                DateTime _now = DateTime.Now;
-                string _No = dataGridView4.Rows[0].Cells[0].Value.ToString();
-                string _UpdateSQL = $@"UPDATE SalesRecord SET PaidTime = '{_now.ToString("yyyy-MM-dd HH:mm:ss")}'
-                            , Paid = '{(int)Math.Round(Convert.ToDouble(label23.Text), 0, MidpointRounding.AwayFromZero)}'
-                            WHERE No = '{_No}'";
 
-                dB_SQLite.Manipulate(DB_Path, _UpdateSQL);
-                string _SelectSQL = $@"SELECT No, Time, Name, Type, Count, UnitPrice, Unit, 
+                string _No = "";
+                if (Inquire == "單號") 
+                {
+                    _No = dataGridView4.Rows[0].Cells[0].Value.ToString();
+                    UpdateNoPaid(_No, label23.Text);
+
+                    string _SelectSQL = $@"SELECT No, Time, Name, Type, Count, UnitPrice, Unit, 
                         SalesArea, Paid, (Count * UnitPrice)AS Unpaid FROM SalesRecord  
                         WHERE No = '{_No}';";
-                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, _SelectSQL), dataGridView4);
+                    DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, _SelectSQL), dataGridView4);
+                }
+                else if (Inquire == "整合")
+                {
+                    DataGridViewRow row = new DataGridViewRow();
+                    foreach (DataGridViewRow _row in dataGridView4.Rows)
+                    {
+                        UpdateNoPaid(_row.Cells[0].Value.ToString(), _row.Cells[9].Value.ToString());
+                        _row.Cells[8].Value = _row.Cells[9].Value.ToString();
+                    }
+                }
 
-                log.LogMessage("已付修改 成功路徑：" + DB_Path + "\r\n語法：" + _UpdateSQL, enumLogType.Trace);
-                log.LogMessage("已付修改 成功路徑：" + DB_Path + "\r\n語法：" + _UpdateSQL, enumLogType.Info);
+                log.LogMessage("已付修改 成功路徑：" + DB_Path, enumLogType.Trace);
+                log.LogMessage("已付修改 成功路徑：" + DB_Path, enumLogType.Info);
             }
             catch (Exception ee)
             {
                 log.LogMessage("已付修改 失敗：" + ee.Message, enumLogType.Error);
                 MessageBox.Show("已付修改 失敗：" + ee.Message);
+            }
+        }
+        //單號已付
+        private void UpdateNoPaid(string No, string Paid)
+        {
+            try
+            {
+                DateTime _now = DateTime.Now;
+                string _UpdateSQL = $@"UPDATE SalesRecord SET PaidTime = '{_now.ToString("yyyy-MM-dd HH:mm:ss")}'
+                            , Paid = '{(int)Math.Round(Convert.ToDouble(Paid), 0, MidpointRounding.AwayFromZero)}'
+                            WHERE No = '{No}'";
+
+                dB_SQLite.Manipulate(DB_Path, _UpdateSQL);
+                log.LogMessage("已付修改 成功路徑：" + DB_Path + "\r\n語法：" + _UpdateSQL, enumLogType.Trace);
+            }
+            catch (Exception ee)
+            {
+                throw ee;
             }
         }
 
