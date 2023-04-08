@@ -46,6 +46,9 @@ namespace 簡易倉儲系統.EssentialTool
                     writer.WriteElementString("販售地區3", _販售地區3);
                     writer.WriteElementString("類型3", _類型3);
                     writer.WriteElementString("SQL語法", _SQL語法);
+                    writer.WriteElementString("廠商標題1", _廠商標題1);
+                    writer.WriteElementString("廠商標題2", _廠商標題2);
+                    writer.WriteElementString("廠商標題3", _廠商標題3);
                     writer.WriteEndElement();
                     writer.Flush();
                     writer.Close();
@@ -54,6 +57,102 @@ namespace 簡易倉儲系統.EssentialTool
             catch// (Exception ex)
             {
                 throw;
+            }
+        }
+
+        private static string _廠商標題3 = "";
+        /// <summary>
+        /// 廠商標題3
+        /// </summary>
+        public static String 廠商標題3
+        {
+            get
+            {
+                String tmpValue = null;
+                try
+                {
+                    Config.getConfigValue("廠商標題3", out tmpValue);
+                }
+                catch (Exception ee)
+                {
+                    if (ee.Message == "查無廠商標題3此參數設定")
+                    {
+                        Config.setConfigValue("廠商標題3", _廠商標題3);
+                        tmpValue = _廠商標題3;
+                    }
+                }
+
+                return tmpValue;
+            }
+            set
+            {
+                try
+                { Config.setConfigValue("廠商標題3", value); }
+                catch { }
+            }
+        }
+
+        private static string _廠商標題2 = "";
+        /// <summary>
+        /// 廠商標題2
+        /// </summary>
+        public static String 廠商標題2
+        {
+            get
+            {
+                String tmpValue = null;
+                try
+                {
+                    Config.getConfigValue("廠商標題2", out tmpValue);
+                }
+                catch (Exception ee)
+                {
+                    if (ee.Message == "查無廠商標題2此參數設定")
+                    {
+                        Config.setConfigValue("廠商標題2", _廠商標題2);
+                        tmpValue = _廠商標題2;
+                    }
+                }
+
+                return tmpValue;
+            }
+            set
+            {
+                try
+                { Config.setConfigValue("廠商標題2", value); }
+                catch { }
+            }
+        }
+
+        private static string _廠商標題1 = "";
+        /// <summary>
+        /// 廠商標題1
+        /// </summary>
+        public static String 廠商標題1
+        {
+            get
+            {
+                String tmpValue = null;
+                try
+                {
+                    Config.getConfigValue("廠商標題1", out tmpValue);
+                }
+                catch (Exception ee)
+                {
+                    if (ee.Message == "查無廠商標題1此參數設定")
+                    {
+                        Config.setConfigValue("廠商標題1", _廠商標題1);
+                        tmpValue = _廠商標題1;
+                    }
+                }
+
+                return tmpValue;
+            }
+            set
+            {
+                try
+                { Config.setConfigValue("廠商標題1", value); }
+                catch { }
             }
         }
 

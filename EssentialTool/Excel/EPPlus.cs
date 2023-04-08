@@ -84,6 +84,20 @@ namespace 簡易倉儲系統.EssentialTool.Excel
             GetEndCell();
         }
 
+        /// <summary>儲存格置中</summary>
+        public void ExcelHorizontalAlignment(int row, int col, OfficeOpenXml.Style.ExcelHorizontalAlignment excelHorizontalAlignment)
+        {
+            Sheet.Cells[row, col].Style.HorizontalAlignment = excelHorizontalAlignment;
+        }
+
+        /// <summary>儲存格字體大小</summary>
+        public void FontSize(int row, int col, float size, Boolean isBold, ExcelBorderStyle excelBorderStyle)
+        {
+            Sheet.Cells[row, col].Style.Font.Size = size;
+            Sheet.Cells[row, col].Style.Font.Bold = isBold;
+            Sheet.Cells[row, col].Style.Border.BorderAround(excelBorderStyle);
+        }
+
         /// <summary>合併儲存格</summary>
         public void MergeColumn(int row1, int col1, int row2, int col2)
         {
