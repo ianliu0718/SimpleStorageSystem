@@ -11,6 +11,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Spire.Xls;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+using static 簡易倉儲系統.EssentialTool.LogToText;
 //using Microsoft.Office.Tools.Excel;
 
 namespace 簡易倉儲系統.EssentialTool.Excel
@@ -27,7 +29,7 @@ namespace 簡易倉儲系統.EssentialTool.Excel
         private ExcelWorksheet Sheet;
 
         /// <summary>加入工作表</summary>
-        public void AddSheet(List<List<MExcelCell>> Table, string SheetName)
+        public void AddSheet(List<List<MExcelCell>> Table, string SheetName, int ColumnWidth = 0)
         {
             //建立一個Sheet，後方為定義Sheet的名稱
             Sheet = Epackage.Workbook.Worksheets.Add(SheetName);
@@ -60,10 +62,16 @@ namespace 簡易倉儲系統.EssentialTool.Excel
             }
 
             //自動調整欄寬
-            for (int i = 1; i <= Table[1].Count; i++)
+            if (Table.Count >= 6)
             {
-                Sheet.Column(i).AutoFit();
-                Sheet.Column(i).Width += 2;
+                for (int i = 1; i <= Table[5].Count; i++)
+                {
+                    Sheet.Column(i).AutoFit();
+                    if (ColumnWidth > 0)
+                        Sheet.Column(i).Width = ColumnWidth;
+                    else
+                        Sheet.Column(i).Width += 2;
+                }
             }
             //高度設定
             for (int i = 1; i <= Table.Count; i++)
@@ -85,7 +93,7 @@ namespace 簡易倉儲系統.EssentialTool.Excel
         }
 
         /// <summary>儲存格置中</summary>
-        public void ExcelHorizontalAlignment(int row, int col, OfficeOpenXml.Style.ExcelHorizontalAlignment excelHorizontalAlignment)
+        public void ExcelCenterCell(int row, int col, OfficeOpenXml.Style.ExcelHorizontalAlignment excelHorizontalAlignment)
         {
             Sheet.Cells[row, col].Style.HorizontalAlignment = excelHorizontalAlignment;
         }

@@ -141,6 +141,7 @@
     <Compile Include="DB\DB_SQLite.cs" />
     <Compile Include="EssentialTool\EncryptionDecryption.cs" />
     <Compile Include="EssentialTool\Excel\EPPlus.cs" />
+    <Compile Include="EssentialTool\Excel\ExcelProcess.cs" />
     <Compile Include="EssentialTool\GetPCMacID.cs" />
     <Compile Include="EssentialTool\LogToText.cs" />
     <Compile Include="EssentialTool\Settings.cs" />
