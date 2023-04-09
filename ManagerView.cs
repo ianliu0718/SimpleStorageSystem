@@ -295,17 +295,17 @@ namespace 簡易倉儲系統
 
                     // 建立資料表 外銷韓國 ExportKoreaUnitPrice
                     createtablestring = @"CREATE TABLE ExportKoreaUnitPrice (Date DateTime, Type1 double, Type2 double
-                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double);";
+                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double);";
                     dB_SQLite.CreateTable(DB_Path, createtablestring);
 
                     // 建立資料表 外銷日本 ExportJapanUnitPrice
                     createtablestring = @"CREATE TABLE ExportJapanUnitPrice (Date DateTime, Type1 double, Type2 double
-                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double);";
+                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double);";
                     dB_SQLite.CreateTable(DB_Path, createtablestring);
 
                     // 建立資料表 超市 ExportSupermarketUnitPrice
                     createtablestring = @"CREATE TABLE ExportSupermarketUnitPrice (Date DateTime, Type1 double, Type2 double
-                    , Type3 double, Type4 double, Type5 double, Type6 double);";
+                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double);";
                     dB_SQLite.CreateTable(DB_Path, createtablestring);
 
                     log.LogMessage("建立資料庫 成功。", enumLogType.Debug);

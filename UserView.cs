@@ -932,6 +932,41 @@ namespace 簡易倉儲系統
                 excelCell.Add(new MExcelCell() { Content = _SalesArea });
                 excelCell.Add(new MExcelCell() { Content = " " });
                 excelCells.Add(excelCell);
+
+                List<ALLTypeModel> typeModels = new List<ALLTypeModel>();
+                foreach (DataGridViewRow row in view.Rows)
+                {
+                    //類型匯入
+                    string _Type = row.Cells[3].Value.ToString();
+                    ALLTypeModel typeModel = typeModels.Find(f => f.Type == _Type);
+                    if (typeModel == null)
+                    {
+                        typeModel = new ALLTypeModel() { Type = _Type };
+                        typeModels.Add(typeModel);
+                    }
+                    //單筆重量加總
+                    typeModel._ALLCount += Convert.ToDouble(row.Cells[4].Value.ToString());
+                }
+                for (int i = 0; i < typeModels.Count; i = i + 3)
+                {
+                    excelCell = new List<MExcelCell>();
+                    excelCell.Add(new MExcelCell() { Content = typeModels[i].Type.ToString() });
+                    excelCell.Add(new MExcelCell() { Content = typeModels[i]._ALLCount.ToString() });
+                    excelCell.Add(new MExcelCell() { Content = " " });
+                    if (i + 1 < typeModels.Count)
+                    {
+                        excelCell.Add(new MExcelCell() { Content = typeModels[i + 1].Type.ToString() });
+                        excelCell.Add(new MExcelCell() { Content = typeModels[i + 1]._ALLCount.ToString() });
+                        excelCell.Add(new MExcelCell() { Content = " " });
+                    }
+                    if (i + 2 < typeModels.Count)
+                    {
+                        excelCell.Add(new MExcelCell() { Content = typeModels[i + 2].Type.ToString() });
+                        excelCell.Add(new MExcelCell() { Content = typeModels[i + 2]._ALLCount.ToString() });
+                        excelCell.Add(new MExcelCell() { Content = " " });
+                    }
+                    excelCells.Add(excelCell);
+                }
                 //空一行
                 excelCells.Add(new List<MExcelCell>());
 
@@ -1128,6 +1163,18 @@ namespace 簡易倉儲系統
                 ePPlus.MergeColumn(7, 2, 7, 3);
                 ePPlus.MergeColumn(7, 5, 7, 6);
                 ePPlus.MergeColumn(7, 8, 7, 9);
+                for (int i = 0; i < typeModels.Count; i = i + 3)
+                {
+                    ePPlus.MergeColumn(8 + (i / 3), 2, 8 + (i / 3), 3);
+                    if (i + 1 < typeModels.Count)
+                    {
+                        ePPlus.MergeColumn(8 + (i / 3), 5, 8 + (i / 3), 6);
+                    }
+                    if (i + 2 < typeModels.Count)
+                    {
+                        ePPlus.MergeColumn(8 + (i / 3), 8, 8 + (i / 3), 9);
+                    }
+                }
                 ePPlus.FontSize(ePPlus.EndCell, 1, 11, false, OfficeOpenXml.Style.ExcelBorderStyle.None);
                 ePPlus.Export(_Path);
                 ePPlus.ChangeExcel2Image(_Path, @".\ianimage.png");  //利用Spire將excel轉換成圖片
