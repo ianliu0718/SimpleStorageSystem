@@ -11,6 +11,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Spire.Xls;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+using static 簡易倉儲系統.EssentialTool.LogToText;
 //using Microsoft.Office.Tools.Excel;
 
 namespace 簡易倉儲系統.EssentialTool.Excel
@@ -27,7 +29,7 @@ namespace 簡易倉儲系統.EssentialTool.Excel
         private ExcelWorksheet Sheet;
 
         /// <summary>加入工作表</summary>
-        public void AddSheet(List<List<MExcelCell>> Table, string SheetName)
+        public void AddSheet(List<List<MExcelCell>> Table, string SheetName, int ColumnWidth = 0)
         {
             //建立一個Sheet，後方為定義Sheet的名稱
             Sheet = Epackage.Workbook.Worksheets.Add(SheetName);
@@ -65,6 +67,16 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                 Sheet.Column(i).AutoFit();
                 Sheet.Column(i).Width += 2;
             }
+            if (ColumnWidth > 0)
+            {
+                if (Table.Count >= 6)
+                {
+                    for (int i = 1; i <= Table[5].Count; i++)
+                    {
+                        Sheet.Column(i).Width = ColumnWidth;
+                    }
+                }
+            }
             //高度設定
             for (int i = 1; i <= Table.Count; i++)
             {
@@ -82,6 +94,20 @@ namespace 簡易倉儲系統.EssentialTool.Excel
             GetBeginCell();
             //取得終點列
             GetEndCell();
+        }
+
+        /// <summary>儲存格置中</summary>
+        public void ExcelCenterCell(int row, int col, OfficeOpenXml.Style.ExcelHorizontalAlignment excelHorizontalAlignment)
+        {
+            Sheet.Cells[row, col].Style.HorizontalAlignment = excelHorizontalAlignment;
+        }
+
+        /// <summary>儲存格字體大小</summary>
+        public void FontSize(int row, int col, float size, Boolean isBold, ExcelBorderStyle excelBorderStyle)
+        {
+            Sheet.Cells[row, col].Style.Font.Size = size;
+            Sheet.Cells[row, col].Style.Font.Bold = isBold;
+            Sheet.Cells[row, col].Style.Border.BorderAround(excelBorderStyle);
         }
 
         /// <summary>合併儲存格</summary>

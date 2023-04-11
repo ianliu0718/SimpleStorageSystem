@@ -1,6 +1,8 @@
 ﻿using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
 using Spire.Pdf.Graphics;
 using Spire.Xls.Core;
@@ -294,17 +296,17 @@ namespace 簡易倉儲系統
 
                     // 建立資料表 外銷韓國 ExportKoreaUnitPrice
                     createtablestring = @"CREATE TABLE ExportKoreaUnitPrice (Date DateTime, Type1 double, Type2 double
-                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double);";
+                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double);";
                     dB_SQLite.CreateTable(DB_Path, createtablestring);
 
                     // 建立資料表 外銷日本 ExportJapanUnitPrice
                     createtablestring = @"CREATE TABLE ExportJapanUnitPrice (Date DateTime, Type1 double, Type2 double
-                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double);";
+                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double);";
                     dB_SQLite.CreateTable(DB_Path, createtablestring);
 
                     // 建立資料表 超市 ExportSupermarketUnitPrice
                     createtablestring = @"CREATE TABLE ExportSupermarketUnitPrice (Date DateTime, Type1 double, Type2 double
-                    , Type3 double, Type4 double, Type5 double, Type6 double);";
+                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double);";
                     dB_SQLite.CreateTable(DB_Path, createtablestring);
 
                     log.LogMessage("建立資料庫 成功。", enumLogType.Debug);
@@ -709,10 +711,10 @@ namespace 簡易倉儲系統
                     checkBox4.Checked = true;
                     checkBox4.Enabled = true;
                     checkBox4.Visible = true;
-                    button7.Enabled = false;
-                    button7.Visible = false;
-                    button8.Enabled = false;
-                    button8.Visible = false; 
+                    button7.Enabled = true;
+                    button7.Visible = true;
+                    button8.Enabled = true;
+                    button8.Visible = true;
                     this.Column10.HeaderText = "日期";
                     dataGridView4.Rows.Clear();
                     checkedListBox1.Items.Clear();
@@ -1132,25 +1134,53 @@ namespace 簡易倉儲系統
             try
             {
                 log.LogMessage("已付修改 開始", enumLogType.Trace);
-                DateTime _now = DateTime.Now;
-                string _No = dataGridView4.Rows[0].Cells[0].Value.ToString();
-                string _UpdateSQL = $@"UPDATE SalesRecord SET PaidTime = '{_now.ToString("yyyy-MM-dd HH:mm:ss")}'
-                            , Paid = '{(int)Math.Round(Convert.ToDouble(label23.Text), 0, MidpointRounding.AwayFromZero)}'
-                            WHERE No = '{_No}'";
 
-                dB_SQLite.Manipulate(DB_Path, _UpdateSQL);
-                string _SelectSQL = $@"SELECT No, Time, Name, Type, Count, UnitPrice, Unit, 
+                string _No = "";
+                if (Inquire == "單號") 
+                {
+                    _No = dataGridView4.Rows[0].Cells[0].Value.ToString();
+                    UpdateNoPaid(_No, label23.Text);
+
+                    string _SelectSQL = $@"SELECT No, Time, Name, Type, Count, UnitPrice, Unit, 
                         SalesArea, Paid, (Count * UnitPrice)AS Unpaid FROM SalesRecord  
                         WHERE No = '{_No}';";
-                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, _SelectSQL), dataGridView4);
+                    DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, _SelectSQL), dataGridView4);
+                }
+                else if (Inquire == "整合")
+                {
+                    DataGridViewRow row = new DataGridViewRow();
+                    foreach (DataGridViewRow _row in dataGridView4.Rows)
+                    {
+                        UpdateNoPaid(_row.Cells[0].Value.ToString(), _row.Cells[9].Value.ToString());
+                        _row.Cells[8].Value = _row.Cells[9].Value.ToString();
+                    }
+                }
 
-                log.LogMessage("已付修改 成功路徑：" + DB_Path + "\r\n語法：" + _UpdateSQL, enumLogType.Trace);
-                log.LogMessage("已付修改 成功路徑：" + DB_Path + "\r\n語法：" + _UpdateSQL, enumLogType.Info);
+                log.LogMessage("已付修改 成功路徑：" + DB_Path, enumLogType.Trace);
+                log.LogMessage("已付修改 成功路徑：" + DB_Path, enumLogType.Info);
             }
             catch (Exception ee)
             {
                 log.LogMessage("已付修改 失敗：" + ee.Message, enumLogType.Error);
                 MessageBox.Show("已付修改 失敗：" + ee.Message);
+            }
+        }
+        //單號已付
+        private void UpdateNoPaid(string No, string Paid)
+        {
+            try
+            {
+                DateTime _now = DateTime.Now;
+                string _UpdateSQL = $@"UPDATE SalesRecord SET PaidTime = '{_now.ToString("yyyy-MM-dd HH:mm:ss")}'
+                            , Paid = '{(int)Math.Round(Convert.ToDouble(Paid), 0, MidpointRounding.AwayFromZero)}'
+                            WHERE No = '{No}'";
+
+                dB_SQLite.Manipulate(DB_Path, _UpdateSQL);
+                log.LogMessage("已付修改 成功路徑：" + DB_Path + "\r\n語法：" + _UpdateSQL, enumLogType.Trace);
+            }
+            catch (Exception ee)
+            {
+                throw ee;
             }
         }
 
@@ -1161,126 +1191,124 @@ namespace 簡易倉儲系統
             try
             {
                 log.LogMessage("匯出Excel 開始", enumLogType.Trace);
+                button8.Enabled = false; 
                 //選取指定的資料夾
                 FolderBrowserDialog folder = new FolderBrowserDialog();
                 if (folder.ShowDialog() != DialogResult.OK)
                     return;
 
+                DataGridView view = dataGridView4;
+                if (view.Rows.Count <= 0)
+                    return;
+
                 EPPlus ePPlus = new EPPlus();
                 List<List<MExcelCell>> excelCells = new List<List<MExcelCell>>();
                 List<MExcelCell> excelCell = new List<MExcelCell>();
-                DataGridView view = dataGridView4;
-                string _No = view.Rows[0].Cells[0].Value.ToString();
-                DateTime _Now = Convert.ToDateTime(view.Rows[0].Cells[1].Value.ToString());
-                string _Name = view.Rows[0].Cells[2].Value.ToString();
-                string _Unit = view.Rows[0].Cells[6].Value.ToString();
-                string _SalesArea = view.Rows[0].Cells[7].Value.ToString();
+                string _Path = "";
+                string _No = "";
+                DateTime _Now = new DateTime();
+                string _Name = "";
+                string _Unit = "";
+                string _SalesArea = "";
 
-                //標頭
-                excelCell.Add(new MExcelCell() { Content = "單號" });
-                excelCell.Add(new MExcelCell() { Content = _No });
-                excelCells.Add(excelCell);
-                excelCell = new List<MExcelCell>();
-                excelCell.Add(new MExcelCell() { Content = "日期" });
-                excelCell.Add(new MExcelCell() { Content = _Now.ToString("yyyy-MM-dd") });
-                excelCells.Add(excelCell);
-                excelCell = new List<MExcelCell>();
-                excelCell.Add(new MExcelCell() { Content = "姓名" });
-                excelCell.Add(new MExcelCell() { Content = _Name });
-                excelCells.Add(excelCell);
-                excelCell = new List<MExcelCell>();
-                excelCell.Add(new MExcelCell() { Content = "單位" });
-                excelCell.Add(new MExcelCell() { Content = _Unit });
-                excelCells.Add(excelCell);
-                excelCell = new List<MExcelCell>();
-                excelCell.Add(new MExcelCell() { Content = "販售地區" });
-                excelCell.Add(new MExcelCell() { Content = _SalesArea });
-                excelCells.Add(excelCell);
-                //空一行
-                excelCells.Add(new List<MExcelCell>());
-
-
-                //頁首
-                List<string> _HideHeader = new List<string>() { "單號", "時間", "姓名", "單位", "販售地區" };
-                excelCell = new List<MExcelCell>();
-                foreach (DataGridViewColumn col in view.Columns)
+                if (Inquire == "單號")
                 {
-                    //隱藏
-                    if (_HideHeader.Contains(col.HeaderText))
-                    {
-                        continue;
-                    }
-                    excelCell.Add(new MExcelCell()
-                    {
-                        Content = col.HeaderText
-                    });
+                    _No = view.Rows[0].Cells[0].Value.ToString();
+                    _Now = Convert.ToDateTime(view.Rows[0].Cells[1].Value.ToString());
+                    _Name = view.Rows[0].Cells[2].Value.ToString();
+                    _Unit = view.Rows[0].Cells[6].Value.ToString();
+                    _SalesArea = view.Rows[0].Cells[7].Value.ToString();
+
+                    ExcelProcess excel = new ExcelProcess(log);
+                    _Path = folder.SelectedPath + $@"\{_No}_{_Name}.xlsx";
+                    excel.ExcelExportImage(view, _Path, _Now, _No, _Name, _Unit, _SalesArea, true);
                 }
-                excelCell.Add(new MExcelCell()
+                else if (Inquire == "整合")
                 {
-                    Content = "價格"
-                });
-                excelCells.Add(excelCell);
-
-                //內容
-                Int32 _ALLPrice = 0;
-                foreach (DataGridViewRow row in view.Rows)
-                {
-                    Double _unitPrice = 0;
-                    Double _count = 1;
+                    //廠商標題
+                    excelCell.Add(new MExcelCell() { Content = Settings.廠商標題1 });
+                    excelCells.Add(excelCell);
+                    //空一行
+                    excelCells.Add(new List<MExcelCell>());
                     excelCell = new List<MExcelCell>();
-                    foreach (DataGridViewCell cell in row.Cells)
+                    excelCell.Add(new MExcelCell() { Content = Settings.廠商標題2 });
+                    excelCells.Add(excelCell);
+                    excelCell = new List<MExcelCell>();
+                    excelCell.Add(new MExcelCell() { Content = Settings.廠商標題3 });
+                    excelCells.Add(excelCell);
+                    //空一行
+                    excelCells.Add(new List<MExcelCell>());
+
+                    //頁首
+                    List<string> _HideHeader = new List<string>() { "類型", "數量", "單價", "單位", "販售地區" };
+                    excelCell = new List<MExcelCell>();
+                    foreach (DataGridViewColumn col in view.Columns)
                     {
                         //隱藏
-                        if (_HideHeader.Contains(view.Columns[cell.ColumnIndex].HeaderText))
+                        if (_HideHeader.Contains(col.HeaderText))
                         {
                             continue;
                         }
-                        //列印隱藏單價/保存單價價格
-                        if (view.Columns[cell.ColumnIndex].HeaderText == "單價")
-                        {
-                            _unitPrice = Convert.ToDouble(cell.Value);
-                        }
-                        //保存數量
-                        else if (view.Columns[cell.ColumnIndex].HeaderText == "數量")
-                        {
-                            _count = Convert.ToDouble(cell.Value);
-                        }
                         excelCell.Add(new MExcelCell()
                         {
-                            Content = cell.Value
+                            Content = col.HeaderText
                         });
+                        if (col.HeaderText == "姓名")
+                        {
+                            excelCell.Add(new MExcelCell() { Content = " " });
+                        }
                     }
-                    //價格加總
-                    _ALLPrice += (int)Math.Round(Convert.ToDouble(_unitPrice * _count), 0, MidpointRounding.AwayFromZero);
-                    excelCell.Add(new MExcelCell()
-                    {
-                        Content = (int)Math.Round(Convert.ToDouble(_unitPrice * _count), 0, MidpointRounding.AwayFromZero)
-                    });
                     excelCells.Add(excelCell);
-                }
-                //總價
-                excelCells.Add(new List<MExcelCell>()); //空一行
-                excelCell = new List<MExcelCell>();
-                for (int i = 0; i < view.Columns.Count; i++)
-                {
-                    //隱藏
-                    if (_HideHeader.Contains(view.Columns[i].HeaderText))
+
+                    //內容
+                    foreach (DataGridViewRow row in view.Rows)
                     {
-                        continue;
+                        excelCell = new List<MExcelCell>();
+                        foreach (DataGridViewCell cell in row.Cells)
+                        {
+                            //隱藏
+                            if (_HideHeader.Contains(view.Columns[cell.ColumnIndex].HeaderText))
+                            {
+                                continue;
+                            }
+                            excelCell.Add(new MExcelCell()
+                            {
+                                Content = cell.Value
+                            });
+                            if (view.Columns[cell.ColumnIndex].HeaderText == "姓名")
+                            {
+                                excelCell.Add(new MExcelCell() { Content = " " });
+                            }
+                        }
+                        excelCells.Add(excelCell);
                     }
-                    excelCell.Add(new MExcelCell());
+                    //空一行
+                    excelCells.Add(new List<MExcelCell>());
+                    excelCell = new List<MExcelCell>();
+                    excelCell.Add(new MExcelCell() { Content = "民智自動化有限公司" });
+                    excelCells.Add(excelCell);
+                    //匯出成檔案
+                    ePPlus.AddSheet(excelCells, "整合", 16);
+                    ePPlus.MergeColumn(1, 1, 2, 6);
+                    ePPlus.FontSize(1, 1, 36, true, OfficeOpenXml.Style.ExcelBorderStyle.None);
+                    ePPlus.ExcelCenterCell(1, 1, OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous);
+                    ePPlus.MergeColumn(3, 1, 3, 6);
+                    ePPlus.FontSize(3, 1, 14, false, OfficeOpenXml.Style.ExcelBorderStyle.None);
+                    ePPlus.ExcelCenterCell(3, 1, OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous);
+                    ePPlus.MergeColumn(4, 1, 4, 6);
+                    ePPlus.FontSize(4, 1, 14, false, OfficeOpenXml.Style.ExcelBorderStyle.None);
+                    ePPlus.ExcelCenterCell(4, 1, OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous);
+                    for (int i = 0; i <= view.Rows.Count; i++) 
+                    {
+                        ePPlus.MergeColumn(i + 6, 3, i + 6, 4);
+                    }
+                    ePPlus.MergeColumn(ePPlus.EndCell, 1, ePPlus.EndCell, 3);
+                    ePPlus.FontSize(ePPlus.EndCell, 1, 11, false, OfficeOpenXml.Style.ExcelBorderStyle.None);
+                    _Path = folder.SelectedPath + $@"\整合_{DateTime.Now.ToString("yyyyMMddhhmmss")}.xlsx";
+                    ePPlus.Export(_Path);
                 }
-                //只要扣掉一列就好，因為有一列是加總出來的價格，不會在列表裡
-                excelCell.Remove(excelCell[excelCell.Count - 1]);
-                excelCell.Add(new MExcelCell() { Content = "總價" });
-                excelCell.Add(new MExcelCell() { Content = _ALLPrice });
-                excelCells.Add(excelCell);
 
-                //匯出成檔案
-                string _Path = folder.SelectedPath + $@"\{_No}_{_Name}.xlsx";
-                ePPlus.AddSheet(excelCells, _No);
-                ePPlus.Export(_Path);
-
+                button8.Enabled = true;
                 log.LogMessage("匯出Excel 成功路徑：" + _Path, enumLogType.Trace);
                 log.LogMessage("匯出Excel 成功", enumLogType.Info);
             }

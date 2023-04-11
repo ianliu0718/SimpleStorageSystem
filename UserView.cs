@@ -1,6 +1,8 @@
 ﻿using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Information;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
+using OfficeOpenXml.Style;
 using Spire.Pdf.Exporting.XPS.Schema;
 using System;
 using System.Collections.Generic;
@@ -885,164 +887,42 @@ namespace 簡易倉儲系統
             }
             #endregion
 
-            #region 列印
-            try
+            ExcelProcess excel = new ExcelProcess(log);
+            if (excel.ExcelExportImage(dataGridView1, $@"{Settings.Excel路徑}{_No}_{Name}.xlsx", _Now, _No, _Name, _Unit, _SalesArea, panel1.Visible))
             {
-                EPPlus ePPlus = new EPPlus();
-                string _Path = $@"{Settings.Excel路徑}{_No}_{comboBox1.Text}.xlsx";
-                List<List<MExcelCell>> excelCells = new List<List<MExcelCell>>();
-                List<MExcelCell> excelCell = new List<MExcelCell>();
-                DataGridView view = dataGridView1;
-
-                //標頭
-                excelCell.Add(new MExcelCell() { Content = "單號" });
-                excelCell.Add(new MExcelCell() { Content = _No });
-                excelCells.Add(excelCell);
-                excelCell = new List<MExcelCell>();
-                excelCell.Add(new MExcelCell() { Content = "日期" });
-                excelCell.Add(new MExcelCell() { Content = _Now.ToString("yyyy-MM-dd") });
-                excelCells.Add(excelCell);
-                excelCell = new List<MExcelCell>();
-                excelCell.Add(new MExcelCell() { Content = "姓名" });
-                excelCell.Add(new MExcelCell() { Content = _Name });
-                excelCells.Add(excelCell);
-                excelCell = new List<MExcelCell>();
-                excelCell.Add(new MExcelCell() { Content = "單位" });
-                excelCell.Add(new MExcelCell() { Content = _Unit });
-                excelCells.Add(excelCell);
-                excelCell = new List<MExcelCell>();
-                excelCell.Add(new MExcelCell() { Content = "販售地區" });
-                excelCell.Add(new MExcelCell() { Content = _SalesArea });
-                excelCells.Add(excelCell);
-                //空一行
-                excelCells.Add(new List<MExcelCell>());
-
-
-                //頁首
-                List<string> _HideHeader = new List<string>() { "單號", "時間", "姓名", "單位", "販售地區" };
-                excelCell = new List<MExcelCell>();
-                foreach (DataGridViewColumn col in view.Columns)
+                try
                 {
-                    //隱藏
-                    if (_HideHeader.Contains(col.HeaderText))
-                    {
-                        continue;
-                    }
-                    //列印隱藏單價
-                    if (col.HeaderText == "單價" && !panel1.Visible)
-                    {
-                        continue;
-                    }
-                    excelCell.Add(new MExcelCell()
-                    {
-                        Content = col.HeaderText
-                    });
+                    #region 列印
+                    //宣告一個印表機
+                    PrintDocument printDocument = new PrintDocument();
+                    //設定印表機邊界
+                    Margins margin = new Margins(0, 0, 0, 0);
+                    printDocument.DefaultPageSettings.Margins = margin;
+                    //印表機事件設定
+                    printDocument.PrintPage += PrintDocument_PrintPage;
+                    printDocument.PrinterSettings.PrinterName = Settings.印表機名稱;
+                    //printDocument.DefaultPageSettings.Landscape = true;           //此处更改页面为横向打印 
+                    _Page = 1;
+                    printDocument.Print();   //列印
+                    #endregion
                 }
-                //列印顯示價格
-                if (panel1.Visible)
+                catch (Exception ee)
                 {
-                    excelCell.Add(new MExcelCell()
-                    {
-                        Content = "價格"
-                    });
+                    log.LogMessage("列印 失敗：\r\n" + ee.Message, enumLogType.Error);
+                    button1.Enabled = true;
+                    dB_SQLite.Manipulate(DB_Path, $@"DELETE FROM SalesRecord WHERE No = '{_No}';");
+                    _No = "";
                 }
-                excelCells.Add(excelCell);
-
-                //內容
-                Int32 _ALLPrice = 0;
-                foreach (DataGridViewRow row in view.Rows)
-                {
-                    Double _unitPrice = 0;
-                    Double _count = 1;
-                    excelCell = new List<MExcelCell>();
-                    foreach (DataGridViewCell cell in row.Cells)
-                    {
-                        //隱藏
-                        if (_HideHeader.Contains(view.Columns[cell.ColumnIndex].HeaderText))
-                        {
-                            continue;
-                        }
-                        //列印隱藏單價/保存單價價格
-                        if (view.Columns[cell.ColumnIndex].HeaderText == "單價")
-                        {
-                            if (!panel1.Visible)
-                                continue;
-                            _unitPrice = Convert.ToDouble(cell.Value);
-                        }
-                        //保存數量
-                        else if (view.Columns[cell.ColumnIndex].HeaderText == "數量")
-                        {
-                            _count = Convert.ToDouble(cell.Value);
-                        }
-                        excelCell.Add(new MExcelCell()
-                        {
-                            Content = cell.Value
-                        });
-                    }
-                    //價格加總
-                    if (panel1.Visible)
-                    {
-                        _ALLPrice += (int)Math.Round(Convert.ToDouble(_unitPrice * _count), 0, MidpointRounding.AwayFromZero);
-                        excelCell.Add(new MExcelCell()
-                        {
-                            Content = (int)Math.Round(Convert.ToDouble(_unitPrice * _count), 0, MidpointRounding.AwayFromZero)
-                        });
-                    }
-                    excelCells.Add(excelCell);
-                }
-                //總價
-                if (panel1.Visible)
-                {
-                    //空一行
-                    excelCells.Add(new List<MExcelCell>());
-                    excelCell = new List<MExcelCell>();
-                    for (int i = 0; i < view.Columns.Count; i++)
-                    {
-                        //隱藏
-                        if (_HideHeader.Contains(view.Columns[i].HeaderText))
-                        {
-                            continue;
-                        }
-                        excelCell.Add(new MExcelCell());
-                    }
-                    //只要扣掉一列就好，因為有一列是加總出來的價格，不會在列表裡
-                    excelCell.Remove(excelCell[excelCell.Count - 1]);
-                    excelCell.Add(new MExcelCell() { Content = "總價" });
-                    excelCell.Add(new MExcelCell() { Content = _ALLPrice });
-                    excelCells.Add(excelCell);
-                }
-
-                //匯出成檔案
-                ePPlus.AddSheet(excelCells, _No);
-                ePPlus.Export(_Path);
-                ePPlus.ChangeExcel2Image(_Path, @".\ianimage.png");  //利用Spire將excel轉換成圖片
-
-                //宣告一個印表機
-                PrintDocument printDocument = new PrintDocument();
-                //設定印表機邊界
-                Margins margin = new Margins(0, 0, 0, 0);
-                printDocument.DefaultPageSettings.Margins = margin;
-                //印表機事件設定
-                printDocument.PrintPage += PrintDocument_PrintPage;
-                printDocument.PrinterSettings.PrinterName = Settings.印表機名稱;
-                //printDocument.DefaultPageSettings.Landscape = true;           //此处更改页面为横向打印 
-                printDocument.Print();   //列印
-
-                log.LogMessage("確認_列印 成功路徑：" + _Path, enumLogType.Trace);
-                log.LogMessage("確認_列印 成功", enumLogType.Info);
             }
-            catch (Exception ee)
+            else
             {
-                MessageBox.Show("列印 失敗：\r\n" + ee.Message);
-                log.LogMessage("確認_列印 失敗：\r\n" + ee.Message, enumLogType.Error);
                 button1.Enabled = true;
-                return;
+                dB_SQLite.Manipulate(DB_Path, $@"DELETE FROM SalesRecord WHERE No = '{_No}';");
+                _No = "";
             }
-            #endregion
 
             comboBox1.SelectedIndex = -1;
             label5.Text = _No;
-            _Page = 1;
         }
         int _Page = 1;
         int _PageHeight = 0;
@@ -1092,15 +972,16 @@ namespace 簡易倉儲系統
                         newarea.Height = _PageHeight;
                     }
                 }
-                
 
-                int _width = newarea.Width;
-                if (newarea.Width > 810)
+
+                int _width = newarea.Width + 60;
+                newarea.Width = newarea.Width + 60;
+                if (_width > 810)
                 {
                     _width = 810;
                     newarea.Width = 810;
                 }
-                e.Graphics.DrawImage(bitmap, newarea, 0, _Y, _width, newarea.Height, GraphicsUnit.Pixel);
+                e.Graphics.DrawImage(bitmap, newarea, 0 - 60, _Y, _width, newarea.Height, GraphicsUnit.Pixel);
                 _Page++;
                 if (!e.HasMorePages)
                     button1.Enabled = true;
@@ -1171,8 +1052,8 @@ namespace 簡易倉儲系統
                 return;
             else if (comboBox2.Focused)
                 return;
-            if (!textBox1.Focused) 
-                textBox1.Focus();
+            //if (!textBox1.Focused) 
+            //    textBox1.Focus();
         }
 
         private void button1_Enter(object sender, EventArgs e)
