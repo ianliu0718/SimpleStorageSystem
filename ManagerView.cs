@@ -4,6 +4,7 @@ using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
+using Spire.Pdf.Exporting.XPS.Schema;
 using Spire.Pdf.Graphics;
 using Spire.Xls.Core;
 using System;
@@ -682,6 +683,8 @@ namespace 簡易倉儲系統
                     button8.Enabled = true;
                     button8.Visible = true;
                     this.Column10.HeaderText = "時間";
+                    if (!dataGridView4.Columns[3].Visible)
+                        dataGridView4.Rows.Clear();
                     dataGridView4.Columns[3].Visible = true;
                     dataGridView4.Columns[4].Visible = true;
                     dataGridView4.Columns[5].Visible = true;
@@ -699,6 +702,8 @@ namespace 簡易倉儲系統
                     button8.Enabled = false;
                     button8.Visible = false;
                     this.Column10.HeaderText = "時間";
+                    if (!dataGridView4.Columns[3].Visible)
+                        dataGridView4.Rows.Clear();
                     dataGridView4.Columns[3].Visible = true;
                     dataGridView4.Columns[4].Visible = true;
                     dataGridView4.Columns[5].Visible = true;
@@ -792,7 +797,11 @@ namespace 簡易倉儲系統
                         label28.Text = "";
                         dataGridView4.Rows.Clear();
                         checkedListBox1.Items.Clear();
-                        _SQL = $@"SELECT No, Time, Name, Paid, (Count * UnitPrice)AS Unpaid FROM SalesRecord WHERE 1 = 1 ";
+                        checkedListBox1.Items.Add("已付款", true);
+                        checkedListBox1.Items.Add("未付款", true);
+                        _SQL = $@"SELECT No, MAX(Time)AS'Date', MAX(Name)AS'Name', ''AS'Buff1', ''AS'Buff2', ''AS'Buff3', 
+                            ''AS'Buff4', ''AS'Buff5', MAX(Paid)AS'Paid', SUM(Count * UnitPrice)AS Unpaid 
+                            FROM SalesRecord WHERE 1 = 1 ";
                         if (textBox21.Text != "")
                         {
                             _SQL += $@" AND Name LIKE '%{textBox21.Text}%' ";
@@ -801,46 +810,50 @@ namespace 簡易倉儲系統
                         {
                             _SQL += $@" AND Time between '{dateTimePicker1.Value.ToString("yyyy-MM-dd")}' AND '{dateTimePicker2.Value.AddDays(1).ToString("yyyy-MM-dd")}' ";
                         }
+                        _SQL += $@"GROUP BY No;";
                         _SelectDT = dB_SQLite.GetDataTable(DB_Path, _SQL);
-                        DataGridView view = dataGridView4;
-                        List<Integrate> _integrate = new List<Integrate>();
-                        for (int i = 0; i < _SelectDT.Rows.Count; i++)
-                        {
-                            Integrate _item = _integrate.Find(f => f.No == _SelectDT.Rows[i][0].ToString());
-                            if (_item == null)
-                            {
-                                _item = new Integrate()
-                                {
-                                    No = _SelectDT.Rows[i][0].ToString(),
-                                    Date = DateTime.Parse(_SelectDT.Rows[i][1].ToString()).ToString("yyyy-MM-dd"),
-                                    Name = _SelectDT.Rows[i][2].ToString(),
-                                    Paid = _SelectDT.Rows[i][3].ToString()
-                                };
-                                _integrate.Add(_item);
-                            }
-                            _item.Unpaid += ((int)Math.Round(Convert.ToDouble(_SelectDT.Rows[i][4].ToString()), 0, MidpointRounding.AwayFromZero));
-                        }
-                        foreach (Integrate integrate in _integrate)
-                        {
-                            //每一列分開寫入DataGridView
-                            DataGridViewRow _data = new DataGridViewRow();
-                            _data.CreateCells(view);
-                            List<string> strings = new List<string>();
-                            strings.Insert(0, integrate.No.ToString());
-                            strings.Insert(1, integrate.Date.ToString());
-                            strings.Insert(2, integrate.Name.ToString());
-                            strings.Insert(3, "");
-                            strings.Insert(4, "");
-                            strings.Insert(5, "");
-                            strings.Insert(6, "");
-                            strings.Insert(7, "");
-                            strings.Insert(8, integrate.Paid.ToString());
-                            strings.Insert(9, integrate.Unpaid.ToString());
-                            _data.SetValues(strings.ToArray());
-                            view.Rows.Insert(0, _data);
-                            view.Rows[0].Selected = true;
-                            view.CurrentCell = view.Rows[0].Cells[0];
-                        }
+                        //DataGridView view = dataGridView4;
+                        //List<Integrate> _integrate = new List<Integrate>();
+                        //for (int i = 0; i < _SelectDT.Rows.Count; i++)
+                        //{
+                        //    Integrate _item = _integrate.Find(f => f.No == _SelectDT.Rows[i][0].ToString());
+                        //    if (_item == null)
+                        //    {
+                        //        _item = new Integrate()
+                        //        {
+                        //            No = _SelectDT.Rows[i][0].ToString(),
+                        //            Date = DateTime.Parse(_SelectDT.Rows[i][1].ToString()).ToString("yyyy-MM-dd"),
+                        //            Name = _SelectDT.Rows[i][2].ToString(),
+                        //            Paid = _SelectDT.Rows[i][3].ToString()
+                        //        };
+                        //        _integrate.Add(_item);
+                        //    }
+                        //    _item.Unpaid += ((int)Math.Round(Convert.ToDouble(_SelectDT.Rows[i][4].ToString()), 0, MidpointRounding.AwayFromZero));
+                        //}
+                        //foreach (Integrate integrate in _integrate)
+                        //{
+                        //    //每一列分開寫入DataGridView
+                        //    DataGridViewRow _data = new DataGridViewRow();
+                        //    _data.CreateCells(view);
+                        //    List<string> strings = new List<string>();
+                        //    strings.Insert(0, integrate.No.ToString());
+                        //    strings.Insert(1, integrate.Date.ToString());
+                        //    strings.Insert(2, integrate.Name.ToString());
+                        //    strings.Insert(3, "");
+                        //    strings.Insert(4, "");
+                        //    strings.Insert(5, "");
+                        //    strings.Insert(6, "");
+                        //    strings.Insert(7, "");
+                        //    strings.Insert(8, integrate.Paid.ToString());
+                        //    strings.Insert(9, integrate.Unpaid.ToString());
+                        //    _data.SetValues(strings.ToArray());
+                        //    view.Rows.Insert(0, _data);
+                        //    view.Rows[0].Selected = true;
+                        //    view.CurrentCell = view.Rows[0].Cells[0];
+                        //}
+                        DatatableToDatagridview(_SelectDT, dataGridView4);
+                        log.LogMessage("確認整合搜尋 成功 語法：" + _SQL, enumLogType.Info);
+                        log.LogMessage("確認整合搜尋 成功 語法：" + _SQL, enumLogType.Trace);
                         return;
                     }
                     _SelectDT = dB_SQLite.GetDataTable(DB_Path, _SQL);
@@ -905,6 +918,7 @@ namespace 簡易倉儲系統
                 DataTable dt = _SelectDT.Clone();
                 Boolean _已付款 = false;
                 Boolean _未付款 = false;
+                label28.Text = "";
                 List<ALLTypeModel> typeModels = new List<ALLTypeModel>();
                 for (int i = 0; i < checkedListBox1.Items.Count; i++)
                 {
@@ -913,6 +927,7 @@ namespace 簡易倉儲系統
                         DataRow[] rows;
                         string _Text = checkedListBox1.GetItemText(checkedListBox1.Items[i]);
                         string _SelectText = "Type = '" + _Text + "' ";
+
                         if (_Text == "已付款")
                         {
                             _已付款 = true;
@@ -933,7 +948,6 @@ namespace 簡易倉儲系統
                         else
                             break;
 
-                        label28.Text = "";
                         typeModels.Add(new ALLTypeModel() { Type = _Text });
                         foreach (DataRow row in rows)
                         {
@@ -947,14 +961,29 @@ namespace 簡易倉儲系統
                         }
                     }
                 }
-                if (typeModels.Count <= 0)
-                    label28.Text = "";
                 foreach (ALLTypeModel item in typeModels)
                 {
                     label28.Text += "【" + item.Type + "：" + item._ALLCount + "】";
                 }
                 label23.Text = _ALLUnitPrice.ToString();
                 label25.Text = _ALLCount.ToString();
+
+                if (Inquire == "整合")
+                {
+                    DataRow[] rows;
+                    if (_已付款 && _未付款)
+                        rows = _SelectDT.Select();
+                    else if (_已付款)
+                        rows = _SelectDT.Select("(Paid is not null)");
+                    else if (_未付款)
+                        rows = _SelectDT.Select("(Paid is null)");
+                    else
+                        rows = new DataRow[] { _SelectDT.Rows[0] };
+                    foreach (DataRow row in rows)
+                    {
+                        dt.ImportRow(row);
+                    }
+                }
                 DatatableToDatagridview(dt, dataGridView4);
 
                 log.LogMessage("類型點選變更 成功 總金額：" + label23.Text + "\t總重量：" + label25.Text, enumLogType.Info);
