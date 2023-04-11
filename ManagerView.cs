@@ -66,6 +66,7 @@ namespace 簡易倉儲系統
             label25.Text = "";
             label28.Text = ""; 
             checkedListBox1.Items.Clear();
+            checkedListBox2.Items.Clear();
             DB_Path = Settings.資料庫路徑 + @"data.db";
 
             if (!string.IsNullOrEmpty(Settings.SQL語法))
@@ -430,6 +431,7 @@ namespace 簡易倉儲系統
             //清空搜尋頁
             dataGridView4.Rows.Clear();
             checkedListBox1.Items.Clear();
+            checkedListBox2.Items.Clear();
             _SelectDT = new DataTable();
 
             //清空暫存
@@ -723,6 +725,7 @@ namespace 簡易倉儲系統
                     this.Column10.HeaderText = "日期";
                     dataGridView4.Rows.Clear();
                     checkedListBox1.Items.Clear();
+                    checkedListBox2.Items.Clear();
                     label28.Text = "";
                     label25.Text = "";
                     label23.Text = "";
@@ -812,45 +815,6 @@ namespace 簡易倉儲系統
                         }
                         _SQL += $@"GROUP BY No;";
                         _SelectDT = dB_SQLite.GetDataTable(DB_Path, _SQL);
-                        //DataGridView view = dataGridView4;
-                        //List<Integrate> _integrate = new List<Integrate>();
-                        //for (int i = 0; i < _SelectDT.Rows.Count; i++)
-                        //{
-                        //    Integrate _item = _integrate.Find(f => f.No == _SelectDT.Rows[i][0].ToString());
-                        //    if (_item == null)
-                        //    {
-                        //        _item = new Integrate()
-                        //        {
-                        //            No = _SelectDT.Rows[i][0].ToString(),
-                        //            Date = DateTime.Parse(_SelectDT.Rows[i][1].ToString()).ToString("yyyy-MM-dd"),
-                        //            Name = _SelectDT.Rows[i][2].ToString(),
-                        //            Paid = _SelectDT.Rows[i][3].ToString()
-                        //        };
-                        //        _integrate.Add(_item);
-                        //    }
-                        //    _item.Unpaid += ((int)Math.Round(Convert.ToDouble(_SelectDT.Rows[i][4].ToString()), 0, MidpointRounding.AwayFromZero));
-                        //}
-                        //foreach (Integrate integrate in _integrate)
-                        //{
-                        //    //每一列分開寫入DataGridView
-                        //    DataGridViewRow _data = new DataGridViewRow();
-                        //    _data.CreateCells(view);
-                        //    List<string> strings = new List<string>();
-                        //    strings.Insert(0, integrate.No.ToString());
-                        //    strings.Insert(1, integrate.Date.ToString());
-                        //    strings.Insert(2, integrate.Name.ToString());
-                        //    strings.Insert(3, "");
-                        //    strings.Insert(4, "");
-                        //    strings.Insert(5, "");
-                        //    strings.Insert(6, "");
-                        //    strings.Insert(7, "");
-                        //    strings.Insert(8, integrate.Paid.ToString());
-                        //    strings.Insert(9, integrate.Unpaid.ToString());
-                        //    _data.SetValues(strings.ToArray());
-                        //    view.Rows.Insert(0, _data);
-                        //    view.Rows[0].Selected = true;
-                        //    view.CurrentCell = view.Rows[0].Cells[0];
-                        //}
                         DatatableToDatagridview(_SelectDT, dataGridView4);
                         log.LogMessage("確認整合搜尋 成功 語法：" + _SQL, enumLogType.Info);
                         log.LogMessage("確認整合搜尋 成功 語法：" + _SQL, enumLogType.Trace);
@@ -865,7 +829,9 @@ namespace 簡易倉儲系統
                     checkedListBox1.Items.Clear();
                     checkedListBox1.Items.Add("已付款", true);
                     checkedListBox1.Items.Add("未付款", true);
+                    checkedListBox2.Items.Clear();
                     List<ALLTypeModel> typeModels = new List<ALLTypeModel>();
+                    List<String> salesAreaModels = new List<string>();
                     foreach (DataRow row in _SelectDT.Rows)
                     {
                         //類型匯入
@@ -874,6 +840,13 @@ namespace 簡易倉儲系統
                         {
                             checkedListBox1.Items.Add(_Type, true);
                             typeModels.Add(new ALLTypeModel() { Type = _Type });
+                        }
+                        //販售地區匯入
+                        string _SalesArea = row.Field<String>("SalesArea");
+                        if (!checkedListBox2.Items.Contains(_SalesArea))
+                        {
+                            checkedListBox2.Items.Add(_SalesArea, true);
+                            salesAreaModels.Add(_SalesArea);
                         }
                         //單價金額加總
                         _ALLUnitPrice += (int)Math.Round(row.Field<Double>("Unpaid"), 0, MidpointRounding.AwayFromZero);
@@ -903,7 +876,7 @@ namespace 簡易倉儲系統
         }
 
         //類型匯入後，點選變更
-        private void checkedListBox1_Click(object sender, EventArgs e)
+        private void checkedListBox_Click(object sender, EventArgs e)
         {
             timer_SelectType.Start();
         }
@@ -915,11 +888,13 @@ namespace 簡易倉儲系統
                 string strCollected = string.Empty;
                 Double _ALLUnitPrice = 0;
                 Double _ALLCount = 0;
+                DataTable dt_Buff = _SelectDT.Clone();
                 DataTable dt = _SelectDT.Clone();
                 Boolean _已付款 = false;
                 Boolean _未付款 = false;
                 label28.Text = "";
                 List<ALLTypeModel> typeModels = new List<ALLTypeModel>();
+
                 for (int i = 0; i < checkedListBox1.Items.Count; i++)
                 {
                     if (checkedListBox1.GetItemChecked(i))
@@ -948,7 +923,8 @@ namespace 簡易倉儲系統
                         else
                             break;
 
-                        typeModels.Add(new ALLTypeModel() { Type = _Text });
+                        if (rows.Count() > 0)
+                            typeModels.Add(new ALLTypeModel() { Type = _Text });
                         foreach (DataRow row in rows)
                         {
                             //單價加總
@@ -957,9 +933,32 @@ namespace 簡易倉儲系統
                             typeModels.Find(f => f.Type == _Text)._ALLCount += row.Field<Double>("Count");
                             //重量加總
                             _ALLCount += row.Field<Double>("Count");
+                            dt_Buff.ImportRow(row);
+                        }
+                    }
+                }
+                //販賣地區
+                Boolean _SalesAreaIsNull = true;
+                for (int i = 0; i < checkedListBox2.Items.Count; i++)
+                {
+                    if (checkedListBox2.GetItemChecked(i))
+                    {
+                        _SalesAreaIsNull = false;
+                        DataRow[] rows;
+                        string _Text = checkedListBox2.GetItemText(checkedListBox2.Items[i]);
+                        rows = dt_Buff.Select($@"SalesArea = '{_Text}'");
+                        foreach (DataRow row in rows)
+                        {
                             dt.ImportRow(row);
                         }
                     }
+                }
+                if (_SalesAreaIsNull || dt.Rows.Count <= 0)
+                {
+                    dt = _SelectDT.Clone();
+                    typeModels = new List<ALLTypeModel>();
+                    _ALLUnitPrice = 0;
+                    _ALLCount = 0;
                 }
                 foreach (ALLTypeModel item in typeModels)
                 {

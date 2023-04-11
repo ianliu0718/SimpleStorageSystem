@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManagerView));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.SelectPage = new System.Windows.Forms.TabPage();
+            this.checkedListBox2 = new System.Windows.Forms.CheckedListBox();
             this.button8 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.label28 = new System.Windows.Forms.Label();
@@ -260,7 +261,7 @@
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.Padding = new System.Drawing.Point(60, 3);
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1422, 859);
+            this.tabControl1.Size = new System.Drawing.Size(1590, 859);
             this.tabControl1.TabIndex = 99;
             this.tabControl1.TabStop = false;
             this.tabControl1.Tag = "";
@@ -268,6 +269,7 @@
             // 
             // SelectPage
             // 
+            this.SelectPage.Controls.Add(this.checkedListBox2);
             this.SelectPage.Controls.Add(this.button8);
             this.SelectPage.Controls.Add(this.button7);
             this.SelectPage.Controls.Add(this.label28);
@@ -282,16 +284,32 @@
             this.SelectPage.Location = new System.Drawing.Point(4, 44);
             this.SelectPage.Name = "SelectPage";
             this.SelectPage.Padding = new System.Windows.Forms.Padding(3);
-            this.SelectPage.Size = new System.Drawing.Size(1414, 811);
+            this.SelectPage.Size = new System.Drawing.Size(1582, 811);
             this.SelectPage.TabIndex = 100;
             this.SelectPage.Text = "查詢";
             this.SelectPage.UseVisualStyleBackColor = true;
+            // 
+            // checkedListBox2
+            // 
+            this.checkedListBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkedListBox2.CheckOnClick = true;
+            this.checkedListBox2.FormattingEnabled = true;
+            this.checkedListBox2.Items.AddRange(new object[] {
+            "外銷韓國",
+            "外銷日本",
+            "超市"});
+            this.checkedListBox2.Location = new System.Drawing.Point(151, 218);
+            this.checkedListBox2.Name = "checkedListBox2";
+            this.checkedListBox2.Size = new System.Drawing.Size(207, 460);
+            this.checkedListBox2.TabIndex = 11;
+            this.checkedListBox2.Click += new System.EventHandler(this.checkedListBox_Click);
             // 
             // button8
             // 
             this.button8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button8.Enabled = false;
-            this.button8.Location = new System.Drawing.Point(1145, 742);
+            this.button8.Location = new System.Drawing.Point(1313, 742);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(261, 50);
             this.button8.TabIndex = 10;
@@ -304,7 +322,7 @@
             // 
             this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button7.Enabled = false;
-            this.button7.Location = new System.Drawing.Point(816, 742);
+            this.button7.Location = new System.Drawing.Point(984, 742);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(261, 50);
             this.button7.TabIndex = 9;
@@ -338,7 +356,7 @@
             this.checkedListBox1.Name = "checkedListBox1";
             this.checkedListBox1.Size = new System.Drawing.Size(136, 460);
             this.checkedListBox1.TabIndex = 7;
-            this.checkedListBox1.Click += new System.EventHandler(this.checkedListBox1_Click);
+            this.checkedListBox1.Click += new System.EventHandler(this.checkedListBox_Click);
             // 
             // label25
             // 
@@ -389,7 +407,7 @@
             this.groupBox8.Controls.Add(this.textBox21);
             this.groupBox8.Location = new System.Drawing.Point(8, 105);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(1406, 107);
+            this.groupBox8.Size = new System.Drawing.Size(1574, 107);
             this.groupBox8.TabIndex = 2;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "單號";
@@ -464,7 +482,7 @@
             this.groupBox7.Controls.Add(this.radioButton2);
             this.groupBox7.Location = new System.Drawing.Point(8, 6);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(1406, 93);
+            this.groupBox7.Size = new System.Drawing.Size(1574, 93);
             this.groupBox7.TabIndex = 1;
             this.groupBox7.TabStop = false;
             // 
@@ -523,12 +541,12 @@
             this.Column15,
             this.Column21,
             this.Column17});
-            this.dataGridView4.Location = new System.Drawing.Point(151, 218);
+            this.dataGridView4.Location = new System.Drawing.Point(364, 218);
             this.dataGridView4.Name = "dataGridView4";
             this.dataGridView4.ReadOnly = true;
             this.dataGridView4.RowHeadersWidth = 51;
             this.dataGridView4.RowTemplate.Height = 27;
-            this.dataGridView4.Size = new System.Drawing.Size(1260, 460);
+            this.dataGridView4.Size = new System.Drawing.Size(1215, 460);
             this.dataGridView4.TabIndex = 0;
             // 
             // Column9
@@ -629,7 +647,7 @@
             this.CustomerProfile.Location = new System.Drawing.Point(4, 44);
             this.CustomerProfile.Name = "CustomerProfile";
             this.CustomerProfile.Padding = new System.Windows.Forms.Padding(3);
-            this.CustomerProfile.Size = new System.Drawing.Size(1414, 811);
+            this.CustomerProfile.Size = new System.Drawing.Size(1582, 811);
             this.CustomerProfile.TabIndex = 101;
             this.CustomerProfile.Text = "客戶資料";
             this.CustomerProfile.UseVisualStyleBackColor = true;
@@ -836,7 +854,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 44);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1414, 811);
+            this.tabPage1.Size = new System.Drawing.Size(1582, 811);
             this.tabPage1.TabIndex = 99;
             this.tabPage1.Text = "外銷韓國";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -1247,7 +1265,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 44);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1414, 811);
+            this.tabPage2.Size = new System.Drawing.Size(1582, 811);
             this.tabPage2.TabIndex = 99;
             this.tabPage2.Text = "外銷日本";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -1655,7 +1673,7 @@
             this.tabPage3.Controls.Add(this.groupBox3);
             this.tabPage3.Location = new System.Drawing.Point(4, 44);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(1414, 811);
+            this.tabPage3.Size = new System.Drawing.Size(1582, 811);
             this.tabPage3.TabIndex = 99;
             this.tabPage3.Text = "超市";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -2061,7 +2079,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1422, 858);
+            this.ClientSize = new System.Drawing.Size(1590, 858);
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(1440, 896);
@@ -2320,6 +2338,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn15;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column24;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column25;
+        private System.Windows.Forms.CheckedListBox checkedListBox2;
     }
 }
 
