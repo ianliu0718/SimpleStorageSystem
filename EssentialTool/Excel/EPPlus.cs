@@ -62,15 +62,19 @@ namespace 簡易倉儲系統.EssentialTool.Excel
             }
 
             //自動調整欄寬
-            if (Table.Count >= 6)
+            for (int i = 1; i <= Table[1].Count; i++)
             {
-                for (int i = 1; i <= Table[5].Count; i++)
+                Sheet.Column(i).AutoFit();
+                Sheet.Column(i).Width += 2;
+            }
+            if (ColumnWidth > 0)
+            {
+                if (Table.Count >= 6)
                 {
-                    Sheet.Column(i).AutoFit();
-                    if (ColumnWidth > 0)
+                    for (int i = 1; i <= Table[5].Count; i++)
+                    {
                         Sheet.Column(i).Width = ColumnWidth;
-                    else
-                        Sheet.Column(i).Width += 2;
+                    }
                 }
             }
             //高度設定
