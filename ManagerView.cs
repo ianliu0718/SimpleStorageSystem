@@ -692,6 +692,7 @@ namespace 簡易倉儲系統
                     dataGridView4.Columns[5].Visible = true;
                     dataGridView4.Columns[6].Visible = true;
                     dataGridView4.Columns[7].Visible = true;
+                    dataGridView4.Columns[10].Visible = true;
                 }
                 else if (_Text == "姓名查詢")
                 {
@@ -711,6 +712,7 @@ namespace 簡易倉儲系統
                     dataGridView4.Columns[5].Visible = true;
                     dataGridView4.Columns[6].Visible = true;
                     dataGridView4.Columns[7].Visible = true;
+                    dataGridView4.Columns[10].Visible = true;
                 }
                 else if (_Text == "整合查詢")
                 {
@@ -734,6 +736,7 @@ namespace 簡易倉儲系統
                     dataGridView4.Columns[5].Visible = false;
                     dataGridView4.Columns[6].Visible = false;
                     dataGridView4.Columns[7].Visible = false;
+                    dataGridView4.Columns[10].Visible = false;
                 }
 
                 ((GroupBox)((RadioButton)sender).Parent).BackColor = Color.Transparent;
@@ -776,7 +779,7 @@ namespace 簡易倉儲系統
                     log.LogMessage("確認搜尋 開始", enumLogType.Trace);
                     Int32 _ALLUnitPrice = 0;
                     string _SQL = $@"SELECT No, Time, Name, Type, Count, UnitPrice, Unit, 
-                        SalesArea, Paid, (Count * UnitPrice)AS Unpaid FROM SalesRecord ";
+                        SalesArea, Paid, (Count * UnitPrice)AS Unpaid, PaidTime FROM SalesRecord ";
                     if (Inquire == "單號")
                     {
                         _SQL += $@" WHERE No = '{textBox21.Text}' ";
@@ -803,7 +806,7 @@ namespace 簡易倉儲系統
                         checkedListBox1.Items.Add("已付款", true);
                         checkedListBox1.Items.Add("未付款", true);
                         _SQL = $@"SELECT No, MAX(Time)AS'Date', MAX(Name)AS'Name', ''AS'Buff1', ''AS'Buff2', ''AS'Buff3', 
-                            ''AS'Buff4', ''AS'Buff5', MAX(Paid)AS'Paid', SUM(Count * UnitPrice)AS Unpaid 
+                            ''AS'Buff4', ''AS'Buff5', MAX(Paid)AS'Paid', SUM(Count * UnitPrice)AS Unpaid, ''AS'Buff6'
                             FROM SalesRecord WHERE 1 = 1 ";
                         if (textBox21.Text != "")
                         {
