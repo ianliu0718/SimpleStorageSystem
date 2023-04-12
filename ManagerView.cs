@@ -963,13 +963,6 @@ namespace 簡易倉儲系統
                     _ALLUnitPrice = 0;
                     _ALLCount = 0;
                 }
-                foreach (ALLTypeModel item in typeModels)
-                {
-                    label28.Text += "【" + item.Type + "：" + item._ALLCount + "】";
-                }
-                label23.Text = _ALLUnitPrice.ToString();
-                label25.Text = _ALLCount.ToString();
-
                 if (Inquire == "整合")
                 {
                     DataRow[] rows;
@@ -980,12 +973,21 @@ namespace 簡易倉儲系統
                     else if (_未付款)
                         rows = _SelectDT.Select("(Paid is null)");
                     else
-                        rows = new DataRow[] { _SelectDT.Rows[0] };
+                        rows = new DataRow[] {};
                     foreach (DataRow row in rows)
                     {
+                        //單價加總
+                        _ALLUnitPrice += (int)Math.Round(row.Field<Double>("Unpaid"), 0, MidpointRounding.AwayFromZero);
                         dt.ImportRow(row);
                     }
                 }
+
+                foreach (ALLTypeModel item in typeModels)
+                {
+                    label28.Text += "【" + item.Type + "：" + item._ALLCount + "】";
+                }
+                label23.Text = _ALLUnitPrice.ToString();
+                label25.Text = _ALLCount.ToString();
                 DatatableToDatagridview(dt, dataGridView4);
 
                 log.LogMessage("類型點選變更 成功 總金額：" + label23.Text + "\t總重量：" + label25.Text, enumLogType.Info);
@@ -1271,7 +1273,7 @@ namespace 簡易倉儲系統
                     excelCells.Add(new List<MExcelCell>());
 
                     //頁首
-                    List<string> _HideHeader = new List<string>() { "類型", "數量", "單價", "單位", "販售地區" };
+                    List<string> _HideHeader = new List<string>() { "類型", "數量", "單價", "單位", "販售地區", "已付時間" };
                     excelCell = new List<MExcelCell>();
                     foreach (DataGridViewColumn col in view.Columns)
                     {
@@ -1292,8 +1294,11 @@ namespace 簡易倉儲系統
                     excelCells.Add(excelCell);
 
                     //內容
+                    Int32 _ALLPrice = 0;
                     foreach (DataGridViewRow row in view.Rows)
                     {
+                        Double _unitPrice = 0;
+                        Double _count = 1;
                         excelCell = new List<MExcelCell>();
                         foreach (DataGridViewCell cell in row.Cells)
                         {
@@ -1301,6 +1306,16 @@ namespace 簡易倉儲系統
                             if (_HideHeader.Contains(view.Columns[cell.ColumnIndex].HeaderText))
                             {
                                 continue;
+                            }
+                            //列印隱藏單價/保存單價價格
+                            if (view.Columns[cell.ColumnIndex].HeaderText == "單價")
+                            {
+                                _unitPrice = Convert.ToDouble(cell.Value);
+                            }
+                            //保存數量
+                            else if (view.Columns[cell.ColumnIndex].HeaderText == "數量")
+                            {
+                                _count = Convert.ToDouble(cell.Value);
                             }
                             excelCell.Add(new MExcelCell()
                             {
@@ -1311,15 +1326,30 @@ namespace 簡易倉儲系統
                                 excelCell.Add(new MExcelCell() { Content = " " });
                             }
                         }
+                        _ALLPrice += (int)Math.Round(Convert.ToDouble(_unitPrice * _count), 0, MidpointRounding.AwayFromZero);
                         excelCells.Add(excelCell);
                     }
                     //空一行
                     excelCells.Add(new List<MExcelCell>());
                     excelCell = new List<MExcelCell>();
                     excelCell.Add(new MExcelCell() { Content = "民智自動化有限公司" });
+                    //總價
+                    for (int i = 0; i < view.Columns.Count; i++)
+                    {
+                        //隱藏
+                        if (_HideHeader.Contains(view.Columns[i].HeaderText))
+                        {
+                            continue;
+                        }
+                        excelCell.Add(new MExcelCell() { Content = "" });
+                    }
+                    excelCell.Remove(excelCell[excelCell.Count - 1]);
+                    excelCell.Remove(excelCell[excelCell.Count - 1]);
+                    excelCell.Add(new MExcelCell() { Content = "總價" });
+                    excelCell.Add(new MExcelCell() { Content = _ALLPrice });
                     excelCells.Add(excelCell);
                     //匯出成檔案
-                    ePPlus.AddSheet(excelCells, "整合", 16);
+                    ePPlus.AddSheet(excelCells, "整合", 15);
                     ePPlus.MergeColumn(1, 1, 2, 6);
                     ePPlus.FontSize(1, 1, 36, true, OfficeOpenXml.Style.ExcelBorderStyle.None);
                     ePPlus.ExcelCenterCell(1, 1, OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous);

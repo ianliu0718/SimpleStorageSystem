@@ -116,7 +116,7 @@ namespace 簡易倉儲系統.EssentialTool.Excel
 
 
                 //頁首
-                List<string> _HideHeader = new List<string>() { "單號", "時間", "姓名", "單位", "販售地區", "已付款金額", "未付款金額" };
+                List<string> _HideHeader = new List<string>() { "單號", "時間", "姓名", "單位", "販售地區", "已付款金額", "未付款金額", "已付時間" };
                 excelCell = new List<MExcelCell>();
                 foreach (DataGridViewColumn col in view.Columns)
                 {
