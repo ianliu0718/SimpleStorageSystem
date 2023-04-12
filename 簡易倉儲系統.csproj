@@ -144,6 +144,7 @@
     <Compile Include="EssentialTool\Excel\ExcelProcess.cs" />
     <Compile Include="EssentialTool\GetPCMacID.cs" />
     <Compile Include="EssentialTool\LogToText.cs" />
+    <Compile Include="EssentialTool\SendLine.cs" />
     <Compile Include="EssentialTool\Settings.cs" />
     <Compile Include="EssentialTool\SystemConfig.cs" />
     <Compile Include="ManagerView.cs">

@@ -9,7 +9,10 @@ namespace 簡易倉儲系統.EssentialTool
 {
     internal class GetPCMacID
     {
-        //1.獲取CPU序列號代碼
+        /// <summary>
+        /// 1.獲取CPU序列號代碼
+        /// </summary>
+        /// <returns></returns>
         public static string GetCpuID()
         {
             try
@@ -31,8 +34,11 @@ namespace 簡易倉儲系統.EssentialTool
             }
         }
 
-        //2.獲取網卡硬件地址
-        string GetMacAddress()
+        /// <summary>
+        /// 2.獲取網卡硬件地址
+        /// </summary>
+        /// <returns></returns>
+        public static string GetMacAddress()
         {
             try
             {
@@ -57,7 +63,10 @@ namespace 簡易倉儲系統.EssentialTool
             }
         }
 
-        //3.獲取硬盤ID
+        /// <summary>
+        /// 3.獲取硬盤ID
+        /// </summary>
+        /// <returns></returns>
         string GetDiskID()
         {
             try
@@ -79,8 +88,11 @@ namespace 簡易倉儲系統.EssentialTool
             }
         }
 
-        //4.獲取IP地址
-        string GetIPAddress()
+        /// <summary>
+        /// 4.獲取IP地址
+        /// </summary>
+        /// <returns></returns>
+        public static string GetIPAddress()
         {
             try
             {
@@ -108,8 +120,11 @@ namespace 簡易倉儲系統.EssentialTool
             }
         }
 
-        // 5.操作系統的登錄用戶名
-        string GetUserName()
+        /// <summary>
+        /// 5.操作系統的登錄用戶名
+        /// </summary>
+        /// <returns></returns>
+        public static string GetUserName()
         {
             string st;
             try
@@ -124,8 +139,11 @@ namespace 簡易倉儲系統.EssentialTool
             }
         }
 
-        //6.獲取計算機名
-        string GetComputerName()
+        /// <summary>
+        /// 6.獲取計算機名
+        /// </summary>
+        /// <returns></returns>
+        public static string GetComputerName()
         {
             try
             {
@@ -137,8 +155,11 @@ namespace 簡易倉儲系統.EssentialTool
             }
         }
 
-        //7. PC類型
-        string GetSystemType()
+        /// <summary>
+        /// 7. PC類型
+        /// </summary>
+        /// <returns></returns>
+        public static string GetSystemType()
         {
             try
             {
@@ -159,7 +180,10 @@ namespace 簡易倉儲系統.EssentialTool
             }
         }
 
-        // 8.物理內存
+        /// <summary>
+        /// 8.物理內存
+        /// </summary>
+        /// <returns></returns>
         string GetTotalPhysicalMemory()
         {
             try
