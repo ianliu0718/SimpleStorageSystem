@@ -13,7 +13,7 @@ namespace 簡易倉儲系統.EssentialTool
 {
     internal class SendLine
     {
-        List<stLineToken> ListLineToken;
+        List<stLineToken> ListLineToken = null;
         class stLineToken
         {
             public String Send_Group { get; set; }

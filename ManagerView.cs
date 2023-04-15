@@ -849,15 +849,47 @@ namespace 簡易倉儲系統
                     checkedListBox1.Items.Add("已付款", true);
                     checkedListBox1.Items.Add("未付款", true);
                     checkedListBox2.Items.Clear();
+
+                    #region 類型順序調整
+                    List<string> _TypeGradation = new List<string>() { };
+                    string[] _TypeGradation1 = Settings.類型1.Split('/');
+                    string[] _TypeGradation2 = Settings.類型2.Split('/');
+                    string[] _TypeGradation3 = Settings.類型3.Split('/');
+                    for (int i = 0; i < 8; i++)
+                    {
+                        if (i < _TypeGradation1.Length)
+                        {
+                            if (!_TypeGradation.Contains(_TypeGradation1[i]))
+                            {
+                                _TypeGradation.Add(_TypeGradation1[i]);
+                            }
+                        }
+                        if (i < _TypeGradation2.Length)
+                        {
+                            if (!_TypeGradation.Contains(_TypeGradation2[i]))
+                            {
+                                _TypeGradation.Add(_TypeGradation2[i]);
+                            }
+                        }
+                        if (i < _TypeGradation3.Length)
+                        {
+                            if (!_TypeGradation.Contains(_TypeGradation3[i]))
+                            {
+                                _TypeGradation.Add(_TypeGradation3[i]);
+                            }
+                        }
+                    }
+                    #endregion
+
                     List<ALLTypeModel> typeModels = new List<ALLTypeModel>();
                     List<String> salesAreaModels = new List<string>();
                     foreach (DataRow row in _SelectDT.Rows)
                     {
                         //類型匯入
                         string _Type = row.Field<String>("Type");
-                        if (!checkedListBox1.Items.Contains(_Type))
+                        var typeModel = typeModels.Find(f => f.Type == _Type);
+                        if (typeModel == null)
                         {
-                            checkedListBox1.Items.Add(_Type, true);
                             typeModels.Add(new ALLTypeModel() { Type = _Type });
                         }
                         //販售地區匯入
@@ -876,8 +908,25 @@ namespace 簡易倉儲系統
                     }
                     if (typeModels.Count <= 0)
                         label28.Text = "";
+                    foreach (string item in _TypeGradation)
+                    {
+                        var typeModel = typeModels.Find(f => f.Type == item);
+                        if (typeModel != null)
+                        {
+                            label28.Text += "【" + typeModel.Type + "：" + typeModel._ALLCount + "】";
+                            if (!checkedListBox1.Items.Contains(typeModel.Type))
+                            {
+                                checkedListBox1.Items.Add(typeModel.Type, true);
+                            }
+                            typeModels.Remove(typeModel);
+                        }
+                    }
                     foreach (ALLTypeModel item in typeModels)
                     {
+                        if (!checkedListBox1.Items.Contains(item.Type))
+                        {
+                            checkedListBox1.Items.Add(item.Type, true);
+                        }
                         label28.Text += "【" + item.Type + "：" + item._ALLCount + "】";
                     }
                     label23.Text = _ALLUnitPrice.ToString();
