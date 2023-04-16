@@ -50,7 +50,7 @@ namespace 簡易倉儲系統
         public static string[][] type = { new string[] { "", "", "", "", "", "", "", "" }
                                         , new string[] { "", "", "", "", "", "", "", "" }
                                         , new string[] { "", "", "", "", "", "", "", "" } };
-        
+
         public ManagerView()
         {
             InitializeComponent();
@@ -64,7 +64,7 @@ namespace 簡易倉儲系統
             textBox21.Text = "";
             label23.Text = "";
             label25.Text = "";
-            label28.Text = ""; 
+            label28.Text = "";
             checkedListBox1.Items.Clear();
             checkedListBox2.Items.Clear();
             DB_Path = Settings.資料庫路徑 + @"data.db";
@@ -185,7 +185,7 @@ namespace 簡易倉儲系統
                 else if (Settings.主機序號 == GetPCMacID.GetCpuID())
                 {
                     Settings.主機序號 = EncryptionDecryption.desEncryptBase64(Settings.主機序號);
-                    SendLine.SendLineMessage("PkOjQVn809ZiLtwkmnZqGPy8WmZYnnCsxDfdLLCptlc", 
+                    SendLine.SendLineMessage("PkOjQVn809ZiLtwkmnZqGPy8WmZYnnCsxDfdLLCptlc",
                         "主機綁定成功\r\nCPUID：" + GetPCMacID.GetCpuID() +
                         "\r\n網卡硬件地址：" + GetPCMacID.GetMacAddress() +
                         "\r\nIP地址：" + GetPCMacID.GetIPAddress() +
@@ -272,7 +272,7 @@ namespace 簡易倉儲系統
                 //label18.Text = dataGridViewTextBoxColumn13.HeaderText = _Type3.Split('/')[3];
                 //label19.Text = dataGridViewTextBoxColumn14.HeaderText = _Type3.Split('/')[4];
                 //label20.Text = dataGridViewTextBoxColumn15.HeaderText = _Type3.Split('/')[5];
-                log.LogMessage("取得類型設定參數 成功\r\n" + tabPage1.Text + " / " + 
+                log.LogMessage("取得類型設定參數 成功\r\n" + tabPage1.Text + " / " +
                     tabPage2.Text + " / " + tabPage3.Text, enumLogType.Info);
                 log.LogMessage("取得類型設定參數 成功\r\n" + LogMessage, enumLogType.Trace);
             }
@@ -518,7 +518,7 @@ namespace 簡易倉儲系統
                 {
                     if (item.GetType().Name == "DataGridView")
                     {
-                        _view = (DataGridView)item; 
+                        _view = (DataGridView)item;
                         break;
                     }
                 }
@@ -663,7 +663,7 @@ namespace 簡易倉儲系統
                     control.Controls[i - 1].Controls[1].Text =
                         ((DataGridView)sender).Rows[((DataGridView)sender).CurrentRow.Index].Cells[i].Value.ToString();
                 }
-                
+
                 log.LogMessage("dataGridView轉出 成功", enumLogType.Trace);
             }
             catch (Exception ee)
@@ -850,37 +850,6 @@ namespace 簡易倉儲系統
                     checkedListBox1.Items.Add("未付款", true);
                     checkedListBox2.Items.Clear();
 
-                    #region 類型順序調整
-                    List<string> _TypeGradation = new List<string>() { };
-                    string[] _TypeGradation1 = Settings.類型1.Split('/');
-                    string[] _TypeGradation2 = Settings.類型2.Split('/');
-                    string[] _TypeGradation3 = Settings.類型3.Split('/');
-                    for (int i = 0; i < 8; i++)
-                    {
-                        if (i < _TypeGradation1.Length)
-                        {
-                            if (!_TypeGradation.Contains(_TypeGradation1[i]))
-                            {
-                                _TypeGradation.Add(_TypeGradation1[i]);
-                            }
-                        }
-                        if (i < _TypeGradation2.Length)
-                        {
-                            if (!_TypeGradation.Contains(_TypeGradation2[i]))
-                            {
-                                _TypeGradation.Add(_TypeGradation2[i]);
-                            }
-                        }
-                        if (i < _TypeGradation3.Length)
-                        {
-                            if (!_TypeGradation.Contains(_TypeGradation3[i]))
-                            {
-                                _TypeGradation.Add(_TypeGradation3[i]);
-                            }
-                        }
-                    }
-                    #endregion
-
                     List<ALLTypeModel> typeModels = new List<ALLTypeModel>();
                     List<String> salesAreaModels = new List<string>();
                     foreach (DataRow row in _SelectDT.Rows)
@@ -908,9 +877,9 @@ namespace 簡易倉儲系統
                     }
                     if (typeModels.Count <= 0)
                         label28.Text = "";
-                    foreach (string item in _TypeGradation)
+                    foreach (string item in TypeGradation())
                     {
-                        var typeModel = typeModels.Find(f => f.Type == item);
+                        ALLTypeModel typeModel = typeModels.Find(f => f.Type == item);
                         if (typeModel != null)
                         {
                             label28.Text += "【" + typeModel.Type + "：" + typeModel._ALLCount + "】";
@@ -1038,7 +1007,7 @@ namespace 簡易倉儲系統
                     else if (_未付款)
                         rows = _SelectDT.Select("(Paid is null)");
                     else
-                        rows = new DataRow[] {};
+                        rows = new DataRow[] { };
                     foreach (DataRow row in rows)
                     {
                         //單價加總
@@ -1234,7 +1203,7 @@ namespace 簡易倉儲系統
                 log.LogMessage("已付修改 開始", enumLogType.Trace);
 
                 string _No = "";
-                if (Inquire == "單號") 
+                if (Inquire == "單號")
                 {
                     _No = dataGridView4.Rows[0].Cells[0].Value.ToString();
                     UpdateNoPaid(_No, label23.Text);
@@ -1289,7 +1258,7 @@ namespace 簡易倉儲系統
             try
             {
                 log.LogMessage("匯出Excel 開始", enumLogType.Trace);
-                button8.Enabled = false; 
+                button8.Enabled = false;
                 //選取指定的資料夾
                 FolderBrowserDialog folder = new FolderBrowserDialog();
                 if (folder.ShowDialog() != DialogResult.OK)
@@ -1424,7 +1393,7 @@ namespace 簡易倉儲系統
                     ePPlus.MergeColumn(4, 1, 4, 6);
                     ePPlus.FontSize(4, 1, 14, false, OfficeOpenXml.Style.ExcelBorderStyle.None);
                     ePPlus.ExcelCenterCell(4, 1, OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous);
-                    for (int i = 0; i <= view.Rows.Count; i++) 
+                    for (int i = 0; i <= view.Rows.Count; i++)
                     {
                         ePPlus.MergeColumn(i + 6, 3, i + 6, 4);
                     }
@@ -1445,6 +1414,42 @@ namespace 簡易倉儲系統
                 button1.Enabled = true;
                 return;
             }
+            #endregion
+        }
+
+        //類型順序調整
+        public static List<string> TypeGradation()
+        {
+            #region 類型順序調整
+            List<string> _TypeGradation = new List<string>() { };
+            string[] _TypeGradation1 = Settings.類型1.Split('/');
+            string[] _TypeGradation2 = Settings.類型2.Split('/');
+            string[] _TypeGradation3 = Settings.類型3.Split('/');
+            for (int i = 0; i < 8; i++)
+            {
+                if (i < _TypeGradation1.Length)
+                {
+                    if (!_TypeGradation.Contains(_TypeGradation1[i]))
+                    {
+                        _TypeGradation.Add(_TypeGradation1[i]);
+                    }
+                }
+                if (i < _TypeGradation2.Length)
+                {
+                    if (!_TypeGradation.Contains(_TypeGradation2[i]))
+                    {
+                        _TypeGradation.Add(_TypeGradation2[i]);
+                    }
+                }
+                if (i < _TypeGradation3.Length)
+                {
+                    if (!_TypeGradation.Contains(_TypeGradation3[i]))
+                    {
+                        _TypeGradation.Add(_TypeGradation3[i]);
+                    }
+                }
+            }
+            return _TypeGradation;
             #endregion
         }
     }

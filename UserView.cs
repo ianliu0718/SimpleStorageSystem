@@ -909,6 +909,7 @@ namespace 簡易倉儲系統
                 try
                 {
                     #region 列印
+                    _Page = 1;
                     //宣告一個印表機
                     PrintDocument printDocument = new PrintDocument();
                     //設定印表機邊界
@@ -918,7 +919,6 @@ namespace 簡易倉儲系統
                     printDocument.PrintPage += PrintDocument_PrintPage;
                     printDocument.PrinterSettings.PrinterName = Settings.印表機名稱;
                     //printDocument.DefaultPageSettings.Landscape = true;           //此处更改页面为横向打印 
-                    _Page = 1;
                     printDocument.Print();   //列印
                     #endregion
                 }
