@@ -803,10 +803,10 @@ namespace 簡易倉儲系統
             //刪除失敗則還原
             try
             {
-                log.LogMessage("刪除失敗則還原 開始", enumLogType.Trace);
-                dB_SQLite.Manipulate(DB_Path, $@"DELETE FROM SalesRecord WHERE No = '{e.Row.Cells[0].Value.ToString()}';");
-                log.LogMessage($@"刪除失敗則還原 成功：No = '{e.Row.Cells[0].Value.ToString()}'", enumLogType.Trace);
-                log.LogMessage($@"刪除失敗則還原 成功：No = '{e.Row.Cells[0].Value.ToString()}'", enumLogType.Info);
+                //log.LogMessage("刪除失敗則還原 開始", enumLogType.Trace);
+                //dB_SQLite.Manipulate(DB_Path, $@"DELETE FROM SalesRecord WHERE No = '{e.Row.Cells[0].Value.ToString()}';");
+                //log.LogMessage($@"刪除失敗則還原 成功：No = '{e.Row.Cells[0].Value.ToString()}'", enumLogType.Trace);
+                //log.LogMessage($@"刪除失敗則還原 成功：No = '{e.Row.Cells[0].Value.ToString()}'", enumLogType.Info);
                 textBox1.Focus();
             }
             catch (Exception ee)
@@ -909,6 +909,7 @@ namespace 簡易倉儲系統
                 try
                 {
                     #region 列印
+                    _Page = 1;
                     //宣告一個印表機
                     PrintDocument printDocument = new PrintDocument();
                     //設定印表機邊界
@@ -918,7 +919,6 @@ namespace 簡易倉儲系統
                     printDocument.PrintPage += PrintDocument_PrintPage;
                     printDocument.PrinterSettings.PrinterName = Settings.印表機名稱;
                     //printDocument.DefaultPageSettings.Landscape = true;           //此处更改页面为横向打印 
-                    _Page = 1;
                     printDocument.Print();   //列印
                     #endregion
                 }
@@ -1072,13 +1072,16 @@ namespace 簡易倉儲系統
             //    textBox1.Focus();
         }
 
-        private void button1_Enter(object sender, EventArgs e)
+        private void button_Enter(object sender, EventArgs e)
         {
-            button1.BackColor = SystemColors.ActiveCaption;
+            ((Button)sender).BackColor = SystemColors.ActiveCaption;
         }
-        private void button1_Leave(object sender, EventArgs e)
+        private void button_Leave(object sender, EventArgs e)
         {
-            button1.BackColor = SystemColors.Control;
+            if (((Button)sender).Name == "button2")
+                ((Button)sender).BackColor = SystemColors.ActiveBorder;
+            else
+                ((Button)sender).BackColor = SystemColors.Control;
         }
         private void textBox1_Enter(object sender, EventArgs e)
         {
@@ -1096,6 +1099,18 @@ namespace 簡易倉儲系統
             else if (salesArea.Split('_')[0] == radioButton9.Text.Split('(')[0])
                 salesArea = radioButton9.Text.Split('(')[0] + "_" + comboBox2.Text;
             textBox1.Focus();
+        }
+
+        //刪除
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.Rows.Count > 0)
+            {
+                if (DialogResult.Yes == MessageBox.Show("是否刪除首筆資料！", "刪除", MessageBoxButtons.YesNo))
+                {
+                    dataGridView1.Rows.RemoveAt(0);
+                }
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static 簡易倉儲系統.EssentialTool.LogToText;
 using System.Windows.Forms;
+using System.Reflection.Emit;
 
 namespace 簡易倉儲系統.EssentialTool.Excel
 {
@@ -65,6 +66,7 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                 excelCell.Add(new MExcelCell() { Content = " " });
                 excelCells.Add(excelCell);
 
+                List<ALLTypeModel> typeModelsBuff = new List<ALLTypeModel>();
                 List<ALLTypeModel> typeModels = new List<ALLTypeModel>();
 
                 int _TypeIndex = -1;
@@ -82,14 +84,23 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                 {
                     //類型匯入
                     string _Type = row.Cells[_TypeIndex].Value.ToString();
-                    ALLTypeModel typeModel = typeModels.Find(f => f.Type == _Type);
+                    ALLTypeModel typeModel = typeModelsBuff.Find(f => f.Type == _Type);
                     if (typeModel == null)
                     {
                         typeModel = new ALLTypeModel() { Type = _Type };
-                        typeModels.Add(typeModel);
+                        typeModelsBuff.Add(typeModel);
                     }
                     //單筆重量加總
                     typeModel._ALLCount += Convert.ToDouble(row.Cells[_CountIndex].Value.ToString());
+                }
+                //排序
+                foreach (string item in ManagerView.TypeGradation())
+                {
+                    ALLTypeModel typeModel = typeModelsBuff.Find(f => f.Type == item);
+                    if (typeModel != null)
+                    {
+                        typeModels.Add(typeModel);
+                    }
                 }
                 for (int i = 0; i < typeModels.Count; i = i + 3)
                 {
