@@ -49,6 +49,7 @@ namespace 簡易倉儲系統.EssentialTool
                     writer.WriteElementString("廠商標題1", _廠商標題1);
                     writer.WriteElementString("廠商標題2", _廠商標題2);
                     writer.WriteElementString("廠商標題3", _廠商標題3);
+                    writer.WriteElementString("籃重功能", _籃重功能);
                     writer.WriteEndElement();
                     writer.Flush();
                     writer.Close();
@@ -57,6 +58,38 @@ namespace 簡易倉儲系統.EssentialTool
             catch// (Exception ex)
             {
                 throw;
+            }
+        }
+
+        private static string _籃重功能 = "False";
+        /// <summary>
+        /// 籃重功能
+        /// </summary>
+        public static String 籃重功能
+        {
+            get
+            {
+                String tmpValue = null;
+                try
+                {
+                    Config.getConfigValue("籃重功能", out tmpValue);
+                }
+                catch (Exception ee)
+                {
+                    if (ee.Message == "查無【籃重功能】此參數設定")
+                    {
+                        Config.setConfigValue("籃重功能", _籃重功能);
+                        tmpValue = _籃重功能;
+                    }
+                }
+
+                return tmpValue;
+            }
+            set
+            {
+                try
+                { Config.setConfigValue("籃重功能", value); }
+                catch { }
             }
         }
 
@@ -75,7 +108,7 @@ namespace 簡易倉儲系統.EssentialTool
                 }
                 catch (Exception ee)
                 {
-                    if (ee.Message == "查無廠商標題3此參數設定")
+                    if (ee.Message == "查無【廠商標題3】此參數設定")
                     {
                         Config.setConfigValue("廠商標題3", _廠商標題3);
                         tmpValue = _廠商標題3;
@@ -107,7 +140,7 @@ namespace 簡易倉儲系統.EssentialTool
                 }
                 catch (Exception ee)
                 {
-                    if (ee.Message == "查無廠商標題2此參數設定")
+                    if (ee.Message == "查無【廠商標題2】此參數設定")
                     {
                         Config.setConfigValue("廠商標題2", _廠商標題2);
                         tmpValue = _廠商標題2;
@@ -139,7 +172,7 @@ namespace 簡易倉儲系統.EssentialTool
                 }
                 catch (Exception ee)
                 {
-                    if (ee.Message == "查無廠商標題1此參數設定")
+                    if (ee.Message == "查無【廠商標題1】此參數設定")
                     {
                         Config.setConfigValue("廠商標題1", _廠商標題1);
                         tmpValue = _廠商標題1;
@@ -171,7 +204,7 @@ namespace 簡易倉儲系統.EssentialTool
                 }
                 catch (Exception ee)
                 {
-                    if (ee.Message == "查無SQL語法此參數設定")
+                    if (ee.Message == "查無【SQL語法】此參數設定")
                     {
                         Config.setConfigValue("SQL語法", _SQL語法);
                         tmpValue = SQL語法;
@@ -203,7 +236,7 @@ namespace 簡易倉儲系統.EssentialTool
                 }
                 catch (Exception ee)
                 {
-                    if (ee.Message == "查無類型3此參數設定")
+                    if (ee.Message == "查無【類型3】此參數設定")
                     {
                         Config.setConfigValue("類型3", _類型3);
                         tmpValue = 類型3;
@@ -235,7 +268,7 @@ namespace 簡易倉儲系統.EssentialTool
                 }
                 catch (Exception ee)
                 {
-                    if (ee.Message == "查無販售地區3此參數設定")
+                    if (ee.Message == "查無【販售地區3】此參數設定")
                     {
                         Config.setConfigValue("販售地區3", _販售地區3);
                         tmpValue = _販售地區3;
@@ -267,7 +300,7 @@ namespace 簡易倉儲系統.EssentialTool
                 }
                 catch (Exception ee)
                 {
-                    if (ee.Message == "查無類型2此參數設定")
+                    if (ee.Message == "查無【類型2】此參數設定")
                     {
                         Config.setConfigValue("類型2", _類型2);
                         tmpValue = 類型2;
@@ -299,7 +332,7 @@ namespace 簡易倉儲系統.EssentialTool
                 }
                 catch (Exception ee)
                 {
-                    if (ee.Message == "查無販售地區2此參數設定")
+                    if (ee.Message == "查無【販售地區2】此參數設定")
                     {
                         Config.setConfigValue("販售地區2", _販售地區2);
                         tmpValue = _販售地區2;
@@ -331,7 +364,7 @@ namespace 簡易倉儲系統.EssentialTool
                 }
                 catch (Exception ee)
                 {
-                    if (ee.Message == "查無類型1此參數設定")
+                    if (ee.Message == "查無【類型1】此參數設定")
                     {
                         Config.setConfigValue("類型1", _類型1);
                         tmpValue = 類型1;
@@ -363,7 +396,7 @@ namespace 簡易倉儲系統.EssentialTool
                 }
                 catch (Exception ee)
                 {
-                    if (ee.Message == "查無販售地區1此參數設定")
+                    if (ee.Message == "查無【販售地區1】此參數設定")
                     {
                         Config.setConfigValue("販售地區1", _販售地區1);
                         tmpValue = _販售地區1;
@@ -395,7 +428,7 @@ namespace 簡易倉儲系統.EssentialTool
                 }
                 catch (Exception ee)
                 {
-                    if (ee.Message == "查無主機序號此參數設定")
+                    if (ee.Message == "查無【主機序號】此參數設定")
                     {
                         Config.setConfigValue("主機序號", _主機序號);
                         tmpValue = _主機序號;
