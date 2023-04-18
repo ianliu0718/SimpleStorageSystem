@@ -710,9 +710,20 @@ namespace 簡易倉儲系統
 
                 #region DataGridView修改
 
+                //重量
+                Double weight = Convert.ToDouble(((TextBox)sender).Text);
+                if (Int32.TryParse(textBox3.Text, out Int32 countBuff))
+                {
+                    if (Double.TryParse(textBox2.Text, out Double weightBuff))
+                    {
+                        weight = weight - (countBuff * weightBuff);
+                    }
+                }
                 //重繪才能讀取到別的使用者登錄的資料
                 row.CreateCells(dataGridView1);
-                row.SetValues(new string[] { "", now.ToString("yyyy-MM-dd HH:mm:ss"), comboBox1.Text, type, ((TextBox)sender).Text, unitPrice, unit, salesArea });
+                row.SetValues(new string[] { "", now.ToString("yyyy-MM-dd HH:mm:ss"), comboBox1.Text, type
+                    , (Convert.ToDouble((int)(weight * 100)) / 100).ToString(), unitPrice, unit, salesArea
+                    , countBuff.ToString() });
                 dataGridView1.Rows.Insert(0, row);
                 dataGridView1.Rows[0].Selected = true;
                 dataGridView1.CurrentCell = dataGridView1.Rows[0].Cells[0];
@@ -809,6 +820,38 @@ namespace 簡易倉儲系統
             {
                 MessageBox.Show("小數點最多兩位數");
                 textBox1.Text = (Convert.ToDouble((int)(_buffDouble * 100)) / 100).ToString();
+            }
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox2.Text == "")
+                return;
+            if (!Double.TryParse(textBox2.Text, out Double _buffDouble))
+            {
+                MessageBox.Show("請輸入數字");
+                textBox2.Text = "";
+            }
+            if (!Int32.TryParse((_buffDouble * 10).ToString(), out Int32 _buffInt))
+            {
+                MessageBox.Show("小數點最多一位數");
+                textBox2.Text = (Convert.ToDouble((int)(_buffDouble * 10)) / 10).ToString();
+            }
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox3.Text == "")
+                return;
+            if (!Double.TryParse(textBox3.Text, out Double _buffDouble))
+            {
+                MessageBox.Show("請輸入數字");
+                textBox3.Text = "";
+            }
+            if (!Int32.TryParse((_buffDouble).ToString(), out Int32 _buffInt))
+            {
+                MessageBox.Show("只能輸入整數");
+                textBox3.Text = (Convert.ToDouble((int)(_buffDouble))).ToString();
             }
         }
 
@@ -1097,13 +1140,15 @@ namespace 簡易倉儲系統
             else
                 ((Button)sender).BackColor = SystemColors.Control;
         }
-        private void textBox1_Enter(object sender, EventArgs e)
+        private void textBox_Enter(object sender, EventArgs e)
         {
-            groupBox3.BackColor = SystemColors.ActiveCaption;
+            ((TextBox)sender).Parent.BackColor = SystemColors.ActiveCaption;
+            //groupBox3.BackColor = SystemColors.ActiveCaption;
         }
-        private void textBox1_Leave(object sender, EventArgs e)
+        private void textBox_Leave(object sender, EventArgs e)
         {
-            groupBox3.BackColor = SystemColors.Control;
+            ((TextBox)sender).Parent.BackColor = SystemColors.Control;
+            //groupBox3.BackColor = SystemColors.Control;
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)

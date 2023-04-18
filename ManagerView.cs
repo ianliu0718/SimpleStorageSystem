@@ -323,7 +323,7 @@ namespace 簡易倉儲系統
 
                     // 建立資料表 販售紀錄 SalesRecord
                     createtablestring = @"CREATE TABLE SalesRecord (No Integer, Time DateTime, Name TEXT, Type TEXT, Count double
-                    , UnitPrice double, Unit TEXT, SalesArea TEXT, Paid Integer, PaidTime DateTime);";
+                    , UnitPrice double, Unit TEXT, SalesArea TEXT, Paid Integer, PaidTime DateTime, BasketCount Integer);";
                     dB_SQLite.CreateTable(DB_Path, createtablestring);
 
                     // 建立資料表 外銷韓國 ExportKoreaUnitPrice
@@ -723,6 +723,7 @@ namespace 簡易倉儲系統
                     dataGridView4.Columns[6].Visible = true;
                     dataGridView4.Columns[7].Visible = true;
                     dataGridView4.Columns[10].Visible = true;
+                    dataGridView4.Columns[11].Visible = true;
                 }
                 else if (_Text == "姓名查詢")
                 {
@@ -743,6 +744,7 @@ namespace 簡易倉儲系統
                     dataGridView4.Columns[6].Visible = true;
                     dataGridView4.Columns[7].Visible = true;
                     dataGridView4.Columns[10].Visible = true;
+                    dataGridView4.Columns[11].Visible = true;
                 }
                 else if (_Text == "整合查詢")
                 {
@@ -767,6 +769,7 @@ namespace 簡易倉儲系統
                     dataGridView4.Columns[6].Visible = false;
                     dataGridView4.Columns[7].Visible = false;
                     dataGridView4.Columns[10].Visible = false;
+                    dataGridView4.Columns[11].Visible = false;
                 }
 
                 ((GroupBox)((RadioButton)sender).Parent).BackColor = Color.Transparent;
@@ -809,7 +812,7 @@ namespace 簡易倉儲系統
                     log.LogMessage("確認搜尋 開始", enumLogType.Trace);
                     Int32 _ALLUnitPrice = 0;
                     string _SQL = $@"SELECT No, Time, Name, Type, Count, UnitPrice, Unit, 
-                        SalesArea, Paid, (Count * UnitPrice)AS Unpaid, PaidTime FROM SalesRecord ";
+                        SalesArea, Paid, (Count * UnitPrice)AS Unpaid, PaidTime, BasketCount FROM SalesRecord ";
                     if (Inquire == "單號")
                     {
                         _SQL += $@" WHERE No = '{textBox21.Text}' ";
@@ -836,7 +839,7 @@ namespace 簡易倉儲系統
                         checkedListBox1.Items.Add("已付款", true);
                         checkedListBox1.Items.Add("未付款", true);
                         _SQL = $@"SELECT No, MAX(Time)AS'Date', MAX(Name)AS'Name', ''AS'Buff1', ''AS'Buff2', ''AS'Buff3', 
-                            ''AS'Buff4', ''AS'Buff5', MAX(Paid)AS'Paid', SUM(Count * UnitPrice)AS Unpaid, ''AS'Buff6'
+                            ''AS'Buff4', ''AS'Buff5', MAX(Paid)AS'Paid', SUM(Count * UnitPrice)AS Unpaid, ''AS'Buff6', ''AS'Buff7'
                             FROM SalesRecord WHERE 1 = 1 ";
                         if (textBox21.Text != "")
                         {
@@ -1321,7 +1324,7 @@ namespace 簡易倉儲系統
                     excelCells.Add(new List<MExcelCell>());
 
                     //頁首
-                    List<string> _HideHeader = new List<string>() { "類型", "數量", "單價", "單位", "販售地區", "已付時間" };
+                    List<string> _HideHeader = new List<string>() { "類型", "重量", "單價", "單位", "地區", "已付時間", "籃重" };
                     excelCell = new List<MExcelCell>();
                     foreach (DataGridViewColumn col in view.Columns)
                     {
@@ -1360,8 +1363,8 @@ namespace 簡易倉儲系統
                             {
                                 _unitPrice = Convert.ToDouble(cell.Value);
                             }
-                            //保存數量
-                            else if (view.Columns[cell.ColumnIndex].HeaderText == "數量")
+                            //保存重量
+                            else if (view.Columns[cell.ColumnIndex].HeaderText == "重量")
                             {
                                 _count = Convert.ToDouble(cell.Value);
                             }
@@ -1474,6 +1477,9 @@ namespace 簡易倉儲系統
 
         /// <summary>各類型總重量</summary>
         public Double _ALLCount { get; set; } = 0;
+
+        /// <summary>各類型總金額</summary>
+        public Int32 _ALLMoney { get; set; } = 0;
     }
     public class Integrate
     {

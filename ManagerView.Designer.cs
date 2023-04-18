@@ -198,6 +198,7 @@
             this.Column21 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column17 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column26 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column27 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabControl1.SuspendLayout();
             this.SelectPage.SuspendLayout();
             this.groupBox8.SuspendLayout();
@@ -542,7 +543,8 @@
             this.Column15,
             this.Column21,
             this.Column17,
-            this.Column26});
+            this.Column26,
+            this.Column27});
             this.dataGridView4.Location = new System.Drawing.Point(364, 218);
             this.dataGridView4.Name = "dataGridView4";
             this.dataGridView4.ReadOnly = true;
@@ -2057,7 +2059,7 @@
             this.Column15.MinimumWidth = 6;
             this.Column15.Name = "Column15";
             this.Column15.ReadOnly = true;
-            this.Column15.Width = 162;
+            this.Column15.Width = 102;
             // 
             // Column21
             // 
@@ -2085,6 +2087,14 @@
             this.Column26.Name = "Column26";
             this.Column26.ReadOnly = true;
             this.Column26.Width = 162;
+            // 
+            // Column27
+            // 
+            this.Column27.HeaderText = "籃重";
+            this.Column27.MinimumWidth = 6;
+            this.Column27.Name = "Column27";
+            this.Column27.ReadOnly = true;
+            this.Column27.Width = 125;
             // 
             // ManagerView
             // 
@@ -2351,6 +2361,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column21;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column17;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column26;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column27;
     }
 }
 
