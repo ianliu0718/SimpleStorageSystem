@@ -875,7 +875,7 @@ namespace 簡易倉儲系統
             }
         }
 
-        //列印
+        //未付款列印
         private void button1_Click(object sender, EventArgs e)
         {
             textBox1.Focus();
@@ -902,66 +902,13 @@ namespace 簡易倉儲系統
             }
 
             button1.Enabled = false;
-            string _No = ""; //單號
+            button3.Enabled = false;
             DateTime _Now = DateTime.Now; //時間
-            string _Name = ""; //姓名
-            string _Unit = ""; //單位
-            string _SalesArea = ""; //販售地區
 
-            #region DB新增
-            try
-            {
-                ///取單號
-                DataTable dataTable = dB_SQLite.GetDataTable(DB_Path, $@"
-                    SELECT CASE WHEN MAX(No) ISNULL THEN '{_Now.ToString("yyyyMMdd") + "001"}' ELSE MAX(No)+1 END No
-                    FROM SalesRecord WHERE Time > '{_Now.ToString("yyyy-MM-dd")}';");
-                _No = dataTable.Rows[0][0].ToString();
-
-                string insertstring = $@"INSERT INTO SalesRecord (No, Time, Name, Type, Count, UnitPrice, Unit, salesArea) VALUES";
-                /// 插入資料
-                /// 可自動抓取新單號新增
-                foreach (DataGridViewRow row in dataGridView1.Rows)
-                {
-                    //暫存資料，用於匯出Excel時統合
-                    if (_Name == "")
-                        _Name = row.Cells[2].Value.ToString();
-                    else if (!row.Cells[2].Value.ToString().Split('，').Contains(row.Cells[2].Value.ToString()))
-                        _Name += row.Cells[2].Value.ToString();
-                    if (_Unit == "")
-                        _Unit = row.Cells[6].Value.ToString();
-                    else if (!row.Cells[6].Value.ToString().Split('，').Contains(row.Cells[6].Value.ToString()))
-                        _Unit += row.Cells[6].Value.ToString();
-                    if (_SalesArea == "")
-                        _SalesArea = row.Cells[7].Value.ToString();
-                    else if (!row.Cells[7].Value.ToString().Split('，').Contains(row.Cells[7].Value.ToString()))
-                        _SalesArea += row.Cells[7].Value.ToString();
-
-                    insertstring += $@" ('{_No}', '{Convert.ToDateTime(row.Cells[1].Value).ToString("yyyy-MM-dd HH:mm:ss")}', '{row.Cells[2].Value.ToString()}', 
-                            '{row.Cells[3].Value.ToString()}', '{row.Cells[4].Value.ToString()}', '{row.Cells[5].Value.ToString()}', 
-                            '{row.Cells[6].Value.ToString()}', '{row.Cells[7].Value.ToString()}') ,";
-                }
-                insertstring = insertstring.Remove(insertstring.Length - 1, 1);
-                dB_SQLite.Manipulate(DB_Path, insertstring);
-
-                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, $@"SELECT No, Time, Name, Type, 
-                    Count, UnitPrice, Unit, salesArea FROM SalesRecord 
-                    WHERE Time > '{DateTime.Now.ToString("yyyy-MM-dd")}' AND No = '{_No}';"), dataGridView1);
-
-                insertstring = "重複列印單號：" + _No;
-                log.LogMessage("確認_DB新增 成功路徑：" + DB_Path + "\r\n語法：" + insertstring, enumLogType.Trace);
-                log.LogMessage("確認_DB新增 成功單號：" + _No, enumLogType.Info);
-            }
-            catch (Exception ee)
-            {
-                MessageBox.Show("DB新增 失敗：\r\n" + ee.Message);
-                log.LogMessage("確認_DB新增 失敗：\r\n" + ee.Message, enumLogType.Error);
-                button1.Enabled = true;
-                return;
-            }
-            #endregion
+            InsertSalesRecord(_Now, out string _No, out string _Name, out string _Unit, out string _SalesArea);
 
             ExcelProcess excel = new ExcelProcess(log);
-            if (excel.ExcelExportImage(dataGridView1, $@"{Settings.Excel路徑}{_No}_{Name}.xlsx", _Now, _No, _Name, _Unit, _SalesArea, panel1.Visible))
+            if (excel.ExcelExportImage(dataGridView1, $@"{Settings.Excel路徑}{_No}_{_Name}.xlsx", _Now, _No, _Name, _Unit, _SalesArea, panel1.Visible))
             {
                 try
                 {
@@ -983,6 +930,7 @@ namespace 簡易倉儲系統
                 {
                     log.LogMessage("列印 失敗：\r\n" + ee.Message, enumLogType.Error);
                     button1.Enabled = true;
+                    button3.Enabled = true;
                     dB_SQLite.Manipulate(DB_Path, $@"DELETE FROM SalesRecord WHERE No = '{_No}';");
                     _No = "";
                 }
@@ -990,12 +938,140 @@ namespace 簡易倉儲系統
             else
             {
                 button1.Enabled = true;
+                button3.Enabled = true;
                 dB_SQLite.Manipulate(DB_Path, $@"DELETE FROM SalesRecord WHERE No = '{_No}';");
                 _No = "";
             }
 
             comboBox1.SelectedIndex = -1;
             label5.Text = _No;
+        }
+        //已付款列印
+        private void button3_Click(object sender, EventArgs e)
+        {
+            textBox1.Focus();
+
+            if (label5.Text != "")
+            {
+                if (DialogResult.Yes == MessageBox.Show("是否重複已付款列印", "重複已付款列印", MessageBoxButtons.YesNo))
+                {
+                    UpdateNoPaid(label5.Text);
+
+                    _Page = 1;
+                    //宣告一個印表機
+                    PrintDocument printDocument = new PrintDocument();
+                    //設定印表機邊界
+                    Margins margin = new Margins(0, 0, 0, 0);
+                    printDocument.DefaultPageSettings.Margins = margin;
+                    //印表機事件設定
+                    printDocument.PrintPage += PrintDocument_PrintPage;
+                    printDocument.PrinterSettings.PrinterName = Settings.印表機名稱;
+                    printDocument.Print();   //列印
+
+                    log.LogMessage("已付款重複列印 成功", enumLogType.Trace);
+                    log.LogMessage("已付款重複列印 成功", enumLogType.Info);
+                    return;
+                }
+                return;
+            }
+
+            button1.Enabled = false;
+            button3.Enabled = false;
+            DateTime _Now = DateTime.Now; //時間
+
+            InsertSalesRecord(_Now, out string _No, out string _Name, out string _Unit, out string _SalesArea);
+
+            ExcelProcess excel = new ExcelProcess(log);
+            if (excel.ExcelExportImage(dataGridView1, $@"{Settings.Excel路徑}{_No}_{_Name}.xlsx", _Now, _No, _Name, _Unit, _SalesArea, panel1.Visible))
+            {
+                try
+                {
+                    #region 列印
+                    _Page = 1;
+                    //宣告一個印表機
+                    PrintDocument printDocument = new PrintDocument();
+                    //設定印表機邊界
+                    Margins margin = new Margins(0, 0, 0, 0);
+                    printDocument.DefaultPageSettings.Margins = margin;
+                    //印表機事件設定
+                    printDocument.PrintPage += PrintDocument_PrintPage;
+                    printDocument.PrinterSettings.PrinterName = Settings.印表機名稱;
+                    //printDocument.DefaultPageSettings.Landscape = true;           //此处更改页面为横向打印 
+                    printDocument.Print();   //列印
+                    #endregion
+                }
+                catch (Exception ee)
+                {
+                    log.LogMessage("列印 失敗：\r\n" + ee.Message, enumLogType.Error);
+                    button1.Enabled = true;
+                    button3.Enabled = true;
+                    dB_SQLite.Manipulate(DB_Path, $@"DELETE FROM SalesRecord WHERE No = '{_No}';");
+                    _No = "";
+                }
+            }
+            else
+            {
+                button1.Enabled = true;
+                button3.Enabled = true;
+                dB_SQLite.Manipulate(DB_Path, $@"DELETE FROM SalesRecord WHERE No = '{_No}';");
+                _No = "";
+            }
+
+            comboBox1.SelectedIndex = -1;
+            UpdateNoPaid(_No);
+            label5.Text = _No;
+        }
+        private void InsertSalesRecord(DateTime _Now, out string _No, out string _Name, out string _Unit, out string _SalesArea)
+        {
+            _No = ""; _Name = ""; _Unit = ""; _SalesArea = "";
+            try
+            {
+                ///取單號
+                DataTable dataTable = dB_SQLite.GetDataTable(DB_Path, $@"
+                    SELECT CASE WHEN MAX(No) ISNULL THEN '{_Now.ToString("yyyyMMdd") + "001"}' ELSE MAX(No)+1 END No
+                    FROM SalesRecord WHERE Time > '{_Now.ToString("yyyy-MM-dd")}';");
+                _No = dataTable.Rows[0][0].ToString();
+
+                string insertstring = $@"INSERT INTO SalesRecord (No, Time, Name, Type, Count, UnitPrice, Unit, salesArea, BasketCount) VALUES";
+                /// 插入資料
+                /// 可自動抓取新單號新增
+                foreach (DataGridViewRow row in dataGridView1.Rows)
+                {
+                    //暫存資料，用於匯出Excel時統合
+                    if (_Name == "")
+                        _Name = row.Cells[2].Value.ToString();
+                    else if (!row.Cells[2].Value.ToString().Split('，').Contains(row.Cells[2].Value.ToString()))
+                        _Name += row.Cells[2].Value.ToString();
+                    if (_Unit == "")
+                        _Unit = row.Cells[6].Value.ToString();
+                    else if (!row.Cells[6].Value.ToString().Split('，').Contains(row.Cells[6].Value.ToString()))
+                        _Unit += row.Cells[6].Value.ToString();
+                    if (_SalesArea == "")
+                        _SalesArea = row.Cells[7].Value.ToString();
+                    else if (!row.Cells[7].Value.ToString().Split('，').Contains(row.Cells[7].Value.ToString()))
+                        _SalesArea += row.Cells[7].Value.ToString();
+
+                    insertstring += $@" ('{_No}', '{Convert.ToDateTime(row.Cells[1].Value).ToString("yyyy-MM-dd HH:mm:ss")}', '{row.Cells[2].Value.ToString()}', 
+                            '{row.Cells[3].Value.ToString()}', '{row.Cells[4].Value.ToString()}', '{row.Cells[5].Value.ToString()}', 
+                            '{row.Cells[6].Value.ToString()}', '{row.Cells[7].Value.ToString()}', '{row.Cells[8].Value.ToString()}') ,";
+                }
+                insertstring = insertstring.Remove(insertstring.Length - 1, 1);
+                dB_SQLite.Manipulate(DB_Path, insertstring);
+
+                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, $@"SELECT No, Time, Name, Type, 
+                    Count, UnitPrice, Unit, salesArea, BasketCount FROM SalesRecord 
+                    WHERE Time > '{DateTime.Now.ToString("yyyy-MM-dd")}' AND No = '{_No}';"), dataGridView1);
+
+                log.LogMessage("確認_DB新增 成功路徑：" + DB_Path + "\r\n語法：" + insertstring, enumLogType.Trace);
+                log.LogMessage("確認_DB新增 成功單號：" + _No, enumLogType.Info);
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("DB新增 失敗：\r\n" + ee.Message);
+                log.LogMessage("確認_DB新增 失敗：\r\n" + ee.Message, enumLogType.Error);
+                button1.Enabled = true;
+                return;
+            }
         }
         int _Page = 1;
         int _PageHeight = 0;
@@ -1012,7 +1088,7 @@ namespace 簡易倉儲系統
                 newarea.X = 0;
                 newarea.Y = 0;
                 newarea.Width = bitmap.Width;
-                newarea.Height = bitmap.Height;
+                newarea.Height = bitmap.Height - 30;
                 //第一頁
                 if (_Page == 1)
                 {
@@ -1057,9 +1133,42 @@ namespace 簡易倉儲系統
                 e.Graphics.DrawImage(bitmap, newarea, 0 - 60, _Y, _width, newarea.Height, GraphicsUnit.Pixel);
                 _Page++;
                 if (!e.HasMorePages)
+                {
                     button1.Enabled = true;
+                    button3.Enabled = true;
+                }
             }
             #endregion
+        }
+        //單號已付
+        private void UpdateNoPaid(string No)
+        {
+            string _SQL = $@"SELECT SUM(Count * UnitPrice)AS SumUnpaid FROM SalesRecord 
+                WHERE No = '{No}';";
+            var _Buff = dB_SQLite.GetDataTable(DB_Path, _SQL).Rows;
+            if (_Buff.Count > 0)
+            {
+                var Paid = "";
+                Paid = dB_SQLite.GetDataTable(DB_Path, _SQL).Rows[0][0].ToString();
+                UpdateNoPaid(No, Paid);
+            }
+        }
+        private void UpdateNoPaid(string No, string Paid)
+        {
+            try
+            {
+                DateTime _now = DateTime.Now;
+                string _UpdateSQL = $@"UPDATE SalesRecord SET PaidTime = '{_now.ToString("yyyy-MM-dd HH:mm:ss")}'
+                            , Paid = '{(int)Math.Round(Convert.ToDouble(Paid), 0, MidpointRounding.AwayFromZero)}'
+                            WHERE No = '{No}'";
+
+                dB_SQLite.Manipulate(DB_Path, _UpdateSQL);
+                log.LogMessage("已付修改 成功路徑：" + DB_Path + "\r\n語法：" + _UpdateSQL, enumLogType.Trace);
+            }
+            catch (Exception ee)
+            {
+                throw ee;
+            }
         }
 
         string _comboBoxSelectText = "";
