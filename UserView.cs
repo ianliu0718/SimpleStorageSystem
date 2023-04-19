@@ -1252,12 +1252,14 @@ namespace 簡易倉儲系統
         private void textBox_Enter(object sender, EventArgs e)
         {
             ((TextBox)sender).Parent.BackColor = SystemColors.ActiveCaption;
-            //groupBox3.BackColor = SystemColors.ActiveCaption;
+            if (((TextBox)sender).Name == "textBox3")
+            {
+                ((TextBox)sender).Text = "";
+            }
         }
         private void textBox_Leave(object sender, EventArgs e)
         {
             ((TextBox)sender).Parent.BackColor = SystemColors.Control;
-            //groupBox3.BackColor = SystemColors.Control;
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
