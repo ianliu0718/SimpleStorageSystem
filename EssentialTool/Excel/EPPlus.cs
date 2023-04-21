@@ -111,6 +111,13 @@ namespace 簡易倉儲系統.EssentialTool.Excel
             Sheet.Cells[row, col].Style.Font.Bold = isBold;
             Sheet.Cells[row, col].Style.Border.BorderAround(excelBorderStyle);
         }
+        /// <summary>設定欄位上方框框</summary>
+        public void FontSizeTop(int row, int col, ExcelBorderStyle excelBorderStyle)
+        {
+            if (row > 1)
+                Sheet.Cells[row - 1, col].Style.Border.Bottom.Style = excelBorderStyle;
+            Sheet.Cells[row, col].Style.Border.Top.Style = excelBorderStyle;
+        }
 
         /// <summary>合併儲存格</summary>
         public void MergeColumn(int row1, int col1, int row2, int col2)

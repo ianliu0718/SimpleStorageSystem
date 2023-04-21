@@ -137,7 +137,8 @@ namespace 簡易倉儲系統
                     //表示此程式非有效期
                     log.LogMessage("此序號已失效，請聯絡相關廠商", enumLogType.Error);
                     SendLine.SendLineMessage("PkOjQVn809ZiLtwkmnZqGPy8WmZYnnCsxDfdLLCptlc",
-                        "此序號已失效\r\nCPUID：" + GetPCMacID.GetCpuID() +
+                        "此序號已失效\r\n主機板ID：" + GetPCMacID.GetBaseboardID() +
+                        "\r\nCPUID：" + GetPCMacID.GetCpuID() +
                         "\r\n網卡硬件地址：" + GetPCMacID.GetMacAddress() +
                         "\r\nIP地址：" + GetPCMacID.GetIPAddress() +
                         "\r\n操作系統的登錄用戶名：" + GetPCMacID.GetUserName() +
@@ -248,13 +249,7 @@ namespace 簡易倉儲系統
                     , new Control[] { panel22, label27 } };
                 if (ConvectTypeText(_Type, _LabelList, dataGridView1))
                     LogMessage += tabPage1.Text + $@"：{_Type}";
-                //label1.Text = Column2.HeaderText = _Type1.Split('/')[0];
-                //label2.Text = Column3.HeaderText = _Type1.Split('/')[1];
-                //label3.Text = Column4.HeaderText = _Type1.Split('/')[2];
-                //label4.Text = Column5.HeaderText = _Type1.Split('/')[3];
-                //label5.Text = Column6.HeaderText = _Type1.Split('/')[4];
-                //label6.Text = Column7.HeaderText = _Type1.Split('/')[5];
-                //label7.Text = Column8.HeaderText = _Type1.Split('/')[6];
+
                 tabPage2.Text = Settings.販售地區2.Split('/')[0];
                 _Type = Settings.類型2;
                 _LabelList = new List<Control[]>() {new Control[] { panel8, label8 }
@@ -264,28 +259,17 @@ namespace 簡易倉儲系統
                     , new Control[] { panel23, label29 } };
                 if (ConvectTypeText(_Type, _LabelList, dataGridView2))
                     LogMessage += " / " + tabPage2.Text + $@"：{_Type}";
-                //label8.Text = dataGridViewTextBoxColumn2.HeaderText = _Type2.Split('/')[0];
-                //label9.Text = dataGridViewTextBoxColumn3.HeaderText = _Type2.Split('/')[1];
-                //label10.Text = dataGridViewTextBoxColumn4.HeaderText = _Type2.Split('/')[2];
-                //label11.Text = dataGridViewTextBoxColumn5.HeaderText = _Type2.Split('/')[3];
-                //label12.Text = dataGridViewTextBoxColumn6.HeaderText = _Type2.Split('/')[4];
-                //label13.Text = dataGridViewTextBoxColumn7.HeaderText = _Type2.Split('/')[5];
-                //label14.Text = dataGridViewTextBoxColumn8.HeaderText = _Type2.Split('/')[6];
+
                 tabPage3.Text = Settings.販售地區3.Split('/')[0];
                 _Type = Settings.類型3;
                 _LabelList = new List<Control[]>() {new Control[] { panel15, label15 }
                     , new Control[] { panel16, label16 }, new Control[] { panel17, label17 }
                     , new Control[] { panel18, label18 }, new Control[] { panel19, label19 }
-                    , new Control[] { panel20, label20 }, new Control[] { panel24, label20 }
+                    , new Control[] { panel20, label20 }, new Control[] { panel24, label30 }
                     , new Control[] { panel25, label31 } };
                 if (ConvectTypeText(_Type, _LabelList, dataGridView3))
                     LogMessage += " / " + tabPage3.Text + $@"：{_Type}";
-                //label15.Text = dataGridViewTextBoxColumn10.HeaderText = _Type3.Split('/')[0];
-                //label16.Text = dataGridViewTextBoxColumn11.HeaderText = _Type3.Split('/')[1];
-                //label17.Text = dataGridViewTextBoxColumn12.HeaderText = _Type3.Split('/')[2];
-                //label18.Text = dataGridViewTextBoxColumn13.HeaderText = _Type3.Split('/')[3];
-                //label19.Text = dataGridViewTextBoxColumn14.HeaderText = _Type3.Split('/')[4];
-                //label20.Text = dataGridViewTextBoxColumn15.HeaderText = _Type3.Split('/')[5];
+
                 log.LogMessage("取得類型設定參數 成功\r\n" + tabPage1.Text + " / " +
                     tabPage2.Text + " / " + tabPage3.Text, enumLogType.Info);
                 log.LogMessage("取得類型設定參數 成功\r\n" + LogMessage, enumLogType.Trace);
@@ -715,7 +699,7 @@ namespace 簡易倉儲系統
                     button8.Enabled = true;
                     button8.Visible = true;
                     this.Column10.HeaderText = "時間";
-                    if (!dataGridView4.Columns[3].Visible)
+                    //if (!dataGridView4.Columns[3].Visible)
                         dataGridView4.Rows.Clear();
                     dataGridView4.Columns[3].Visible = true;
                     dataGridView4.Columns[4].Visible = true;
@@ -736,7 +720,7 @@ namespace 簡易倉儲系統
                     button8.Enabled = false;
                     button8.Visible = false;
                     this.Column10.HeaderText = "時間";
-                    if (!dataGridView4.Columns[3].Visible)
+                    //if (!dataGridView4.Columns[3].Visible)
                         dataGridView4.Rows.Clear();
                     dataGridView4.Columns[3].Visible = true;
                     dataGridView4.Columns[4].Visible = true;
@@ -1480,6 +1464,9 @@ namespace 簡易倉儲系統
 
         /// <summary>各類型總金額</summary>
         public Int32 _ALLMoney { get; set; } = 0;
+
+        /// <summary>各類型單價</summary>
+        public Int32 _UnitPrice { get; set; } = 0;
     }
     public class Integrate
     {

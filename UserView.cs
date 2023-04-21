@@ -130,7 +130,8 @@ namespace 簡易倉儲系統
                     //表示此程式非有效期
                     log.LogMessage("此序號已失效，請聯絡相關廠商", enumLogType.Error);
                     SendLine.SendLineMessage("PkOjQVn809ZiLtwkmnZqGPy8WmZYnnCsxDfdLLCptlc",
-                        "此序號已失效\r\nCPUID：" + GetPCMacID.GetCpuID() +
+                        "此序號已失效\r\n主機板ID：" + GetPCMacID.GetBaseboardID() +
+                        "\r\nCPUID：" + GetPCMacID.GetCpuID() +
                         "\r\n網卡硬件地址：" + GetPCMacID.GetMacAddress() +
                         "\r\nIP地址：" + GetPCMacID.GetIPAddress() +
                         "\r\n操作系統的登錄用戶名：" + GetPCMacID.GetUserName() +
@@ -1143,6 +1144,8 @@ namespace 簡易倉儲系統
         //單號已付
         private void UpdateNoPaid(string No)
         {
+            if (String.IsNullOrEmpty(No))
+                return;
             string _SQL = $@"SELECT SUM(Count * UnitPrice)AS SumUnpaid FROM SalesRecord 
                 WHERE No = '{No}';";
             var _Buff = dB_SQLite.GetDataTable(DB_Path, _SQL).Rows;

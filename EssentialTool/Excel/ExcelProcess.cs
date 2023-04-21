@@ -119,11 +119,11 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                     //單筆金額加總
                     if (UnitPriceShow)
                     {
-                        Double _money = Convert.ToDouble(typeModel._ALLCount * Convert.ToDouble(row.Cells[_MoneyIndex].Value.ToString()));
+                        if (typeModel._UnitPrice == 0)
+                            typeModel._UnitPrice = Convert.ToInt32(row.Cells[_MoneyIndex].Value.ToString());
+                        Double _money = Convert.ToDouble(typeModel._ALLCount * Convert.ToInt32(row.Cells[_MoneyIndex].Value.ToString()));
                         typeModel._ALLMoney += (int)Math.Round(_money, 0, MidpointRounding.AwayFromZero);
                     }
-                    else
-                        excelCell.Add(new MExcelCell());
                 }
                 //排序
                 foreach (string item in ManagerView.TypeGradation())
@@ -142,8 +142,8 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                     excelCell.Add(new MExcelCell() { Content = typeModels[i]._ALLCount.ToString() });
                     excelCell.Add(new MExcelCell() { Content = "金額：" + typeModels[i]._ALLMoney.ToString() });
                     excelCell.Add(new MExcelCell() { Content = " " });
-                    excelCell2.Add(new MExcelCell() { Content = " " });
-                    excelCell2.Add(new MExcelCell() { Content = " " });
+                    excelCell2.Add(new MExcelCell() { Content = "(" + typeModels[i]._UnitPrice.ToString() + ")" });
+                    excelCell2.Add(new MExcelCell() { Content = Unit });
                     excelCell2.Add(new MExcelCell() { Content = " " });
                     excelCell2.Add(new MExcelCell() { Content = " " });
                     if (i + 1 < typeModels.Count)
@@ -152,8 +152,8 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                         excelCell.Add(new MExcelCell() { Content = typeModels[i + 1]._ALLCount.ToString() });
                         excelCell.Add(new MExcelCell() { Content = "金額：" + typeModels[i + 1]._ALLMoney.ToString() });
                         excelCell.Add(new MExcelCell() { Content = " " });
-                        excelCell2.Add(new MExcelCell() { Content = " " });
-                        excelCell2.Add(new MExcelCell() { Content = " " });
+                        excelCell2.Add(new MExcelCell() { Content = "(" + typeModels[i]._UnitPrice.ToString() + ")" });
+                        excelCell2.Add(new MExcelCell() { Content = Unit });
                         excelCell2.Add(new MExcelCell() { Content = " " });
                         excelCell2.Add(new MExcelCell() { Content = " " });
                     }
@@ -253,23 +253,35 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                 ePPlus.ExcelCenterCell(7, 8, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
                 for (int i = 0; i < typeModels.Count; i = i + 2)
                 {
-                    ePPlus.MergeColumn(9 + ((i + i) / 2), 1, 10 + ((i + i) / 2), 1);
+                    //ePPlus.MergeColumn(9 + ((i + i) / 2), 1, 10 + ((i + i) / 2), 1);
                     ePPlus.FontSize(9 + ((i + i) / 2), 1, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                     ePPlus.ExcelCenterCell(9 + ((i + i) / 2), 1, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
-                    ePPlus.MergeColumn(9 + ((i + i) / 2), 2, 10 + ((i + i) / 2), 2);
+                    ePPlus.FontSize(10 + ((i + i) / 2), 1, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                    ePPlus.FontSizeTop(10 + ((i + i) / 2), 1, OfficeOpenXml.Style.ExcelBorderStyle.None);
+                    ePPlus.ExcelCenterCell(10 + ((i + i) / 2), 1, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
+                    //ePPlus.MergeColumn(9 + ((i + i) / 2), 2, 10 + ((i + i) / 2), 2);
                     ePPlus.FontSize(9 + ((i + i) / 2), 2, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                     ePPlus.ExcelCenterCell(9 + ((i + i) / 2), 2, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
+                    ePPlus.FontSize(10 + ((i + i) / 2), 2, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                    ePPlus.FontSizeTop(10 + ((i + i) / 2), 2, OfficeOpenXml.Style.ExcelBorderStyle.None);
+                    ePPlus.ExcelCenterCell(10 + ((i + i) / 2), 2, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
                     ePPlus.MergeColumn(9 + ((i + i) / 2), 3, 10 + ((i + i) / 2), 4);
                     ePPlus.FontSize(9 + ((i + i) / 2), 3, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                     ePPlus.ExcelCenterCell(9 + ((i + i) / 2), 3, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
                     if (i + 1 < typeModels.Count)
                     {
-                        ePPlus.MergeColumn(9 + ((i + i) / 2), 5, 10 + ((i + i) / 2), 5);
+                        //ePPlus.MergeColumn(9 + ((i + i) / 2), 5, 10 + ((i + i) / 2), 5);
                         ePPlus.FontSize(9 + ((i + i) / 2), 5, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                         ePPlus.ExcelCenterCell(9 + ((i + i) / 2), 5, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
-                        ePPlus.MergeColumn(9 + ((i + i) / 2), 6, 10 + ((i + i) / 2), 6);
+                        ePPlus.FontSize(10 + ((i + i) / 2), 5, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                        ePPlus.FontSizeTop(10 + ((i + i) / 2), 5, OfficeOpenXml.Style.ExcelBorderStyle.None);
+                        ePPlus.ExcelCenterCell(10 + ((i + i) / 2), 5, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
+                        //ePPlus.MergeColumn(9 + ((i + i) / 2), 6, 10 + ((i + i) / 2), 6);
                         ePPlus.FontSize(9 + ((i + i) / 2), 6, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                         ePPlus.ExcelCenterCell(9 + ((i + i) / 2), 6, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
+                        ePPlus.FontSize(10 + ((i + i) / 2), 6, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                        ePPlus.FontSizeTop(10 + ((i + i) / 2), 6, OfficeOpenXml.Style.ExcelBorderStyle.None);
+                        ePPlus.ExcelCenterCell(10 + ((i + i) / 2), 6, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
                         ePPlus.MergeColumn(9 + ((i + i) / 2), 7, 10 + ((i + i) / 2), 8);
                         ePPlus.FontSize(9 + ((i + i) / 2), 7, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                         ePPlus.ExcelCenterCell(9 + ((i + i) / 2), 7, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
@@ -317,23 +329,35 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                 ePPlus.ExcelCenterCell(7 + _X, 8, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
                 for (int i = 0; i < typeModels.Count; i = i + 2)
                 {
-                    ePPlus.MergeColumn(9 + _X + ((i + i) / 2), 1, 10 + _X + ((i + i) / 2), 1);
+                    //ePPlus.MergeColumn(9 + _X + ((i + i) / 2), 1, 10 + _X + ((i + i) / 2), 1);
                     ePPlus.FontSize(9 + _X + ((i + i) / 2), 1, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                     ePPlus.ExcelCenterCell(9 + _X + ((i + i) / 2), 1, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
-                    ePPlus.MergeColumn(9 + _X + ((i + i) / 2), 2, 10 + _X + ((i + i) / 2), 2);
+                    ePPlus.FontSize(10 + _X + ((i + i) / 2), 1, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                    ePPlus.FontSizeTop(10 + _X + ((i + i) / 2), 1, OfficeOpenXml.Style.ExcelBorderStyle.None);
+                    ePPlus.ExcelCenterCell(10 + _X + ((i + i) / 2), 1, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
+                    //ePPlus.MergeColumn(9 + _X + ((i + i) / 2), 2, 10 + _X + ((i + i) / 2), 2);
                     ePPlus.FontSize(9 + _X + ((i + i) / 2), 2, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                     ePPlus.ExcelCenterCell(9 + _X + ((i + i) / 2), 2, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
+                    ePPlus.FontSize(10 + _X + ((i + i) / 2), 2, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                    ePPlus.FontSizeTop(10 + _X + ((i + i) / 2), 2, OfficeOpenXml.Style.ExcelBorderStyle.None);
+                    ePPlus.ExcelCenterCell(10 + _X + ((i + i) / 2), 2, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
                     ePPlus.MergeColumn(9 + _X + ((i + i) / 2), 3, 10 + _X + ((i + i) / 2), 4);
                     ePPlus.FontSize(9 + _X + ((i + i) / 2), 3, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                     ePPlus.ExcelCenterCell(9 + _X + ((i + i) / 2), 3, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
                     if (i + 1 < typeModels.Count)
                     {
-                        ePPlus.MergeColumn(9 + _X + ((i + i) / 2), 5, 10 + _X + ((i + i) / 2), 5);
+                        //ePPlus.MergeColumn(9 + _X + ((i + i) / 2), 5, 10 + _X + ((i + i) / 2), 5);
                         ePPlus.FontSize(9 + _X + ((i + i) / 2), 5, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                         ePPlus.ExcelCenterCell(9 + _X + ((i + i) / 2), 5, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
-                        ePPlus.MergeColumn(9 + _X + ((i + i) / 2), 6, 10 + _X + ((i + i) / 2), 6);
+                        ePPlus.FontSize(10 + _X + ((i + i) / 2), 5, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                        ePPlus.FontSizeTop(10 + _X + ((i + i) / 2), 5, OfficeOpenXml.Style.ExcelBorderStyle.None);
+                        ePPlus.ExcelCenterCell(10 + _X + ((i + i) / 2), 5, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
+                        //ePPlus.MergeColumn(9 + _X + ((i + i) / 2), 6, 10 + _X + ((i + i) / 2), 6);
                         ePPlus.FontSize(9 + _X + ((i + i) / 2), 6, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                         ePPlus.ExcelCenterCell(9 + _X + ((i + i) / 2), 6, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
+                        ePPlus.FontSize(10 + _X + ((i + i) / 2), 6, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                        ePPlus.FontSizeTop(10 + _X + ((i + i) / 2), 6, OfficeOpenXml.Style.ExcelBorderStyle.None);
+                        ePPlus.ExcelCenterCell(10 + _X + ((i + i) / 2), 6, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
                         ePPlus.MergeColumn(9 + _X + ((i + i) / 2), 7, 10 + _X + ((i + i) / 2), 8);
                         ePPlus.FontSize(9 + _X + ((i + i) / 2), 7, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
                         ePPlus.ExcelCenterCell(9 + _X + ((i + i) / 2), 7, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
