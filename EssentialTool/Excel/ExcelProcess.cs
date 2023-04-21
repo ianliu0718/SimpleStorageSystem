@@ -152,7 +152,7 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                         excelCell.Add(new MExcelCell() { Content = typeModels[i + 1]._ALLCount.ToString() });
                         excelCell.Add(new MExcelCell() { Content = "金額：" + typeModels[i + 1]._ALLMoney.ToString() });
                         excelCell.Add(new MExcelCell() { Content = " " });
-                        excelCell2.Add(new MExcelCell() { Content = "(" + typeModels[i]._UnitPrice.ToString() + ")" });
+                        excelCell2.Add(new MExcelCell() { Content = "(" + typeModels[i + 1]._UnitPrice.ToString() + ")" });
                         excelCell2.Add(new MExcelCell() { Content = Unit });
                         excelCell2.Add(new MExcelCell() { Content = " " });
                         excelCell2.Add(new MExcelCell() { Content = " " });
