@@ -75,7 +75,7 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                 {
                     if (column.HeaderText == "類型")
                         _TypeIndex = column.Index;
-                    if (column.HeaderText == "數量")
+                    if (column.HeaderText == "重量")
                         _CountIndex = column.Index;
                     if (_TypeIndex != -1 && _CountIndex != -1)
                         break;
@@ -212,8 +212,8 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                             }
                             _unitPrice = Convert.ToDouble(cell.Value);
                         }
-                        //保存數量
-                        else if (view.Columns[cell.ColumnIndex].HeaderText == "數量")
+                        //保存重量
+                        else if (view.Columns[cell.ColumnIndex].HeaderText == "重量")
                         {
                             _count = Convert.ToDouble(cell.Value);
                         }
@@ -254,8 +254,8 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                                 }
                                 _unitPrice = Convert.ToDouble(cell.Value);
                             }
-                            //保存數量
-                            else if (view.Columns[cell.ColumnIndex].HeaderText == "數量")
+                            //保存重量
+                            else if (view.Columns[cell.ColumnIndex].HeaderText == "重量")
                             {
                                 _count = Convert.ToDouble(cell.Value);
                             }

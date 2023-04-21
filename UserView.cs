@@ -55,7 +55,7 @@ namespace 簡易倉儲系統
         /// </summary>
         public static string type = "";
         /// <summary>
-        /// 販售地點
+        /// 販售地區
         /// </summary>
         public static string salesArea = "";
         /// <summary>
@@ -130,7 +130,8 @@ namespace 簡易倉儲系統
                     //表示此程式非有效期
                     log.LogMessage("此序號已失效，請聯絡相關廠商", enumLogType.Error);
                     SendLine.SendLineMessage("PkOjQVn809ZiLtwkmnZqGPy8WmZYnnCsxDfdLLCptlc",
-                        "此序號已失效\r\nCPUID：" + GetPCMacID.GetCpuID() +
+                        "此序號已失效\r\n主機板ID：" + GetPCMacID.GetBaseboardID() +
+                        "\r\nCPUID：" + GetPCMacID.GetCpuID() +
                         "\r\n網卡硬件地址：" + GetPCMacID.GetMacAddress() +
                         "\r\nIP地址：" + GetPCMacID.GetIPAddress() +
                         "\r\n操作系統的登錄用戶名：" + GetPCMacID.GetUserName() +
@@ -177,9 +178,10 @@ namespace 簡易倉儲系統
                 }
                 else if (Settings.主機序號 == GetPCMacID.GetCpuID())
                 {
-                    Settings.主機序號 = EncryptionDecryption.desEncryptBase64(Settings.主機序號);
+                    Settings.主機序號 = EncryptionDecryption.desEncryptBase64(GetPCMacID.GetCpuID() + GetPCMacID.GetBaseboardID());
                     SendLine.SendLineMessage("PkOjQVn809ZiLtwkmnZqGPy8WmZYnnCsxDfdLLCptlc",
-                        "主機綁定成功\r\nCPUID：" + GetPCMacID.GetCpuID() +
+                        "主機綁定成功\r\n主機板ID：" + GetPCMacID.GetBaseboardID() +
+                        "\r\nCPUID：" + GetPCMacID.GetCpuID() +
                         "\r\n網卡硬件地址：" + GetPCMacID.GetMacAddress() +
                         "\r\nIP地址：" + GetPCMacID.GetIPAddress() +
                         "\r\n操作系統的登錄用戶名：" + GetPCMacID.GetUserName() +
@@ -190,7 +192,20 @@ namespace 簡易倉儲系統
                     log.LogMessage("比對 CPU ID 綁定 成功", enumLogType.Info);
                     log.LogMessage("比對 CPU ID 綁定 成功", enumLogType.Trace);
                 }
-                else if (EncryptionDecryption.desDecryptBase64(Settings.主機序號) != GetPCMacID.GetCpuID())
+                else if (EncryptionDecryption.desDecryptBase64(Settings.主機序號) == GetPCMacID.GetCpuID())
+                {
+                    Settings.主機序號 = EncryptionDecryption.desEncryptBase64(GetPCMacID.GetCpuID() + GetPCMacID.GetBaseboardID());
+                    SendLine.SendLineMessage("PkOjQVn809ZiLtwkmnZqGPy8WmZYnnCsxDfdLLCptlc",
+                        "原先為綁定CPUID改為主機板ID成功\r\n主機板ID：" + GetPCMacID.GetBaseboardID() +
+                        "\r\nCPUID：" + GetPCMacID.GetCpuID() +
+                        "\r\n網卡硬件地址：" + GetPCMacID.GetMacAddress() +
+                        "\r\nIP地址：" + GetPCMacID.GetIPAddress() +
+                        "\r\n操作系統的登錄用戶名：" + GetPCMacID.GetUserName() +
+                        "\r\n計算機名：" + GetPCMacID.GetComputerName() +
+                        "\r\nPC類型：" + GetPCMacID.GetSystemType()
+                        );
+                }
+                else if (EncryptionDecryption.desDecryptBase64(Settings.主機序號) != (GetPCMacID.GetCpuID() + GetPCMacID.GetBaseboardID()))
                 {
                     log.LogMessage("程式已綁定，無法在此電腦執行！", enumLogType.Info);
                     MessageBox.Show("程式已綁定，無法在此電腦執行！");
