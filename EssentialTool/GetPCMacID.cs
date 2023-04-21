@@ -10,6 +10,32 @@ namespace 簡易倉儲系統.EssentialTool
     internal class GetPCMacID
     {
         /// <summary>
+        /// 0.獲取主板序列號代碼
+        /// </summary>
+        /// <returns></returns>
+        public static string GetBaseboardID()
+        {
+            try
+            {
+                string BaseboardInfo = "";//主板序列號
+                ManagementObjectSearcher mos = new ManagementObjectSearcher("select * from Win32_baseboard");
+                foreach (ManagementObject mo in mos.Get())
+                {
+                    BaseboardInfo = mo["SerialNumber"].ToString();
+                    break;
+                    //Response.Write("主板製造商:" + mo["Manufacturer"]);
+                    //Response.Write("型號:" + mo["Product"]);
+                    //Response.Write("序列號:" + mo["SerialNumber"].ToString());
+                }
+                mos = null;
+                return BaseboardInfo;
+            }
+            catch
+            {
+                return "unknow";
+            }
+        }
+        /// <summary>
         /// 1.獲取CPU序列號代碼
         /// </summary>
         /// <returns></returns>

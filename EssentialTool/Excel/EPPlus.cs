@@ -97,9 +97,11 @@ namespace 簡易倉儲系統.EssentialTool.Excel
         }
 
         /// <summary>儲存格置中</summary>
-        public void ExcelCenterCell(int row, int col, OfficeOpenXml.Style.ExcelHorizontalAlignment excelHorizontalAlignment)
+        public void ExcelCenterCell(int row, int col, OfficeOpenXml.Style.ExcelHorizontalAlignment excelHorizontalAlignment, Boolean Vertical = true)
         {
             Sheet.Cells[row, col].Style.HorizontalAlignment = excelHorizontalAlignment;
+            if (Vertical)
+                Sheet.Cells[row, col].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
         }
 
         /// <summary>儲存格字體大小</summary>
