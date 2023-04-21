@@ -88,6 +88,156 @@ namespace 簡易倉儲系統
                 Application.Exit();
             }
 
+            //各種偵測，每24小時偵測一次
+            timer_detection_Tick(sender, e);
+
+            #region 取得類型設定參數
+            try
+            {
+                log.LogMessage("取得類型設定參數 開始", enumLogType.Trace);
+
+                string _Type = "";
+                string LogMessage = "";
+                List<Control[]> _LabelList = new List<Control[]>();
+
+                tabPage1.Text = Settings.販售地區1.Split('/')[0];
+                _Type = Settings.類型1;
+                _LabelList = new List<Control[]>() {new Control[] { panel1, label1 }
+                    , new Control[] { panel2, label2 }, new Control[] { panel3, label3 }
+                    , new Control[] { panel4, label4 }, new Control[] { panel5, label5 }
+                    , new Control[] { panel6, label6 }, new Control[] { panel7, label7 }
+                    , new Control[] { panel22, label27 } };
+                if (ConvectTypeText(_Type, _LabelList, dataGridView1))
+                    LogMessage += tabPage1.Text + $@"：{_Type}";
+                //label1.Text = Column2.HeaderText = _Type1.Split('/')[0];
+                //label2.Text = Column3.HeaderText = _Type1.Split('/')[1];
+                //label3.Text = Column4.HeaderText = _Type1.Split('/')[2];
+                //label4.Text = Column5.HeaderText = _Type1.Split('/')[3];
+                //label5.Text = Column6.HeaderText = _Type1.Split('/')[4];
+                //label6.Text = Column7.HeaderText = _Type1.Split('/')[5];
+                //label7.Text = Column8.HeaderText = _Type1.Split('/')[6];
+                tabPage2.Text = Settings.販售地區2.Split('/')[0];
+                _Type = Settings.類型2;
+                _LabelList = new List<Control[]>() {new Control[] { panel8, label8 }
+                    , new Control[] { panel9, label9 }, new Control[] { panel10, label10 }
+                    , new Control[] { panel11, label11 }, new Control[] { panel12, label12 }
+                    , new Control[] { panel13, label13 }, new Control[] { panel14, label14 }
+                    , new Control[] { panel23, label29 } };
+                if (ConvectTypeText(_Type, _LabelList, dataGridView2))
+                    LogMessage += " / " + tabPage2.Text + $@"：{_Type}";
+                //label8.Text = dataGridViewTextBoxColumn2.HeaderText = _Type2.Split('/')[0];
+                //label9.Text = dataGridViewTextBoxColumn3.HeaderText = _Type2.Split('/')[1];
+                //label10.Text = dataGridViewTextBoxColumn4.HeaderText = _Type2.Split('/')[2];
+                //label11.Text = dataGridViewTextBoxColumn5.HeaderText = _Type2.Split('/')[3];
+                //label12.Text = dataGridViewTextBoxColumn6.HeaderText = _Type2.Split('/')[4];
+                //label13.Text = dataGridViewTextBoxColumn7.HeaderText = _Type2.Split('/')[5];
+                //label14.Text = dataGridViewTextBoxColumn8.HeaderText = _Type2.Split('/')[6];
+                tabPage3.Text = Settings.販售地區3.Split('/')[0];
+                _Type = Settings.類型3;
+                _LabelList = new List<Control[]>() {new Control[] { panel15, label15 }
+                    , new Control[] { panel16, label16 }, new Control[] { panel17, label17 }
+                    , new Control[] { panel18, label18 }, new Control[] { panel19, label19 }
+                    , new Control[] { panel20, label20 }, new Control[] { panel24, label20 }
+                    , new Control[] { panel25, label31 } };
+                if (ConvectTypeText(_Type, _LabelList, dataGridView3))
+                    LogMessage += " / " + tabPage3.Text + $@"：{_Type}";
+                //label15.Text = dataGridViewTextBoxColumn10.HeaderText = _Type3.Split('/')[0];
+                //label16.Text = dataGridViewTextBoxColumn11.HeaderText = _Type3.Split('/')[1];
+                //label17.Text = dataGridViewTextBoxColumn12.HeaderText = _Type3.Split('/')[2];
+                //label18.Text = dataGridViewTextBoxColumn13.HeaderText = _Type3.Split('/')[3];
+                //label19.Text = dataGridViewTextBoxColumn14.HeaderText = _Type3.Split('/')[4];
+                //label20.Text = dataGridViewTextBoxColumn15.HeaderText = _Type3.Split('/')[5];
+                log.LogMessage("取得類型設定參數 成功\r\n" + tabPage1.Text + " / " +
+                    tabPage2.Text + " / " + tabPage3.Text, enumLogType.Info);
+                log.LogMessage("取得類型設定參數 成功\r\n" + LogMessage, enumLogType.Trace);
+            }
+            catch (Exception ee)
+            {
+                log.LogMessage("取得類型設定參數 失敗\r\n" + ee.Message, enumLogType.Error);
+                MessageBox.Show("取得類型設定參數 失敗\r\n" + ee.Message);
+                return;
+            }
+            #endregion
+
+            try
+            {
+                if (!File.Exists(DB_Path))
+                {
+                    log.LogMessage("偵測到無資料庫，準備開始建立。", enumLogType.Debug);
+                    var createtablestring = "";
+
+                    // 建立 SQLite 資料庫
+                    dB_SQLite.CreateDatabase(DB_Path);
+
+                    // 建立資料表 設定客戶資料 CustomerProfile
+                    createtablestring = @"CREATE TABLE CustomerProfile (ID Integer NOT NULL, CustomerID TEXT, CustomerName TEXT, PRIMARY KEY(ID AUTOINCREMENT));";
+                    dB_SQLite.CreateTable(DB_Path, createtablestring);
+
+                    // 建立資料表 設定參數值 Setting
+                    createtablestring = @"CREATE TABLE Setting (SettingName TEXT, SettingValue TEXT);";
+                    dB_SQLite.CreateTable(DB_Path, createtablestring);
+                    dB_SQLite.Manipulate(DB_Path, $@"
+                        INSERT INTO Setting (SettingName, SettingValue) VALUES ('ShowMoney_ExportKorea', 'False');
+                        INSERT INTO Setting (SettingName, SettingValue) VALUES ('ShowMoney_ExportJapan', 'False');
+                        INSERT INTO Setting (SettingName, SettingValue) VALUES ('ShowMoney_ExportSupermarket', 'False');
+                    ");
+
+                    // 建立資料表 販售紀錄 SalesRecord
+                    createtablestring = @"CREATE TABLE SalesRecord (No Integer, Time DateTime, Name TEXT, Type TEXT, Count double
+                    , UnitPrice double, Unit TEXT, SalesArea TEXT, Paid Integer, PaidTime DateTime);";
+                    dB_SQLite.CreateTable(DB_Path, createtablestring);
+
+                    // 建立資料表 外銷韓國 ExportKoreaUnitPrice
+                    createtablestring = @"CREATE TABLE ExportKoreaUnitPrice (Date DateTime, Type1 double, Type2 double
+                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double);";
+                    dB_SQLite.CreateTable(DB_Path, createtablestring);
+
+                    // 建立資料表 外銷日本 ExportJapanUnitPrice
+                    createtablestring = @"CREATE TABLE ExportJapanUnitPrice (Date DateTime, Type1 double, Type2 double
+                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double);";
+                    dB_SQLite.CreateTable(DB_Path, createtablestring);
+
+                    // 建立資料表 超市 ExportSupermarketUnitPrice
+                    createtablestring = @"CREATE TABLE ExportSupermarketUnitPrice (Date DateTime, Type1 double, Type2 double
+                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double);";
+                    dB_SQLite.CreateTable(DB_Path, createtablestring);
+
+                    log.LogMessage("建立資料庫 成功。", enumLogType.Debug);
+                }
+
+                // 讀取資料
+                foreach (DataRow item in dB_SQLite.GetDataTable(DB_Path, @"SELECT * FROM Setting").Rows)
+                {
+                    switch (item[0].ToString())
+                    {
+                        case "ShowMoney_ExportKorea":
+                            checkBox1.Checked = Boolean.Parse(item[1].ToString());
+                            break;
+                        case "ShowMoney_ExportJapan":
+                            checkBox2.Checked = Boolean.Parse(item[1].ToString());
+                            break;
+                        case "ShowMoney_ExportSupermarket":
+                            checkBox3.Checked = Boolean.Parse(item[1].ToString());
+                            break;
+                    }
+                }
+                DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, @"SELECT * FROM ExportKoreaUnitPrice"), dataGridView1);
+                DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, @"SELECT * FROM ExportJapanUnitPrice"), dataGridView2);
+                DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, @"SELECT * FROM ExportSupermarketUnitPrice"), dataGridView3);
+                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, "SELECT * FROM CustomerProfile"), dataGridView5);
+                log.LogMessage("讀取資料庫 成功。", enumLogType.Trace);
+            }
+            catch (Exception ee)
+            {
+                log.LogMessage("連線資料庫 失敗\r\n" + ee.Message, enumLogType.Error);
+                MessageBox.Show("連線資料庫 失敗\r\n" + ee.Message);
+                return;
+            }
+            log.LogMessage("管理者介面啓動", enumLogType.Info);
+        }
+
+        private void timer_detection_Tick(object sender, EventArgs e)
+        {
             #region 檢查時間為最新
             try
             {
@@ -230,160 +380,6 @@ namespace 簡易倉儲系統
                 return;
             }
             #endregion
-
-            #region 取得類型設定參數
-            try
-            {
-                log.LogMessage("取得類型設定參數 開始", enumLogType.Trace);
-
-                string _Type = "";
-                string LogMessage = "";
-                List<Control[]> _LabelList = new List<Control[]>();
-
-                tabPage1.Text = Settings.販售地區1.Split('/')[0];
-                _Type = Settings.類型1;
-                _LabelList = new List<Control[]>() {new Control[] { panel1, label1 }
-                    , new Control[] { panel2, label2 }, new Control[] { panel3, label3 }
-                    , new Control[] { panel4, label4 }, new Control[] { panel5, label5 }
-                    , new Control[] { panel6, label6 }, new Control[] { panel7, label7 }
-                    , new Control[] { panel22, label27 } };
-                if (ConvectTypeText(_Type, _LabelList, dataGridView1))
-                    LogMessage += tabPage1.Text + $@"：{_Type}";
-                //label1.Text = Column2.HeaderText = _Type1.Split('/')[0];
-                //label2.Text = Column3.HeaderText = _Type1.Split('/')[1];
-                //label3.Text = Column4.HeaderText = _Type1.Split('/')[2];
-                //label4.Text = Column5.HeaderText = _Type1.Split('/')[3];
-                //label5.Text = Column6.HeaderText = _Type1.Split('/')[4];
-                //label6.Text = Column7.HeaderText = _Type1.Split('/')[5];
-                //label7.Text = Column8.HeaderText = _Type1.Split('/')[6];
-                tabPage2.Text = Settings.販售地區2.Split('/')[0];
-                _Type = Settings.類型2;
-                _LabelList = new List<Control[]>() {new Control[] { panel8, label8 }
-                    , new Control[] { panel9, label9 }, new Control[] { panel10, label10 }
-                    , new Control[] { panel11, label11 }, new Control[] { panel12, label12 }
-                    , new Control[] { panel13, label13 }, new Control[] { panel14, label14 }
-                    , new Control[] { panel23, label29 } };
-                if (ConvectTypeText(_Type, _LabelList, dataGridView2))
-                    LogMessage += " / " + tabPage2.Text + $@"：{_Type}";
-                //label8.Text = dataGridViewTextBoxColumn2.HeaderText = _Type2.Split('/')[0];
-                //label9.Text = dataGridViewTextBoxColumn3.HeaderText = _Type2.Split('/')[1];
-                //label10.Text = dataGridViewTextBoxColumn4.HeaderText = _Type2.Split('/')[2];
-                //label11.Text = dataGridViewTextBoxColumn5.HeaderText = _Type2.Split('/')[3];
-                //label12.Text = dataGridViewTextBoxColumn6.HeaderText = _Type2.Split('/')[4];
-                //label13.Text = dataGridViewTextBoxColumn7.HeaderText = _Type2.Split('/')[5];
-                //label14.Text = dataGridViewTextBoxColumn8.HeaderText = _Type2.Split('/')[6];
-                tabPage3.Text = Settings.販售地區3.Split('/')[0];
-                _Type = Settings.類型3;
-                _LabelList = new List<Control[]>() {new Control[] { panel15, label15 }
-                    , new Control[] { panel16, label16 }, new Control[] { panel17, label17 }
-                    , new Control[] { panel18, label18 }, new Control[] { panel19, label19 }
-                    , new Control[] { panel20, label20 }, new Control[] { panel24, label20 }
-                    , new Control[] { panel25, label31 } };
-                if (ConvectTypeText(_Type, _LabelList, dataGridView3))
-                    LogMessage += " / " + tabPage3.Text + $@"：{_Type}";
-                //label15.Text = dataGridViewTextBoxColumn10.HeaderText = _Type3.Split('/')[0];
-                //label16.Text = dataGridViewTextBoxColumn11.HeaderText = _Type3.Split('/')[1];
-                //label17.Text = dataGridViewTextBoxColumn12.HeaderText = _Type3.Split('/')[2];
-                //label18.Text = dataGridViewTextBoxColumn13.HeaderText = _Type3.Split('/')[3];
-                //label19.Text = dataGridViewTextBoxColumn14.HeaderText = _Type3.Split('/')[4];
-                //label20.Text = dataGridViewTextBoxColumn15.HeaderText = _Type3.Split('/')[5];
-                log.LogMessage("取得類型設定參數 成功\r\n" + tabPage1.Text + " / " +
-                    tabPage2.Text + " / " + tabPage3.Text, enumLogType.Info);
-                log.LogMessage("取得類型設定參數 成功\r\n" + LogMessage, enumLogType.Trace);
-            }
-            catch (Exception ee)
-            {
-                log.LogMessage("取得類型設定參數 失敗\r\n" + ee.Message, enumLogType.Error);
-                MessageBox.Show("取得類型設定參數 失敗\r\n" + ee.Message);
-                return;
-            }
-            #endregion
-
-            try
-            {
-                if (!File.Exists(DB_Path))
-                {
-                    log.LogMessage("偵測到無資料庫，準備開始建立。", enumLogType.Debug);
-                    var createtablestring = "";
-
-                    // 建立 SQLite 資料庫
-                    dB_SQLite.CreateDatabase(DB_Path);
-
-                    // 建立資料表 設定客戶資料 CustomerProfile
-                    createtablestring = @"CREATE TABLE CustomerProfile (ID Integer NOT NULL, CustomerID TEXT, CustomerName TEXT, PRIMARY KEY(ID AUTOINCREMENT));";
-                    dB_SQLite.CreateTable(DB_Path, createtablestring);
-
-                    // 建立資料表 設定參數值 Setting
-                    createtablestring = @"CREATE TABLE Setting (SettingName TEXT, SettingValue TEXT);";
-                    dB_SQLite.CreateTable(DB_Path, createtablestring);
-                    dB_SQLite.Manipulate(DB_Path, $@"
-                        INSERT INTO Setting (SettingName, SettingValue) VALUES ('ShowMoney_ExportKorea', 'False');
-                        INSERT INTO Setting (SettingName, SettingValue) VALUES ('ShowMoney_ExportJapan', 'False');
-                        INSERT INTO Setting (SettingName, SettingValue) VALUES ('ShowMoney_ExportSupermarket', 'False');
-                    ");
-
-                    // 建立資料表 販售紀錄 SalesRecord
-                    createtablestring = @"CREATE TABLE SalesRecord (No Integer, Time DateTime, Name TEXT, Type TEXT, Count double
-                    , UnitPrice double, Unit TEXT, SalesArea TEXT, Paid Integer, PaidTime DateTime);";
-                    dB_SQLite.CreateTable(DB_Path, createtablestring);
-
-                    // 建立資料表 外銷韓國 ExportKoreaUnitPrice
-                    createtablestring = @"CREATE TABLE ExportKoreaUnitPrice (Date DateTime, Type1 double, Type2 double
-                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double);";
-                    dB_SQLite.CreateTable(DB_Path, createtablestring);
-
-                    // 建立資料表 外銷日本 ExportJapanUnitPrice
-                    createtablestring = @"CREATE TABLE ExportJapanUnitPrice (Date DateTime, Type1 double, Type2 double
-                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double);";
-                    dB_SQLite.CreateTable(DB_Path, createtablestring);
-
-                    // 建立資料表 超市 ExportSupermarketUnitPrice
-                    createtablestring = @"CREATE TABLE ExportSupermarketUnitPrice (Date DateTime, Type1 double, Type2 double
-                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double);";
-                    dB_SQLite.CreateTable(DB_Path, createtablestring);
-
-                    log.LogMessage("建立資料庫 成功。", enumLogType.Debug);
-                }
-                //ianTest
-                //var insertstring = @"
-                //    INSERT INTO ExportKoreaUnitPrice (Date, Type1, Type2, Type3, Type4, Type5, Type6, Type7) VALUES ('2023-03-11', '100', '20', '200', '100', '20', '200', '3');
-                //    INSERT INTO ExportKoreaUnitPrice (Date, Type1, Type2, Type3, Type4, Type5, Type6, Type7) VALUES ('2023-03-12', '100', '20', '200', '100', '20', '200', '3');
-                //    INSERT INTO ExportJapanUnitPrice (Date, Type1, Type2, Type3, Type4, Type5, Type6, Type7) VALUES ('2023-03-11', '100', '20', '200', '100', '20', '200', '3');
-                //    INSERT INTO ExportJapanUnitPrice (Date, Type1, Type2, Type3, Type4, Type5, Type6, Type7) VALUES ('2023-03-12', '100', '20', '200', '100', '20', '200', '3');
-                //    INSERT INTO ExportSupermarketUnitPrice (Date, Type1, Type2, Type3, Type4, Type5, Type6) VALUES ('2023-03-11', '100', '20', '200', '100', '20', '200');
-                //    INSERT INTO ExportSupermarketUnitPrice (Date, Type1, Type2, Type3, Type4, Type5, Type6) VALUES ('2023-03-12', '100', '20', '200', '100', '20', '200');
-                //";
-                //dB_SQLite.Manipulate(DB_Path, insertstring);
-
-                // 讀取資料
-                foreach (DataRow item in dB_SQLite.GetDataTable(DB_Path, @"SELECT * FROM Setting").Rows)
-                {
-                    switch (item[0].ToString())
-                    {
-                        case "ShowMoney_ExportKorea":
-                            checkBox1.Checked = Boolean.Parse(item[1].ToString());
-                            break;
-                        case "ShowMoney_ExportJapan":
-                            checkBox2.Checked = Boolean.Parse(item[1].ToString());
-                            break;
-                        case "ShowMoney_ExportSupermarket":
-                            checkBox3.Checked = Boolean.Parse(item[1].ToString());
-                            break;
-                    }
-                }
-                DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, @"SELECT * FROM ExportKoreaUnitPrice"), dataGridView1);
-                DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, @"SELECT * FROM ExportJapanUnitPrice"), dataGridView2);
-                DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, @"SELECT * FROM ExportSupermarketUnitPrice"), dataGridView3);
-                DB_SQLite.DatatableToDatagridview(dB_SQLite.GetDataTable(DB_Path, "SELECT * FROM CustomerProfile"), dataGridView5);
-                log.LogMessage("讀取資料庫 成功。", enumLogType.Trace);
-            }
-            catch (Exception ee)
-            {
-                log.LogMessage("連線資料庫 失敗\r\n" + ee.Message, enumLogType.Error);
-                MessageBox.Show("連線資料庫 失敗\r\n" + ee.Message);
-                return;
-            }
-            log.LogMessage("管理者介面啓動", enumLogType.Info);
         }
 
         private bool ConvectTypeText(string TypeText, List<Control[]> labelList, DataGridView dataGridView)
