@@ -82,6 +82,150 @@ namespace 簡易倉儲系統
             comboBox2.SelectedIndex = 0;
             comboBox2.Location = new Point(radioButton9.Location.X + radioButton9.Size.Width + 10, comboBox2.Location.Y);
 
+            //定時偵測序號
+            timer_detection_Tick(sender, e);
+
+            #region 取得類型設定參數
+            try
+            {
+                log.LogMessage("取得類型設定參數 開始", enumLogType.Trace);
+                radioButton8.Text = Settings.販售地區1.Split('/')[0] + "(F1)";
+                label1.Text = Settings.販售地區1.Split('/')[1];
+                string _Type = Settings.類型1;
+                int _TypeCount = _Type.Split('/').Count();
+                int _Space = 10;
+                #region 8個類型的位置調整
+                if (_TypeCount >= 1)
+                {
+                    radioButton1.Text = _Type.Split('/')[0] + "(F4)";
+                    radioButton1.Enabled = true;
+                    radioButton1.Visible = true;
+                }
+                else
+                {
+                    radioButton1.Enabled = false;
+                    radioButton1.Visible = false;
+                }
+                if (_TypeCount >= 2)
+                {
+                    radioButton2.Text = _Type.Split('/')[1] + "(F5)";
+                    radioButton2.Location = new Point(radioButton1.Location.X + radioButton1.Size.Width + _Space, radioButton2.Location.Y);
+                    radioButton2.Enabled = true;
+                    radioButton2.Visible = true;
+                }
+                else
+                {
+                    radioButton2.Enabled = false;
+                    radioButton2.Visible = false;
+                }
+                if (_TypeCount >= 3)
+                {
+                    radioButton3.Text = _Type.Split('/')[2] + "(F6)";
+                    radioButton3.Location = new Point(radioButton2.Location.X + radioButton2.Size.Width + _Space, radioButton2.Location.Y);
+                    radioButton3.Enabled = true;
+                    radioButton3.Visible = true;
+                }
+                else
+                {
+                    radioButton3.Enabled = false;
+                    radioButton3.Visible = false;
+                }
+                if (_TypeCount >= 4)
+                {
+                    radioButton4.Text = _Type.Split('/')[3] + "(F7)";
+                    radioButton4.Location = new Point(radioButton3.Location.X + radioButton3.Size.Width + _Space, radioButton3.Location.Y);
+                    radioButton4.Enabled = true;
+                    radioButton4.Visible = true;
+                }
+                else
+                {
+                    radioButton4.Enabled = false;
+                    radioButton4.Visible = false;
+                }
+                if (_TypeCount >= 5)
+                {
+                    radioButton5.Text = _Type.Split('/')[4] + "(F8)";
+                    radioButton5.Location = new Point(radioButton4.Location.X + radioButton4.Size.Width + _Space, radioButton4.Location.Y);
+                    radioButton5.Enabled = true;
+                    radioButton5.Visible = true;
+                }
+                else
+                {
+                    radioButton5.Enabled = false;
+                    radioButton5.Visible = false;
+                }
+                if (_TypeCount >= 6)
+                {
+                    radioButton6.Text = _Type.Split('/')[5] + "(F9)";
+                    radioButton6.Location = new Point(radioButton5.Location.X + radioButton5.Size.Width + _Space, radioButton5.Location.Y);
+                    radioButton6.Enabled = true;
+                    radioButton6.Visible = true;
+                }
+                else
+                {
+                    radioButton6.Enabled = false;
+                    radioButton6.Visible = false;
+                }
+                if (_TypeCount >= 7)
+                {
+                    radioButton7.Text = _Type.Split('/')[6] + "(F10)";
+                    radioButton7.Location = new Point(radioButton6.Location.X + radioButton6.Size.Width + _Space, radioButton6.Location.Y);
+                    radioButton7.Enabled = true;
+                    radioButton7.Visible = true;
+                }
+                else
+                {
+                    radioButton7.Enabled = false;
+                    radioButton7.Visible = false;
+                }
+                if (_TypeCount >= 8)
+                {
+                    radioButton11.Text = _Type.Split('/')[7] + "(F11)";
+                    radioButton11.Location = new Point(radioButton7.Location.X + radioButton7.Size.Width + _Space, radioButton7.Location.Y);
+                    radioButton11.Enabled = true;
+                    radioButton11.Visible = true;
+                }
+                else
+                {
+                    radioButton11.Enabled = false;
+                    radioButton11.Visible = false;
+                }
+                #endregion
+                radioButton9.Text = Settings.販售地區2.Split('/')[0] + "(F2)";
+                radioButton10.Text = Settings.販售地區3.Split('/')[0] + "(F3)";
+                log.LogMessage("取得類型設定參數 成功\r\n" + radioButton8.Text.Split('(')[0] + $@"：{_Type}", enumLogType.Info);
+                log.LogMessage("取得類型設定參數 成功\r\n" + radioButton8.Text.Split('(')[0] + $@"：{_Type}", enumLogType.Trace);
+            }
+            catch (Exception ee)
+            {
+                log.LogMessage("取得類型設定參數 失敗\r\n" + ee.Message, enumLogType.Error);
+                MessageBox.Show("取得類型設定參數 失敗\r\n" + ee.Message);
+                return;
+            }
+            #endregion
+
+            try
+            {
+                comboBox1.Items.Clear();
+                // 讀取資料
+                foreach (DataRow item in dB_SQLite.GetDataTable(DB_Path, $@"SELECT CustomerID, CustomerName FROM CustomerProfile;").Rows)
+                {
+                    comboBox1.Items.Add(item[0].ToString() + "_" + item[1].ToString());
+                }
+                log.LogMessage("讀取資料庫 成功。", enumLogType.Trace);
+            }
+            catch (Exception ee)
+            {
+                log.LogMessage("連線資料庫 失敗\r\n" + ee.Message, enumLogType.Error);
+                MessageBox.Show("連線資料庫 失敗\r\n" + ee.Message);
+                return;
+            }
+            textBox1.Focus();
+            log.LogMessage("使用者介面啓動", enumLogType.Info);
+        }
+
+        private void timer_detection_Tick(object sender, EventArgs e)
+        {
             #region 檢查時間為最新
             try
             {
@@ -223,144 +367,6 @@ namespace 簡易倉儲系統
                 return;
             }
             #endregion
-
-            #region 取得類型設定參數
-            try
-            {
-                log.LogMessage("取得類型設定參數 開始", enumLogType.Trace);
-                radioButton8.Text = Settings.販售地區1.Split('/')[0] + "(F1)";
-                label1.Text = Settings.販售地區1.Split('/')[1];
-                string _Type = Settings.類型1;
-                int _TypeCount = _Type.Split('/').Count();
-                int _Space = 10;
-                #region 8個類型的位置調整
-                if (_TypeCount >= 1)
-                {
-                    radioButton1.Text = _Type.Split('/')[0] + "(F4)";
-                    radioButton1.Enabled = true;
-                    radioButton1.Visible = true;
-                }
-                else
-                {
-                    radioButton1.Enabled = false;
-                    radioButton1.Visible = false;
-                }
-                if (_TypeCount >= 2)
-                {
-                    radioButton2.Text = _Type.Split('/')[1] + "(F5)";
-                    radioButton2.Location = new Point(radioButton1.Location.X + radioButton1.Size.Width + _Space, radioButton2.Location.Y);
-                    radioButton2.Enabled = true;
-                    radioButton2.Visible = true;
-                }
-                else
-                {
-                    radioButton2.Enabled = false;
-                    radioButton2.Visible = false;
-                }
-                if (_TypeCount >= 3)
-                {
-                    radioButton3.Text = _Type.Split('/')[2] + "(F6)";
-                    radioButton3.Location = new Point(radioButton2.Location.X + radioButton2.Size.Width + _Space, radioButton2.Location.Y);
-                    radioButton3.Enabled = true;
-                    radioButton3.Visible = true;
-                }
-                else
-                {
-                    radioButton3.Enabled = false;
-                    radioButton3.Visible = false;
-                }
-                if (_TypeCount >= 4)
-                {
-                    radioButton4.Text = _Type.Split('/')[3] + "(F7)";
-                    radioButton4.Location = new Point(radioButton3.Location.X + radioButton3.Size.Width + _Space, radioButton3.Location.Y);
-                    radioButton4.Enabled = true;
-                    radioButton4.Visible = true;
-                }
-                else
-                {
-                    radioButton4.Enabled = false;
-                    radioButton4.Visible = false;
-                }
-                if (_TypeCount >= 5)
-                {
-                    radioButton5.Text = _Type.Split('/')[4] + "(F8)";
-                    radioButton5.Location = new Point(radioButton4.Location.X + radioButton4.Size.Width + _Space, radioButton4.Location.Y);
-                    radioButton5.Enabled = true;
-                    radioButton5.Visible = true;
-                }
-                else
-                {
-                    radioButton5.Enabled = false;
-                    radioButton5.Visible = false;
-                }
-                if (_TypeCount >= 6)
-                {
-                    radioButton6.Text = _Type.Split('/')[5] + "(F9)";
-                    radioButton6.Location = new Point(radioButton5.Location.X + radioButton5.Size.Width + _Space, radioButton5.Location.Y);
-                    radioButton6.Enabled = true;
-                    radioButton6.Visible = true;
-                }
-                else
-                {
-                    radioButton6.Enabled = false;
-                    radioButton6.Visible = false;
-                }
-                if (_TypeCount >= 7)
-                {
-                    radioButton7.Text = _Type.Split('/')[6] + "(F10)";
-                    radioButton7.Location = new Point(radioButton6.Location.X + radioButton6.Size.Width + _Space, radioButton6.Location.Y);
-                    radioButton7.Enabled = true;
-                    radioButton7.Visible = true;
-                }
-                else
-                {
-                    radioButton7.Enabled = false;
-                    radioButton7.Visible = false;
-                }
-                if (_TypeCount >= 8)
-                {
-                    radioButton11.Text = _Type.Split('/')[7] + "(F11)";
-                    radioButton11.Location = new Point(radioButton7.Location.X + radioButton7.Size.Width + _Space, radioButton7.Location.Y);
-                    radioButton11.Enabled = true;
-                    radioButton11.Visible = true;
-                }
-                else
-                {
-                    radioButton11.Enabled = false;
-                    radioButton11.Visible = false;
-                }
-                #endregion
-                radioButton9.Text = Settings.販售地區2.Split('/')[0] + "(F2)";
-                radioButton10.Text = Settings.販售地區3.Split('/')[0] + "(F3)";
-                log.LogMessage("取得類型設定參數 成功\r\n" + radioButton8.Text.Split('(')[0] + $@"：{_Type}", enumLogType.Info);
-                log.LogMessage("取得類型設定參數 成功\r\n" + radioButton8.Text.Split('(')[0] + $@"：{_Type}", enumLogType.Trace);
-            }
-            catch (Exception ee)
-            {
-                log.LogMessage("取得類型設定參數 失敗\r\n" + ee.Message, enumLogType.Error);
-                MessageBox.Show("取得類型設定參數 失敗\r\n" + ee.Message);
-                return;
-            }
-            #endregion
-
-            try
-            {
-                comboBox1.Items.Clear();
-                // 讀取資料
-                foreach (DataRow item in dB_SQLite.GetDataTable(DB_Path, $@"SELECT CustomerID, CustomerName FROM CustomerProfile;").Rows)
-                {
-                    comboBox1.Items.Add(item[0].ToString() + "_" + item[1].ToString());
-                }
-                log.LogMessage("讀取資料庫 成功。", enumLogType.Trace);
-            }
-            catch (Exception ee)
-            {
-                log.LogMessage("連線資料庫 失敗\r\n" + ee.Message, enumLogType.Error);
-                MessageBox.Show("連線資料庫 失敗\r\n" + ee.Message);
-                return;
-            }
-            textBox1.Focus();
-            log.LogMessage("使用者介面啓動", enumLogType.Info);
         }
 
         //類型設定，單價設定

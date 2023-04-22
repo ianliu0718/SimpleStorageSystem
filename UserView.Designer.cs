@@ -79,6 +79,7 @@ namespace 簡易倉儲系統
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
+            this.timer_detection = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -663,6 +664,12 @@ namespace 簡易倉儲系統
             this.button3.Enter += new System.EventHandler(this.button_Enter);
             this.button3.Leave += new System.EventHandler(this.button_Leave);
             // 
+            // timer_detection
+            // 
+            this.timer_detection.Enabled = true;
+            this.timer_detection.Interval = 86400000;
+            this.timer_detection.Tick += new System.EventHandler(this.timer_detection_Tick);
+            // 
             // UserView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -751,5 +758,6 @@ namespace 簡易倉儲系統
         private DataGridViewTextBoxColumn Column7;
         private DataGridViewTextBoxColumn Column6;
         private DataGridViewTextBoxColumn Column9;
+        private Timer timer_detection;
     }
 }
