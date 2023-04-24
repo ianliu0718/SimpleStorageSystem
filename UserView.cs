@@ -747,8 +747,47 @@ namespace 簡易倉儲系統
         //快捷鍵指向
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
+            Boolean isCheck = false;
             switch (e.KeyValue)
             {
+                case ((char)Keys.Up):
+                    textBox1.Focus();
+                    return;
+                case ((char)Keys.Down):
+                    textBox3.Focus();
+                    return;
+                case ((char)Keys.Left):
+                    for (int i = 0; i < groupBox1.Controls.Count; i++)
+                    {
+                        if (groupBox1.Controls[i].GetType().Name == "RadioButton")
+                        {
+                            if (((RadioButton)groupBox1.Controls[i]).Checked)
+                            {
+                                isCheck = true;
+                                if ((i + 1) >= 0 && (i + 1) < groupBox1.Controls.Count)
+                                    ((RadioButton)groupBox1.Controls[i + 1]).Checked = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!isCheck) ((RadioButton)groupBox1.Controls[groupBox1.Controls.Count - 1]).Checked = true;
+                    break;
+                case ((char)Keys.Right):
+                    for (int i = 0; i < groupBox1.Controls.Count; i++)
+                    {
+                        if (groupBox1.Controls[i].GetType().Name == "RadioButton")
+                        {
+                            if (((RadioButton)groupBox1.Controls[i]).Checked)
+                            {
+                                isCheck = true;
+                                if ((i - 1) >= 0 && (i - 1) < groupBox1.Controls.Count)
+                                    ((RadioButton)groupBox1.Controls[i - 1]).Checked = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!isCheck) ((RadioButton)groupBox1.Controls[groupBox1.Controls.Count - 1]).Checked = true;
+                    break;
                 case ((char)Keys.F1):
                     if (radioButton8.Visible)
                         radioButton8.Checked = true;

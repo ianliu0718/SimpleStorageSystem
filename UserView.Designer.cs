@@ -118,7 +118,7 @@ namespace 簡易倉儲系統
             this.radioButton11.Name = "radioButton11";
             this.radioButton11.Size = new System.Drawing.Size(234, 51);
             this.radioButton11.TabIndex = 7;
-            this.radioButton11.Tag = "7";
+            this.radioButton11.Tag = "8";
             this.radioButton11.Text = "小小(F11)";
             this.radioButton11.UseVisualStyleBackColor = true;
             this.radioButton11.CheckedChanged += new System.EventHandler(this.radioButton_type_CheckedChanged);
@@ -212,7 +212,6 @@ namespace 簡易倉儲系統
             this.radioButton1.Tag = "1";
             this.radioButton1.Text = "9粒(F4)";
             this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton_type_CheckedChanged);
             // 
             // groupBox2
             // 
@@ -642,12 +641,13 @@ namespace 簡易倉儲系統
             // textBox3
             // 
             this.textBox3.Font = new System.Drawing.Font("新細明體", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.textBox3.Location = new System.Drawing.Point(6, 42);
+            this.textBox3.Location = new System.Drawing.Point(5, 41);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(322, 79);
             this.textBox3.TabIndex = 2;
             this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
             this.textBox3.Enter += new System.EventHandler(this.textBox_Enter);
+            this.textBox3.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
             this.textBox3.Leave += new System.EventHandler(this.textBox_Leave);
             // 
             // button3
