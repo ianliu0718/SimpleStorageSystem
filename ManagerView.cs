@@ -650,6 +650,8 @@ namespace 簡易倉儲系統
                     }
                 }
 
+                if (((DataGridView)sender).Rows.Count <= 0)
+                    return;
                 if (((DataGridView)sender).Rows[((DataGridView)sender).CurrentRow.Index].Cells[0].Value == null)
                     return;
                 for (int i = 1; i < ((DataGridView)sender).Rows[((DataGridView)sender).CurrentRow.Index].Cells.Count; i++)
