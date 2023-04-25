@@ -699,6 +699,8 @@ namespace 簡易倉儲系統
                     this.Column10.HeaderText = "時間";
                     //if (!dataGridView4.Columns[3].Visible)
                         dataGridView4.Rows.Clear();
+                    checkedListBox1.Items.Clear();
+                    checkedListBox2.Items.Clear();
                     dataGridView4.Columns[3].Visible = true;
                     dataGridView4.Columns[4].Visible = true;
                     dataGridView4.Columns[5].Visible = true;
@@ -720,6 +722,8 @@ namespace 簡易倉儲系統
                     this.Column10.HeaderText = "時間";
                     //if (!dataGridView4.Columns[3].Visible)
                         dataGridView4.Rows.Clear();
+                    checkedListBox1.Items.Clear();
+                    checkedListBox2.Items.Clear();
                     dataGridView4.Columns[3].Visible = true;
                     dataGridView4.Columns[4].Visible = true;
                     dataGridView4.Columns[5].Visible = true;
@@ -969,33 +973,31 @@ namespace 簡易倉儲系統
                             typeModels.Add(new ALLTypeModel() { Type = _Text });
                         foreach (DataRow row in rows)
                         {
-                            //單價加總
-                            _ALLUnitPrice += (int)Math.Round(row.Field<Double>("Unpaid"), 0, MidpointRounding.AwayFromZero);
                             //單筆重量加總
                             typeModels.Find(f => f.Type == _Text)._ALLCount += row.Field<Double>("Count");
-                            //重量加總
-                            _ALLCount += row.Field<Double>("Count");
                             dt_Buff.ImportRow(row);
                         }
                     }
                 }
                 //販賣地區
-                Boolean _SalesAreaIsNull = true;
                 for (int i = 0; i < checkedListBox2.Items.Count; i++)
                 {
                     if (checkedListBox2.GetItemChecked(i))
                     {
-                        _SalesAreaIsNull = false;
                         DataRow[] rows;
                         string _Text = checkedListBox2.GetItemText(checkedListBox2.Items[i]);
                         rows = dt_Buff.Select($@"SalesArea = '{_Text}'");
                         foreach (DataRow row in rows)
                         {
+                            //單價加總
+                            _ALLUnitPrice += (int)Math.Round(row.Field<Double>("Unpaid"), 0, MidpointRounding.AwayFromZero);
+                            //重量加總
+                            _ALLCount += row.Field<Double>("Count");
                             dt.ImportRow(row);
                         }
                     }
                 }
-                if (_SalesAreaIsNull || dt.Rows.Count <= 0)
+                if (dt.Rows.Count <= 0)
                 {
                     dt = _SelectDT.Clone();
                     typeModels = new List<ALLTypeModel>();
