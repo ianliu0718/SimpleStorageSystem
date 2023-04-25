@@ -82,147 +82,8 @@ namespace 簡易倉儲系統
             comboBox2.SelectedIndex = 0;
             comboBox2.Location = new Point(radioButton9.Location.X + radioButton9.Size.Width + 10, comboBox2.Location.Y);
 
-            #region 檢查時間為最新
-            try
-            {
-                log.LogMessage("檢查時間 開始", enumLogType.Trace);
-
-                if (!String.IsNullOrEmpty(Settings.每日檢查))
-                {
-                    string _TimeText = EncryptionDecryption.desDecryptBase64(Settings.每日檢查);
-                    DateTime dateTime = DateTime.Parse(_TimeText);
-                    if (dateTime > DateTime.Now)
-                    {
-                        log.LogMessage("檢查時間_無效 失敗", enumLogType.Error);
-                        MessageBox.Show("檢查時間_無效 失敗");
-                        Application.Exit();
-                        return;
-                    }
-                }
-                Settings.每日檢查 = EncryptionDecryption.desEncryptBase64(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-                log.LogMessage("檢查時間 成功", enumLogType.Info);
-                log.LogMessage("檢查時間 成功", enumLogType.Trace);
-            }
-            catch (Exception ee)
-            {
-                log.LogMessage("檢查時間 失敗" + ee.Message, enumLogType.Error);
-                MessageBox.Show("檢查時間 失敗");
-                Application.Exit();
-                return;
-            }
-            #endregion
-
-            #region 檢查程式是否符合效期內
-            try
-            {
-                log.LogMessage("檢查序號 開始", enumLogType.Trace);
-                if (String.IsNullOrEmpty(Settings.序號))
-                {
-                    log.LogMessage("請於設定檔內輸入序號", enumLogType.Info);
-                    MessageBox.Show("請於設定檔內輸入序號");
-                    Application.Exit();
-                    return;
-                }
-                string _SerialNumber = EncryptionDecryption.desDecryptBase64(Settings.序號);
-                if (DateTime.Now < DateTime.Parse(_SerialNumber.Split('/')[1])
-                    || DateTime.Now > DateTime.Parse(_SerialNumber.Split('/')[2]))
-                {
-                    //表示此程式非有效期
-                    log.LogMessage("此序號已失效，請聯絡相關廠商", enumLogType.Error);
-                    SendLine.SendLineMessage("PkOjQVn809ZiLtwkmnZqGPy8WmZYnnCsxDfdLLCptlc",
-                        "此序號已失效\r\n主機板ID：" + GetPCMacID.GetBaseboardID() +
-                        "\r\nCPUID：" + GetPCMacID.GetCpuID() +
-                        "\r\n網卡硬件地址：" + GetPCMacID.GetMacAddress() +
-                        "\r\nIP地址：" + GetPCMacID.GetIPAddress() +
-                        "\r\n操作系統的登錄用戶名：" + GetPCMacID.GetUserName() +
-                        "\r\n計算機名：" + GetPCMacID.GetComputerName() +
-                        "\r\nPC類型：" + GetPCMacID.GetSystemType()
-                        );
-                    MessageBox.Show("此序號已失效，請聯絡相關廠商");
-                    Application.Exit();
-                    return;
-                }
-                log.LogMessage("檢查序號 成功", enumLogType.Info);
-                log.LogMessage("檢查序號 成功", enumLogType.Trace);
-            }
-            catch (Exception ee)
-            {
-                log.LogMessage("序號啟動 失敗" + ee.Message, enumLogType.Error);
-                MessageBox.Show("序號啟動 失敗");
-                Application.Exit();
-                return;
-            }
-            #endregion
-
-            #region 檢查程式是否有重複開啟
-            Process[] proc = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
-            if (proc.Length > 1)
-            {
-                //表示此程式已被開啟
-                Application.Exit();
-                return;
-            }
-            log.LogMessage("系統啓動", enumLogType.Trace);
-            #endregion
-
-            #region 比對 CPU ID 是否吻合
-            try
-            {
-                log.LogMessage("比對 CPU ID 是否吻合 開始", enumLogType.Trace);
-                if (String.IsNullOrEmpty(Settings.主機序號))
-                {
-                    log.LogMessage("未綁定主機，請聯絡相關資訊人員。", enumLogType.Info);
-                    MessageBox.Show("未綁定主機，請聯絡相關資訊人員。");
-                    Application.Exit();
-                    return;
-                }
-                else if (Settings.主機序號 == GetPCMacID.GetCpuID())
-                {
-                    Settings.主機序號 = EncryptionDecryption.desEncryptBase64(GetPCMacID.GetCpuID() + GetPCMacID.GetBaseboardID());
-                    SendLine.SendLineMessage("PkOjQVn809ZiLtwkmnZqGPy8WmZYnnCsxDfdLLCptlc",
-                        "主機綁定成功\r\n主機板ID：" + GetPCMacID.GetBaseboardID() +
-                        "\r\nCPUID：" + GetPCMacID.GetCpuID() +
-                        "\r\n網卡硬件地址：" + GetPCMacID.GetMacAddress() +
-                        "\r\nIP地址：" + GetPCMacID.GetIPAddress() +
-                        "\r\n操作系統的登錄用戶名：" + GetPCMacID.GetUserName() +
-                        "\r\n計算機名：" + GetPCMacID.GetComputerName() +
-                        "\r\nPC類型：" + GetPCMacID.GetSystemType()
-                        );
-                    MessageBox.Show("綁定成功");
-                    log.LogMessage("比對 CPU ID 綁定 成功", enumLogType.Info);
-                    log.LogMessage("比對 CPU ID 綁定 成功", enumLogType.Trace);
-                }
-                else if (EncryptionDecryption.desDecryptBase64(Settings.主機序號) == GetPCMacID.GetCpuID())
-                {
-                    Settings.主機序號 = EncryptionDecryption.desEncryptBase64(GetPCMacID.GetCpuID() + GetPCMacID.GetBaseboardID());
-                    SendLine.SendLineMessage("PkOjQVn809ZiLtwkmnZqGPy8WmZYnnCsxDfdLLCptlc",
-                        "原先為綁定CPUID改為主機板ID成功\r\n主機板ID：" + GetPCMacID.GetBaseboardID() +
-                        "\r\nCPUID：" + GetPCMacID.GetCpuID() +
-                        "\r\n網卡硬件地址：" + GetPCMacID.GetMacAddress() +
-                        "\r\nIP地址：" + GetPCMacID.GetIPAddress() +
-                        "\r\n操作系統的登錄用戶名：" + GetPCMacID.GetUserName() +
-                        "\r\n計算機名：" + GetPCMacID.GetComputerName() +
-                        "\r\nPC類型：" + GetPCMacID.GetSystemType()
-                        );
-                }
-                else if (EncryptionDecryption.desDecryptBase64(Settings.主機序號) != (GetPCMacID.GetCpuID() + GetPCMacID.GetBaseboardID()))
-                {
-                    log.LogMessage("程式已綁定，無法在此電腦執行！", enumLogType.Info);
-                    MessageBox.Show("程式已綁定，無法在此電腦執行！");
-                    Application.Exit();
-                    return;
-                }
-                log.LogMessage("比對 CPU ID 是否吻合 成功", enumLogType.Info);
-                log.LogMessage("比對 CPU ID 是否吻合 成功", enumLogType.Trace);
-            }
-            catch (Exception ee)
-            {
-                log.LogMessage("比對 CPU ID 失敗" + ee.Message, enumLogType.Error);
-                MessageBox.Show("比對 CPU ID 失敗");
-                Application.Exit();
-                return;
-            }
-            #endregion
+            //各種偵測，每24小時偵測一次
+            timer_detection_Tick(sender, e);
 
             #region 取得類型設定參數
             try
@@ -361,6 +222,152 @@ namespace 簡易倉儲系統
             }
             textBox1.Focus();
             log.LogMessage("使用者介面啓動", enumLogType.Info);
+        }
+
+        private void timer_detection_Tick(object sender, EventArgs e)
+        {
+            #region 檢查時間為最新
+            try
+            {
+                log.LogMessage("檢查時間 開始", enumLogType.Trace);
+
+                if (!String.IsNullOrEmpty(Settings.每日檢查))
+                {
+                    string _TimeText = EncryptionDecryption.desDecryptBase64(Settings.每日檢查);
+                    DateTime dateTime = DateTime.Parse(_TimeText);
+                    if (dateTime > DateTime.Now)
+                    {
+                        log.LogMessage("檢查時間_無效 失敗", enumLogType.Error);
+                        MessageBox.Show("檢查時間_無效 失敗");
+                        Application.Exit();
+                        return;
+                    }
+                }
+                Settings.每日檢查 = EncryptionDecryption.desEncryptBase64(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                log.LogMessage("檢查時間 成功", enumLogType.Info);
+                log.LogMessage("檢查時間 成功", enumLogType.Trace);
+            }
+            catch (Exception ee)
+            {
+                log.LogMessage("檢查時間 失敗" + ee.Message, enumLogType.Error);
+                MessageBox.Show("檢查時間 失敗");
+                Application.Exit();
+                return;
+            }
+            #endregion
+
+            #region 檢查程式是否符合效期內
+            try
+            {
+                log.LogMessage("檢查序號 開始", enumLogType.Trace);
+                if (String.IsNullOrEmpty(Settings.序號))
+                {
+                    log.LogMessage("請於設定檔內輸入序號：" + Setting_Path + @"\Setting.xml", enumLogType.Info);
+                    MessageBox.Show("請於設定檔內輸入序號：" + Setting_Path + @"\Setting.xml");
+                    Application.Exit();
+                    return;
+                }
+                string _ianNo = EncryptionDecryption.desEncryptBase64("ian/2023-04-17/2023-04-28/ian");
+                string _SerialNumber = EncryptionDecryption.desDecryptBase64(Settings.序號);
+                if (DateTime.Now < DateTime.Parse(_SerialNumber.Split('/')[1])
+                    || DateTime.Now > DateTime.Parse(_SerialNumber.Split('/')[2]))
+                {
+                    //表示此程式非有效期
+                    log.LogMessage("此序號已失效，請聯絡相關廠商", enumLogType.Error);
+                    SendLine.SendLineMessage("PkOjQVn809ZiLtwkmnZqGPy8WmZYnnCsxDfdLLCptlc",
+                        "此序號已失效\r\n主機板ID：" + GetPCMacID.GetBaseboardID() +
+                        "\r\nCPUID：" + GetPCMacID.GetCpuID() +
+                        "\r\n網卡硬件地址：" + GetPCMacID.GetMacAddress() +
+                        "\r\nIP地址：" + GetPCMacID.GetIPAddress() +
+                        "\r\n操作系統的登錄用戶名：" + GetPCMacID.GetUserName() +
+                        "\r\n計算機名：" + GetPCMacID.GetComputerName() +
+                        "\r\nPC類型：" + GetPCMacID.GetSystemType()
+                        );
+                    MessageBox.Show("此序號已失效，請聯絡相關廠商");
+                    Application.Exit();
+                    return;
+                }
+                log.LogMessage("檢查序號 成功", enumLogType.Info);
+                log.LogMessage("檢查序號 成功", enumLogType.Trace);
+            }
+            catch (Exception ee)
+            {
+                log.LogMessage("序號啟動 失敗" + ee.Message, enumLogType.Error);
+                MessageBox.Show("序號啟動 失敗");
+                Application.Exit();
+                return;
+            }
+            #endregion
+
+            #region 檢查程式是否有重複開啟
+            Process[] proc = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
+            if (proc.Length > 1)
+            {
+                //表示此程式已被開啟
+                Application.Exit();
+                return;
+            }
+            log.LogMessage("系統啓動", enumLogType.Trace);
+            #endregion
+
+            #region 比對 CPU ID 是否吻合
+            try
+            {
+                log.LogMessage("比對 CPU ID 是否吻合 開始", enumLogType.Trace);
+                if (String.IsNullOrEmpty(Settings.主機序號))
+                {
+                    log.LogMessage("未綁定主機，請聯絡相關資訊人員。", enumLogType.Info);
+                    MessageBox.Show("未綁定主機，請聯絡相關資訊人員。");
+                    Application.Exit();
+                    return;
+                }
+                else if (Settings.主機序號 == GetPCMacID.GetCpuID())
+                {
+                    Settings.主機序號 = EncryptionDecryption.desEncryptBase64(GetPCMacID.GetCpuID() + GetPCMacID.GetBaseboardID());
+                    SendLine.SendLineMessage("PkOjQVn809ZiLtwkmnZqGPy8WmZYnnCsxDfdLLCptlc",
+                        "主機綁定成功\r\n主機板ID：" + GetPCMacID.GetBaseboardID() +
+                        "\r\nCPUID：" + GetPCMacID.GetCpuID() +
+                        "\r\n網卡硬件地址：" + GetPCMacID.GetMacAddress() +
+                        "\r\nIP地址：" + GetPCMacID.GetIPAddress() +
+                        "\r\n操作系統的登錄用戶名：" + GetPCMacID.GetUserName() +
+                        "\r\n計算機名：" + GetPCMacID.GetComputerName() +
+                        "\r\nPC類型：" + GetPCMacID.GetSystemType()
+                        );
+                    MessageBox.Show("綁定成功");
+                    log.LogMessage("比對 CPU ID 綁定 成功", enumLogType.Info);
+                    log.LogMessage("比對 CPU ID 綁定 成功", enumLogType.Trace);
+                }
+                else if (EncryptionDecryption.desDecryptBase64(Settings.主機序號) == GetPCMacID.GetCpuID())
+                {
+                    Settings.主機序號 = EncryptionDecryption.desEncryptBase64(GetPCMacID.GetCpuID() + GetPCMacID.GetBaseboardID());
+                    SendLine.SendLineMessage("PkOjQVn809ZiLtwkmnZqGPy8WmZYnnCsxDfdLLCptlc",
+                        "原先為綁定CPUID改為主機板ID成功\r\n主機板ID：" + GetPCMacID.GetBaseboardID() +
+                        "\r\nCPUID：" + GetPCMacID.GetCpuID() +
+                        "\r\n網卡硬件地址：" + GetPCMacID.GetMacAddress() +
+                        "\r\nIP地址：" + GetPCMacID.GetIPAddress() +
+                        "\r\n操作系統的登錄用戶名：" + GetPCMacID.GetUserName() +
+                        "\r\n計算機名：" + GetPCMacID.GetComputerName() +
+                        "\r\nPC類型：" + GetPCMacID.GetSystemType()
+                        );
+                }
+                else if (EncryptionDecryption.desDecryptBase64(Settings.主機序號) != (GetPCMacID.GetCpuID() + GetPCMacID.GetBaseboardID()))
+                {
+                    log.LogMessage("程式已綁定，無法在此電腦執行！", enumLogType.Info);
+                    MessageBox.Show("程式已綁定，無法在此電腦執行！");
+                    Application.Exit();
+                    return;
+                }
+                log.LogMessage("比對 CPU ID 是否吻合 成功", enumLogType.Info);
+                log.LogMessage("比對 CPU ID 是否吻合 成功", enumLogType.Trace);
+            }
+            catch (Exception ee)
+            {
+                log.LogMessage("比對 CPU ID 失敗" + ee.Message, enumLogType.Error);
+                MessageBox.Show("比對 CPU ID 失敗");
+                Application.Exit();
+                return;
+            }
+            #endregion
         }
 
         //類型設定，單價設定
