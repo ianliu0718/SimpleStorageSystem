@@ -749,7 +749,7 @@ namespace 簡易倉儲系統
                     dataGridView4.Columns[4].Visible = false;
                     dataGridView4.Columns[5].Visible = false;
                     dataGridView4.Columns[6].Visible = false;
-                    dataGridView4.Columns[7].Visible = false;
+                    dataGridView4.Columns[7].Visible = true;
                     dataGridView4.Columns[10].Visible = false;
                     dataGridView4.Columns[11].Visible = false;
                 }
@@ -821,7 +821,7 @@ namespace 簡易倉儲系統
                         checkedListBox1.Items.Add("已付款", true);
                         checkedListBox1.Items.Add("未付款", true);
                         _SQL = $@"SELECT No, MAX(Time)AS'Date', MAX(Name)AS'Name', ''AS'Buff1', ''AS'Buff2', ''AS'Buff3', 
-                            ''AS'Buff4', ''AS'Buff5', MAX(Paid)AS'Paid', SUM(Count * UnitPrice)AS Unpaid, ''AS'Buff6', ''AS'Buff7'
+                            ''AS'Buff4', SalesArea, MAX(Paid)AS'Paid', SUM(Count * UnitPrice)AS Unpaid, ''AS'Buff6', ''AS'Buff7'
                             FROM SalesRecord WHERE 1 = 1 ";
                         if (textBox21.Text != "")
                         {
@@ -833,7 +833,13 @@ namespace 簡易倉儲系統
                         }
                         _SQL += $@"GROUP BY No;";
                         _SelectDT = dB_SQLite.GetDataTable(DB_Path, _SQL);
+                        foreach (DataRow row in _SelectDT.Rows)
+                        {
+                            //單價金額加總
+                            _ALLUnitPrice += (int)Math.Round(row.Field<Double>("Unpaid"), 0, MidpointRounding.AwayFromZero);
+                        }
                         DatatableToDatagridview(_SelectDT, dataGridView4);
+                        label23.Text = _ALLUnitPrice.ToString();
                         log.LogMessage("確認整合搜尋 成功 語法：" + _SQL, enumLogType.Info);
                         log.LogMessage("確認整合搜尋 成功 語法：" + _SQL, enumLogType.Trace);
                         return;
