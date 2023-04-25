@@ -830,6 +830,12 @@ namespace 簡易倉儲系統
                         }
                         _SQL += $@"GROUP BY No;";
                         _SelectDT = dB_SQLite.GetDataTable(DB_Path, _SQL);
+                        foreach (DataRow row in _SelectDT.Rows)
+                        {
+                            //單價金額加總
+                            _ALLUnitPrice += (int)Math.Round(row.Field<Double>("Unpaid"), 0, MidpointRounding.AwayFromZero);
+                        }
+                        label23.Text = _ALLUnitPrice.ToString();
                         DatatableToDatagridview(_SelectDT, dataGridView4);
                         log.LogMessage("確認整合搜尋 成功 語法：" + _SQL, enumLogType.Info);
                         log.LogMessage("確認整合搜尋 成功 語法：" + _SQL, enumLogType.Trace);
