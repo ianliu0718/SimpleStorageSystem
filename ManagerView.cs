@@ -747,7 +747,7 @@ namespace 簡易倉儲系統
                     dataGridView4.Columns[4].Visible = false;
                     dataGridView4.Columns[5].Visible = false;
                     dataGridView4.Columns[6].Visible = false;
-                    dataGridView4.Columns[7].Visible = false;
+                    dataGridView4.Columns[7].Visible = true;
                     dataGridView4.Columns[10].Visible = false;
                 }
 
@@ -818,7 +818,7 @@ namespace 簡易倉儲系統
                         checkedListBox1.Items.Add("已付款", true);
                         checkedListBox1.Items.Add("未付款", true);
                         _SQL = $@"SELECT No, MAX(Time)AS'Date', MAX(Name)AS'Name', ''AS'Buff1', ''AS'Buff2', ''AS'Buff3', 
-                            ''AS'Buff4', ''AS'Buff5', MAX(Paid)AS'Paid', SUM(Count * UnitPrice)AS Unpaid, ''AS'Buff6'
+                            ''AS'Buff4', SalesArea, MAX(Paid)AS'Paid', SUM(Count * UnitPrice)AS Unpaid, ''AS'Buff6'
                             FROM SalesRecord WHERE 1 = 1 ";
                         if (textBox21.Text != "")
                         {
