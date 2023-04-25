@@ -739,6 +739,18 @@ namespace 簡易倉儲系統
         {
             switch (e.KeyValue)
             {
+                case ((char)Keys.PageUp):
+                    if (comboBox2.SelectedIndex - 1 < 0)
+                        comboBox2.SelectedIndex = 0;
+                    else
+                        comboBox2.SelectedIndex = comboBox2.SelectedIndex - 1;
+                    break;
+                case ((char)Keys.PageDown):
+                    if (comboBox2.SelectedIndex >= comboBox2.Items.Count - 1)
+                        comboBox2.SelectedIndex = comboBox2.Items.Count - 1;
+                    else
+                        comboBox2.SelectedIndex = comboBox2.SelectedIndex + 1;
+                    break;
                 case ((char)Keys.F1):
                     if (radioButton8.Visible)
                         radioButton8.Checked = true;
@@ -921,6 +933,8 @@ namespace 簡易倉儲系統
                 MessageBox.Show("DB新增 失敗：\r\n" + ee.Message);
                 log.LogMessage("確認_DB新增 失敗：\r\n" + ee.Message, enumLogType.Error);
                 button1.Enabled = true;
+                dB_SQLite.Manipulate(DB_Path, $@"DELETE FROM SalesRecord WHERE No = '{_No}';");
+                _No = "";
                 return;
             }
             #endregion
