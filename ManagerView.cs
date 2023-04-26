@@ -1311,7 +1311,7 @@ namespace 簡易倉儲系統
                     excelCells.Add(new List<MExcelCell>());
 
                     //頁首
-                    List<string> _HideHeader = new List<string>() { "類型", "重量", "單價", "單位", "販售地區", "已付時間" };
+                    List<string> _HideHeader = new List<string>() { "類型", "重量", "單價", "單位", "已付時間" };
                     excelCell = new List<MExcelCell>();
                     foreach (DataGridViewColumn col in view.Columns)
                     {
@@ -1324,10 +1324,6 @@ namespace 簡易倉儲系統
                         {
                             Content = col.HeaderText
                         });
-                        if (col.HeaderText == "姓名")
-                        {
-                            excelCell.Add(new MExcelCell() { Content = " " });
-                        }
                     }
                     excelCells.Add(excelCell);
 
@@ -1335,8 +1331,6 @@ namespace 簡易倉儲系統
                     Int32 _ALLPrice = 0;
                     foreach (DataGridViewRow row in view.Rows)
                     {
-                        Double _unitPrice = 0;
-                        Double _count = 1;
                         excelCell = new List<MExcelCell>();
                         foreach (DataGridViewCell cell in row.Cells)
                         {
@@ -1345,26 +1339,11 @@ namespace 簡易倉儲系統
                             {
                                 continue;
                             }
-                            //列印隱藏單價/保存單價價格
-                            if (view.Columns[cell.ColumnIndex].HeaderText == "單價")
-                            {
-                                _unitPrice = Convert.ToDouble(cell.Value);
-                            }
-                            //保存重量
-                            else if (view.Columns[cell.ColumnIndex].HeaderText == "重量")
-                            {
-                                _count = Convert.ToDouble(cell.Value);
-                            }
                             excelCell.Add(new MExcelCell()
                             {
                                 Content = cell.Value
                             });
-                            if (view.Columns[cell.ColumnIndex].HeaderText == "姓名")
-                            {
-                                excelCell.Add(new MExcelCell() { Content = " " });
-                            }
                         }
-                        _ALLPrice += (int)Math.Round(Convert.ToDouble(_unitPrice * _count), 0, MidpointRounding.AwayFromZero);
                         excelCells.Add(excelCell);
                     }
                     //空一行
@@ -1383,11 +1362,16 @@ namespace 簡易倉儲系統
                     }
                     excelCell.Remove(excelCell[excelCell.Count - 1]);
                     excelCell.Remove(excelCell[excelCell.Count - 1]);
+                    excelCell.Remove(excelCell[excelCell.Count - 1]);
+                    if (!string.IsNullOrEmpty(label23.Text))
+                        _ALLPrice = Convert.ToInt32(label23.Text);
+                    else
+                        _ALLPrice = 0;
                     excelCell.Add(new MExcelCell() { Content = "總價" });
                     excelCell.Add(new MExcelCell() { Content = _ALLPrice });
                     excelCells.Add(excelCell);
                     //匯出成檔案
-                    ePPlus.AddSheet(excelCells, "整合", 15);
+                    ePPlus.AddSheet(excelCells, "整合", 15, 14);
                     ePPlus.MergeColumn(1, 1, 2, 6);
                     ePPlus.FontSize(1, 1, 36, true, OfficeOpenXml.Style.ExcelBorderStyle.None);
                     ePPlus.ExcelCenterCell(1, 1, OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous);
@@ -1397,12 +1381,12 @@ namespace 簡易倉儲系統
                     ePPlus.MergeColumn(4, 1, 4, 6);
                     ePPlus.FontSize(4, 1, 14, false, OfficeOpenXml.Style.ExcelBorderStyle.None);
                     ePPlus.ExcelCenterCell(4, 1, OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous);
-                    for (int i = 0; i <= view.Rows.Count; i++)
-                    {
-                        ePPlus.MergeColumn(i + 6, 3, i + 6, 4);
-                    }
+                    //for (int i = 0; i <= view.Rows.Count; i++)
+                    //{
+                    //    ePPlus.MergeColumn(i + 6, 3, i + 6, 4);
+                    //}
                     ePPlus.MergeColumn(ePPlus.EndCell, 1, ePPlus.EndCell, 3);
-                    ePPlus.FontSize(ePPlus.EndCell, 1, 11, false, OfficeOpenXml.Style.ExcelBorderStyle.None);
+                    ePPlus.FontSize(ePPlus.EndCell, 1, 14, false, OfficeOpenXml.Style.ExcelBorderStyle.None);
                     _Path = folder.SelectedPath + $@"\整合_{DateTime.Now.ToString("yyyyMMddhhmmss")}.xlsx";
                     ePPlus.Export(_Path);
                 }

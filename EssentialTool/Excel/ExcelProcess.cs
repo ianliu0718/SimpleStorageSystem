@@ -61,7 +61,7 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                 excelCell.Add(new MExcelCell() { Content = "單位" });
                 excelCell.Add(new MExcelCell() { Content = Unit });
                 excelCell.Add(new MExcelCell() { Content = " " });
-                excelCell.Add(new MExcelCell() { Content = "販售地區" });
+                excelCell.Add(new MExcelCell() { Content = "地區" });
                 excelCell.Add(new MExcelCell() { Content = SalesArea });
                 excelCell.Add(new MExcelCell() { Content = " " });
                 excelCells.Add(excelCell);
@@ -127,7 +127,7 @@ namespace 簡易倉儲系統.EssentialTool.Excel
 
 
                 //頁首
-                List<string> _HideHeader = new List<string>() { "單號", "時間", "姓名", "單位", "販售地區", "已付款金額", "未付款金額", "已付時間" };
+                List<string> _HideHeader = new List<string>() { "單號", "時間", "姓名", "單位", "地區", "已付款金額", "未付款金額", "已付時間" };
                 excelCell = new List<MExcelCell>();
                 foreach (DataGridViewColumn col in view.Columns)
                 {
@@ -303,7 +303,7 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                 excelCells.Add(excelCell);
 
                 //匯出成檔案
-                ePPlus.AddSheet(excelCells, No);
+                ePPlus.AddSheet(excelCells, No, 0, 14);
                 ePPlus.MergeColumn(1, 1, 2, 9);
                 ePPlus.FontSize(1, 1, 36, true, OfficeOpenXml.Style.ExcelBorderStyle.None);
                 ePPlus.ExcelCenterCell(1, 1, OfficeOpenXml.Style.ExcelHorizontalAlignment.CenterContinuous);
