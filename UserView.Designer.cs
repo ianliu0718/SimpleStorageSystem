@@ -212,6 +212,7 @@ namespace 簡易倉儲系統
             this.radioButton1.Tag = "1";
             this.radioButton1.Text = "9粒(F4)";
             this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton_type_CheckedChanged);
             // 
             // groupBox2
             // 
