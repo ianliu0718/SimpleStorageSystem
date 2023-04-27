@@ -830,6 +830,8 @@ namespace 簡易倉儲系統
                     //F10會呼叫出控制列視窗，需要按兩次ESC做取消
                     SendKeys.SendWait("{ESC}");
                     SendKeys.SendWait("{ESC}");
+                    SendKeys.SendWait("F10");
+                    timer_ESC.Start();
                     break;
                 case ((char)Keys.F11):
                     if (radioButton11.Visible)
@@ -1329,6 +1331,14 @@ namespace 簡易倉儲系統
                     dataGridView1.Rows.RemoveAt(0);
                 }
             }
+        }
+
+        private void timer_ESC_Tick(object sender, EventArgs e)
+        {
+            SendKeys.SendWait("F10");
+            SendKeys.SendWait("{ESC}");
+            //_ESC = true;
+            timer_ESC.Stop();
         }
     }
 }
