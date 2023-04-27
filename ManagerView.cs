@@ -825,7 +825,7 @@ namespace 簡易倉儲系統
                         checkedListBox1.Items.Add("已付款", true);
                         checkedListBox1.Items.Add("未付款", true);
                         _SQL = $@"SELECT No, MAX(Time)AS'Date', MAX(Name)AS'Name', ''AS'Buff1', ''AS'Buff2', ''AS'Buff3', 
-                            ''AS'Buff4', SalesArea, MAX(Paid)AS'Paid', SUM(Count * UnitPrice)AS Unpaid, ''AS'Buff6', ''AS'Buff7'
+                            ''AS'Buff4', SalesArea, MAX(Paid)AS'Paid', SUM(Round(Count * UnitPrice))AS Unpaid, ''AS'Buff6'
                             FROM SalesRecord WHERE 1 = 1 ";
                         if (textBox21.Text != "")
                         {
@@ -939,6 +939,7 @@ namespace 簡易倉儲系統
                 Boolean _已付款 = false;
                 Boolean _未付款 = false;
                 label28.Text = "";
+                List<ALLTypeModel> typeModels_Buff = new List<ALLTypeModel>();
                 List<ALLTypeModel> typeModels = new List<ALLTypeModel>();
 
                 for (int i = 0; i < checkedListBox1.Items.Count; i++)
@@ -970,11 +971,11 @@ namespace 簡易倉儲系統
                             break;
 
                         if (rows.Count() > 0)
-                            typeModels.Add(new ALLTypeModel() { Type = _Text });
+                            typeModels_Buff.Add(new ALLTypeModel() { Type = _Text });
                         foreach (DataRow row in rows)
                         {
                             //單筆重量加總
-                            typeModels.Find(f => f.Type == _Text)._ALLCount += row.Field<Double>("Count");
+                            typeModels_Buff.Find(f => f.Type == _Text)._ALLCount += row.Field<Double>("Count");
                             dt_Buff.ImportRow(row);
                         }
                     }
@@ -993,6 +994,14 @@ namespace 簡易倉儲系統
                             _ALLUnitPrice += (int)Math.Round(row.Field<Double>("Unpaid"), 0, MidpointRounding.AwayFromZero);
                             //重量加總
                             _ALLCount += row.Field<Double>("Count");
+                            //類型分類重量
+                            string typeText = row.Field<String>("Type");
+                            ALLTypeModel typeModel = typeModels_Buff.Find(f => f.Type == typeText);
+                            if (typeModel != null
+                                && typeModels.Find(f => f.Type == typeText) == null)
+                            {
+                                typeModels.Add(typeModel);
+                            }
                             dt.ImportRow(row);
                         }
                     }
