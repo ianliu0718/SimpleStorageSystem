@@ -850,7 +850,8 @@ namespace 簡易倉儲系統
                 default:
                     break;
             }
-            textBox1.Focus();
+            if (((Control)sender).Name != "textBox3")
+                textBox1.Focus();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)

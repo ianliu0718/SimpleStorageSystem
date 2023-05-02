@@ -121,7 +121,7 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                     {
                         if (typeModel._UnitPrice == 0)
                             typeModel._UnitPrice = Convert.ToInt32(row.Cells[_MoneyIndex].Value.ToString());
-                        Double _money = Convert.ToDouble(typeModel._ALLCount * Convert.ToInt32(row.Cells[_MoneyIndex].Value.ToString()));
+                        Double _money = Convert.ToDouble(Convert.ToDouble(row.Cells[_CountIndex].Value.ToString()) * Convert.ToInt32(row.Cells[_MoneyIndex].Value.ToString()));
                         typeModel._ALLMoney += (int)Math.Round(_money, 0, MidpointRounding.AwayFromZero);
                     }
                 }
