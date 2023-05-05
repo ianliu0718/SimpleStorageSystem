@@ -29,7 +29,7 @@ namespace 簡易倉儲系統.EssentialTool.Excel
         private ExcelWorksheet Sheet;
 
         /// <summary>加入工作表</summary>
-        public void AddSheet(List<List<MExcelCell>> Table, string SheetName, int ColumnWidth = 0)
+        public void AddSheet(List<List<MExcelCell>> Table, string SheetName, int ColumnWidth = 0, float Size = 11)
         {
             //建立一個Sheet，後方為定義Sheet的名稱
             Sheet = Epackage.Workbook.Worksheets.Add(SheetName);
@@ -57,6 +57,7 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                         Sheet.Cells[x, y].Style.Fill.PatternType = Table[col][row].PatternType;
                     if (Table[col][row].BackgroundColor != System.Drawing.Color.White)
                         Sheet.Cells[x, y].Style.Fill.BackgroundColor.SetColor(Table[col][row].BackgroundColor);
+                    Sheet.Cells[x, y].Style.Font.Size = Size;
                     Sheet.Cells[x, y].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                 }
             }

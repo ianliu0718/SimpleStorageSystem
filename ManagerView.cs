@@ -1304,7 +1304,7 @@ namespace 簡易倉儲系統
 
                     ExcelProcess excel = new ExcelProcess(log);
                     _Path = folder.SelectedPath + $@"\{_No}_{_Name}.xlsx";
-                    excel.ExcelExportImage(view, _Path, _Now, _No, _Name, _Unit, _SalesArea, true);
+                    excel.ExcelExportImage_3(view, _Path, _Now, _No, _Name, _Unit, _SalesArea, true);
                 }
                 else if (Inquire == "整合")
                 {

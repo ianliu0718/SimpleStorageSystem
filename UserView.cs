@@ -957,7 +957,7 @@ namespace 簡易倉儲系統
             InsertSalesRecord(_Now, out string _No, out string _Name, out string _Unit, out string _SalesArea);
 
             ExcelProcess excel = new ExcelProcess(log);
-            if (excel.ExcelExportImage(dataGridView1, $@"{Settings.Excel路徑}{_No}_{_Name}.xlsx", _Now, _No, _Name, _Unit, _SalesArea, panel1.Visible))
+            if (excel.ExcelExportImage_3(dataGridView1, $@"{Settings.Excel路徑}{_No}_{_Name}.xlsx", _Now, _No, _Name, _Unit, _SalesArea, panel1.Visible))
             {
                 try
                 {
@@ -1031,7 +1031,7 @@ namespace 簡易倉儲系統
             InsertSalesRecord(_Now, out string _No, out string _Name, out string _Unit, out string _SalesArea);
 
             ExcelProcess excel = new ExcelProcess(log);
-            if (excel.ExcelExportImage(dataGridView1, $@"{Settings.Excel路徑}{_No}_{_Name}.xlsx", _Now, _No, _Name, _Unit, _SalesArea, panel1.Visible))
+            if (excel.ExcelExportImage_3(dataGridView1, $@"{Settings.Excel路徑}{_No}_{_Name}.xlsx", _Now, _No, _Name, _Unit, _SalesArea, panel1.Visible))
             {
                 try
                 {
