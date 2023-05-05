@@ -1301,7 +1301,7 @@ namespace 簡易倉儲系統
 
                     ExcelProcess excel = new ExcelProcess(log);
                     _Path = folder.SelectedPath + $@"\{_No}_{_Name}.xlsx";
-                    excel.ExcelExportImage(view, _Path, _Now, _No, _Name, _Unit, _SalesArea, true);
+                    excel.ExcelExportImage_3(view, _Path, _Now, _No, _Name, _Unit, _SalesArea, true);
                 }
                 else if (Inquire == "整合")
                 {
@@ -1457,6 +1457,12 @@ namespace 簡易倉儲系統
 
         /// <summary>各類型總重量</summary>
         public Double _ALLCount { get; set; } = 0;
+
+        /// <summary>各類型總金額</summary>
+        public Int32 _ALLMoney { get; set; } = 0;
+
+        /// <summary>各類型單價</summary>
+        public Int32 _UnitPrice { get; set; } = 0;
     }
     public class Integrate
     {

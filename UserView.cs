@@ -924,7 +924,6 @@ namespace 簡易倉儲系統
                     Count, UnitPrice, Unit, salesArea FROM SalesRecord 
                     WHERE Time > '{DateTime.Now.ToString("yyyy-MM-dd")}' AND No = '{_No}';"), dataGridView1);
 
-                insertstring = "重複列印單號：" + _No;
                 log.LogMessage("確認_DB新增 成功路徑：" + DB_Path + "\r\n語法：" + insertstring, enumLogType.Trace);
                 log.LogMessage("確認_DB新增 成功單號：" + _No, enumLogType.Info);
             }
@@ -940,7 +939,7 @@ namespace 簡易倉儲系統
             #endregion
 
             ExcelProcess excel = new ExcelProcess(log);
-            if (excel.ExcelExportImage(dataGridView1, $@"{Settings.Excel路徑}{_No}_{Name}.xlsx", _Now, _No, _Name, _Unit, _SalesArea, panel1.Visible))
+            if (excel.ExcelExportImage_3(dataGridView1, $@"{Settings.Excel路徑}{_No}_{Name}.xlsx", _Now, _No, _Name, _Unit, _SalesArea, panel1.Visible))
             {
                 try
                 {
