@@ -890,9 +890,9 @@ namespace 簡易倉儲系統
             {
                 ///取單號
                 DataTable dataTable = dB_SQLite.GetDataTable(DB_Path, $@"
-                    SELECT CASE WHEN MAX(No) ISNULL THEN '{_Now.ToString("yyyyMMdd") + "001"}' ELSE MAX(No)+1 END No
+                    SELECT CASE WHEN MAX(No) ISNULL THEN '{_Now.ToString("yyyyMMdd") + "001"}' ELSE MAX(substr(No,1,11))+1 END No
                     FROM SalesRecord WHERE Time > '{_Now.ToString("yyyy-MM-dd")}';");
-                _No = dataTable.Rows[0][0].ToString();
+                _No = dataTable.Rows[0][0].ToString() + Settings.站代號;
 
                 string insertstring = $@"INSERT INTO SalesRecord (No, Time, Name, Type, Count, UnitPrice, Unit, salesArea) VALUES";
                 /// 插入資料
@@ -959,6 +959,7 @@ namespace 簡易倉儲系統
                 }
                 catch (Exception ee)
                 {
+                    MessageBox.Show("列印 失敗：\r\n" + ee.Message);
                     log.LogMessage("列印 失敗：\r\n" + ee.Message, enumLogType.Error);
                     button1.Enabled = true;
                     dB_SQLite.Manipulate(DB_Path, $@"DELETE FROM SalesRecord WHERE No = '{_No}';");
@@ -967,6 +968,7 @@ namespace 簡易倉儲系統
             }
             else
             {
+                MessageBox.Show("列印 失敗！");
                 button1.Enabled = true;
                 dB_SQLite.Manipulate(DB_Path, $@"DELETE FROM SalesRecord WHERE No = '{_No}';");
                 _No = "";
@@ -990,7 +992,7 @@ namespace 簡易倉儲系統
                 newarea.X = 0;
                 newarea.Y = 0;
                 newarea.Width = bitmap.Width;
-                newarea.Height = bitmap.Height;
+                newarea.Height = bitmap.Height - 30;
                 //第一頁
                 if (_Page == 1)
                 {

@@ -798,7 +798,10 @@ namespace 簡易倉儲系統
                         SalesArea, Paid, (Count * UnitPrice)AS Unpaid, PaidTime FROM SalesRecord ";
                     if (Inquire == "單號")
                     {
-                        _SQL += $@" WHERE No = '{textBox21.Text}' ";
+                        if (textBox21.Text.Length <= 11)
+                            _SQL += $@" WHERE substr(No,1,11) = '{textBox21.Text}' ";
+                        else
+                            _SQL += $@" WHERE No Like '{textBox21.Text}%' ";
                     }
                     else if (Inquire == "姓名")
                     {
