@@ -974,8 +974,6 @@ namespace 簡易倉儲系統
                             typeModels_Buff.Add(new ALLTypeModel() { Type = _Text });
                         foreach (DataRow row in rows)
                         {
-                            //單筆重量加總
-                            typeModels_Buff.Find(f => f.Type == _Text)._ALLCount += row.Field<Double>("Count");
                             dt_Buff.ImportRow(row);
                         }
                     }
@@ -997,6 +995,8 @@ namespace 簡易倉儲系統
                             //類型分類重量
                             string typeText = row.Field<String>("Type");
                             ALLTypeModel typeModel = typeModels_Buff.Find(f => f.Type == typeText);
+                            //單筆重量加總
+                            typeModel._ALLCount += row.Field<Double>("Count");
                             if (typeModel != null
                                 && typeModels.Find(f => f.Type == typeText) == null)
                             {
