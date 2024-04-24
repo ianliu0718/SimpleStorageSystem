@@ -821,9 +821,11 @@ namespace 簡易倉儲系統
             }
             if (_buffDouble > 99)
             {
-                //MessageBox.Show("數量已超出99");
-                textBox1.Text = (_buffDouble / 10).ToString();
-                textBox1.SelectionStart = 4;
+                MessageBox.Show("超過兩位數，請重新輸入");
+                textBox1.Text = "";
+                textBox1.Focus();
+                //textBox1.Text = (_buffDouble / 10).ToString();
+                //textBox1.SelectionStart = 4;
             }
             if (!Int32.TryParse((_buffDouble * 100).ToString(), out Int32 _buffInt))
             {
