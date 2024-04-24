@@ -93,104 +93,8 @@ namespace 簡易倉儲系統
                 label1.Text = Settings.販售地區1.Split('/')[1];
                 string _Type = Settings.類型1;
                 int _TypeCount = _Type.Split('/').Count();
-                int _Space = 10;
-                #region 8個類型的位置調整
-                if (_TypeCount >= 1)
-                {
-                    radioButton1.Text = _Type.Split('/')[0] + "(F4)";
-                    radioButton1.Enabled = true;
-                    radioButton1.Visible = true;
-                }
-                else
-                {
-                    radioButton1.Enabled = false;
-                    radioButton1.Visible = false;
-                }
-                if (_TypeCount >= 2)
-                {
-                    radioButton2.Text = _Type.Split('/')[1] + "(F5)";
-                    radioButton2.Location = new Point(radioButton1.Location.X + radioButton1.Size.Width + _Space, radioButton2.Location.Y);
-                    radioButton2.Enabled = true;
-                    radioButton2.Visible = true;
-                }
-                else
-                {
-                    radioButton2.Enabled = false;
-                    radioButton2.Visible = false;
-                }
-                if (_TypeCount >= 3)
-                {
-                    radioButton3.Text = _Type.Split('/')[2] + "(F6)";
-                    radioButton3.Location = new Point(radioButton2.Location.X + radioButton2.Size.Width + _Space, radioButton2.Location.Y);
-                    radioButton3.Enabled = true;
-                    radioButton3.Visible = true;
-                }
-                else
-                {
-                    radioButton3.Enabled = false;
-                    radioButton3.Visible = false;
-                }
-                if (_TypeCount >= 4)
-                {
-                    radioButton4.Text = _Type.Split('/')[3] + "(F7)";
-                    radioButton4.Location = new Point(radioButton3.Location.X + radioButton3.Size.Width + _Space, radioButton3.Location.Y);
-                    radioButton4.Enabled = true;
-                    radioButton4.Visible = true;
-                }
-                else
-                {
-                    radioButton4.Enabled = false;
-                    radioButton4.Visible = false;
-                }
-                if (_TypeCount >= 5)
-                {
-                    radioButton5.Text = _Type.Split('/')[4] + "(F8)";
-                    radioButton5.Location = new Point(radioButton4.Location.X + radioButton4.Size.Width + _Space, radioButton4.Location.Y);
-                    radioButton5.Enabled = true;
-                    radioButton5.Visible = true;
-                }
-                else
-                {
-                    radioButton5.Enabled = false;
-                    radioButton5.Visible = false;
-                }
-                if (_TypeCount >= 6)
-                {
-                    radioButton6.Text = _Type.Split('/')[5] + "(F9)";
-                    radioButton6.Location = new Point(radioButton5.Location.X + radioButton5.Size.Width + _Space, radioButton5.Location.Y);
-                    radioButton6.Enabled = true;
-                    radioButton6.Visible = true;
-                }
-                else
-                {
-                    radioButton6.Enabled = false;
-                    radioButton6.Visible = false;
-                }
-                if (_TypeCount >= 7)
-                {
-                    radioButton7.Text = _Type.Split('/')[6] + "(F10)";
-                    radioButton7.Location = new Point(radioButton6.Location.X + radioButton6.Size.Width + _Space, radioButton6.Location.Y);
-                    radioButton7.Enabled = true;
-                    radioButton7.Visible = true;
-                }
-                else
-                {
-                    radioButton7.Enabled = false;
-                    radioButton7.Visible = false;
-                }
-                if (_TypeCount >= 8)
-                {
-                    radioButton11.Text = _Type.Split('/')[7] + "(F11)";
-                    radioButton11.Location = new Point(radioButton7.Location.X + radioButton7.Size.Width + _Space, radioButton7.Location.Y);
-                    radioButton11.Enabled = true;
-                    radioButton11.Visible = true;
-                }
-                else
-                {
-                    radioButton11.Enabled = false;
-                    radioButton11.Visible = false;
-                }
-                #endregion
+                TypePositionAdjustment(_Type);
+
                 radioButton9.Text = Settings.販售地區2.Split('/')[0] + "(F2)";
                 radioButton10.Text = Settings.販售地區3.Split('/')[0] + "(F3)";
                 log.LogMessage("取得類型設定參數 成功\r\n" + radioButton8.Text.Split('(')[0] + $@"：{_Type}", enumLogType.Info);
@@ -222,6 +126,138 @@ namespace 簡易倉儲系統
             }
             textBox1.Focus();
             log.LogMessage("使用者介面啓動", enumLogType.Info);
+        }
+
+        /// <summary>
+        /// 類型的位置調整
+        /// </summary>
+        /// <param name="_Type">未分割斜線的類型</param>
+        private void TypePositionAdjustment(string _Type)
+        {
+            int _TypeCount = _Type.Split('/').Count();
+            int _Space = 10;
+
+            #region 10個類型的位置調整
+            if (_TypeCount >= 1)
+            {
+                radioButton1.Text = _Type.Split('/')[0] + "(F4)";
+                radioButton1.Enabled = true;
+                radioButton1.Visible = true;
+            }
+            else
+            {
+                radioButton1.Enabled = false;
+                radioButton1.Visible = false;
+            }
+            if (_TypeCount >= 2)
+            {
+                radioButton2.Text = _Type.Split('/')[1] + "(F5)";
+                radioButton2.Location = new Point(radioButton1.Location.X + radioButton1.Size.Width + _Space, radioButton2.Location.Y);
+                radioButton2.Enabled = true;
+                radioButton2.Visible = true;
+            }
+            else
+            {
+                radioButton2.Enabled = false;
+                radioButton2.Visible = false;
+            }
+            if (_TypeCount >= 3)
+            {
+                radioButton3.Text = _Type.Split('/')[2] + "(F6)";
+                radioButton3.Location = new Point(radioButton2.Location.X + radioButton2.Size.Width + _Space, radioButton2.Location.Y);
+                radioButton3.Enabled = true;
+                radioButton3.Visible = true;
+            }
+            else
+            {
+                radioButton3.Enabled = false;
+                radioButton3.Visible = false;
+            }
+            if (_TypeCount >= 4)
+            {
+                radioButton4.Text = _Type.Split('/')[3] + "(F7)";
+                radioButton4.Location = new Point(radioButton3.Location.X + radioButton3.Size.Width + _Space, radioButton3.Location.Y);
+                radioButton4.Enabled = true;
+                radioButton4.Visible = true;
+            }
+            else
+            {
+                radioButton4.Enabled = false;
+                radioButton4.Visible = false;
+            }
+            if (_TypeCount >= 5)
+            {
+                radioButton5.Text = _Type.Split('/')[4] + "(F8)";
+                radioButton5.Location = new Point(radioButton4.Location.X + radioButton4.Size.Width + _Space, radioButton4.Location.Y);
+                radioButton5.Enabled = true;
+                radioButton5.Visible = true;
+            }
+            else
+            {
+                radioButton5.Enabled = false;
+                radioButton5.Visible = false;
+            }
+            if (_TypeCount >= 6)
+            {
+                radioButton6.Text = _Type.Split('/')[5] + "(F9)";
+                radioButton6.Location = new Point(radioButton5.Location.X + radioButton5.Size.Width + _Space, radioButton5.Location.Y);
+                radioButton6.Enabled = true;
+                radioButton6.Visible = true;
+            }
+            else
+            {
+                radioButton6.Enabled = false;
+                radioButton6.Visible = false;
+            }
+            if (_TypeCount >= 7)
+            {
+                radioButton7.Text = _Type.Split('/')[6] + "(F10)";
+                radioButton7.Location = new Point(radioButton6.Location.X + radioButton6.Size.Width + _Space, radioButton6.Location.Y);
+                radioButton7.Enabled = true;
+                radioButton7.Visible = true;
+            }
+            else
+            {
+                radioButton7.Enabled = false;
+                radioButton7.Visible = false;
+            }
+            if (_TypeCount >= 8)
+            {
+                radioButton11.Text = _Type.Split('/')[7] + "(F11)";
+                radioButton11.Location = new Point(radioButton7.Location.X + radioButton7.Size.Width + _Space, radioButton7.Location.Y);
+                radioButton11.Enabled = true;
+                radioButton11.Visible = true;
+            }
+            else
+            {
+                radioButton11.Enabled = false;
+                radioButton11.Visible = false;
+            }
+            if (_TypeCount >= 9)
+            {
+                radioButton12.Text = _Type.Split('/')[8] + "(cF11)";
+                radioButton12.Location = new Point(radioButton11.Location.X + radioButton11.Size.Width + _Space, radioButton11.Location.Y);
+                radioButton12.Enabled = true;
+                radioButton12.Visible = true;
+            }
+            else
+            {
+                radioButton12.Enabled = false;
+                radioButton12.Visible = false;
+            }
+            if (_TypeCount >= 10)
+            {
+                radioButton13.Text = _Type.Split('/')[9] + "(cF12)";
+                radioButton13.Location = new Point(radioButton12.Location.X + radioButton12.Size.Width + _Space, radioButton12.Location.Y);
+                radioButton13.Enabled = true;
+                radioButton13.Visible = true;
+            }
+            else
+            {
+                radioButton13.Enabled = false;
+                radioButton13.Visible = false;
+            }
+            #endregion
         }
 
         private void timer_detection_Tick(object sender, EventArgs e)
@@ -267,7 +303,7 @@ namespace 簡易倉儲系統
                     Application.Exit();
                     return;
                 }
-                string _ianNo = EncryptionDecryption.desEncryptBase64("ian/2023-04-17/2023-04-28/ian");
+                string _ianNo = EncryptionDecryption.desEncryptBase64("ian/2024-04-24/2025-01-01/ian");
                 string _SerialNumber = EncryptionDecryption.desDecryptBase64(Settings.序號);
                 if (DateTime.Now < DateTime.Parse(_SerialNumber.Split('/')[1])
                     || DateTime.Now > DateTime.Parse(_SerialNumber.Split('/')[2]))
@@ -514,104 +550,7 @@ namespace 簡易倉儲系統
                     }
                     label1.Text = unit;
                     int _TypeCount = _Type.Split('/').Count();
-                    int _Space = 10;
-                    #region 8個類型的位置調整
-                    if (_TypeCount >= 1)
-                    {
-                        radioButton1.Text = _Type.Split('/')[0] + "(F4)";
-                        radioButton1.Enabled = true;
-                        radioButton1.Visible = true;
-                    }
-                    else
-                    {
-                        radioButton1.Enabled = false;
-                        radioButton1.Visible = false;
-                    }
-                    if (_TypeCount >= 2)
-                    {
-                        radioButton2.Text = _Type.Split('/')[1] + "(F5)";
-                        radioButton2.Location = new Point(radioButton1.Location.X + radioButton1.Size.Width + _Space, radioButton2.Location.Y);
-                        radioButton2.Enabled = true;
-                        radioButton2.Visible = true;
-                    }
-                    else
-                    {
-                        radioButton2.Enabled = false;
-                        radioButton2.Visible = false;
-                    }
-                    if (_TypeCount >= 3)
-                    {
-                        radioButton3.Text = _Type.Split('/')[2] + "(F6)";
-                        radioButton3.Location = new Point(radioButton2.Location.X + radioButton2.Size.Width + _Space, radioButton2.Location.Y);
-                        radioButton3.Enabled = true;
-                        radioButton3.Visible = true;
-                    }
-                    else
-                    {
-                        radioButton3.Enabled = false;
-                        radioButton3.Visible = false;
-                    }
-                    if (_TypeCount >= 4)
-                    {
-                        radioButton4.Text = _Type.Split('/')[3] + "(F7)";
-                        radioButton4.Location = new Point(radioButton3.Location.X + radioButton3.Size.Width + _Space, radioButton3.Location.Y);
-                        radioButton4.Enabled = true;
-                        radioButton4.Visible = true;
-                    }
-                    else
-                    {
-                        radioButton4.Enabled = false;
-                        radioButton4.Visible = false;
-                    }
-                    if (_TypeCount >= 5)
-                    {
-                        radioButton5.Text = _Type.Split('/')[4] + "(F8)";
-                        radioButton5.Location = new Point(radioButton4.Location.X + radioButton4.Size.Width + _Space, radioButton4.Location.Y);
-                        radioButton5.Enabled = true;
-                        radioButton5.Visible = true;
-                    }
-                    else
-                    {
-                        radioButton5.Enabled = false;
-                        radioButton5.Visible = false;
-                    }
-                    if (_TypeCount >= 6)
-                    {
-                        radioButton6.Text = _Type.Split('/')[5] + "(F9)";
-                        radioButton6.Location = new Point(radioButton5.Location.X + radioButton5.Size.Width + _Space, radioButton5.Location.Y);
-                        radioButton6.Enabled = true;
-                        radioButton6.Visible = true;
-                    }
-                    else
-                    {
-                        radioButton6.Enabled = false;
-                        radioButton6.Visible = false;
-                    }
-                    if (_TypeCount >= 7)
-                    {
-                        radioButton7.Text = _Type.Split('/')[6] + "(F10)";
-                        radioButton7.Location = new Point(radioButton6.Location.X + radioButton6.Size.Width + _Space, radioButton6.Location.Y);
-                        radioButton7.Enabled = true;
-                        radioButton7.Visible = true;
-                    }
-                    else
-                    {
-                        radioButton7.Enabled = false;
-                        radioButton7.Visible = false;
-                    }
-                    if (_TypeCount >= 8)
-                    {
-                        radioButton11.Text = _Type.Split('/')[7] + "(F11)";
-                        radioButton11.Location = new Point(radioButton7.Location.X + radioButton7.Size.Width + _Space, radioButton7.Location.Y);
-                        radioButton11.Enabled = true;
-                        radioButton11.Visible = true;
-                    }
-                    else
-                    {
-                        radioButton11.Enabled = false;
-                        radioButton11.Visible = false;
-                    }
-                    #endregion
+                    TypePositionAdjustment(_Type);
 
                     unitPrice = "";
                     type = "";
@@ -737,80 +676,135 @@ namespace 簡易倉儲系統
         //快捷鍵指向
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            switch (e.KeyValue)
+            //組合鍵
+            if (e.Control)
             {
-                case ((char)Keys.PageUp):
-                    if (comboBox2.SelectedIndex - 1 < 0)
-                        comboBox2.SelectedIndex = 0;
-                    else
-                        comboBox2.SelectedIndex = comboBox2.SelectedIndex - 1;
-                    break;
-                case ((char)Keys.PageDown):
-                    if (comboBox2.SelectedIndex >= comboBox2.Items.Count - 1)
-                        comboBox2.SelectedIndex = comboBox2.Items.Count - 1;
-                    else
-                        comboBox2.SelectedIndex = comboBox2.SelectedIndex + 1;
-                    break;
-                case ((char)Keys.F1):
-                    if (radioButton8.Visible)
-                        radioButton8.Checked = true;
-                    break;
-                case ((char)Keys.F2):
-                    if (radioButton9.Visible)
-                        radioButton9.Checked = true;
-                    break;
-                case ((char)Keys.F3):
-                    if (radioButton10.Visible)
-                        radioButton10.Checked = true;
-                    break;
-                case ((char)Keys.F4):
-                    if (radioButton1.Visible)
-                        radioButton1.Checked = true;
-                    break;
-                case ((char)Keys.F5):
-                    if (radioButton2.Visible)
-                        radioButton2.Checked = true;
-                    break;
-                case ((char)Keys.F6):
-                    if (radioButton3.Visible)
-                        radioButton3.Checked = true;
-                    break;
-                case ((char)Keys.F7):
-                    if (radioButton4.Visible)
-                        radioButton4.Checked = true;
-                    break;
-                case ((char)Keys.F8):
-                    if (radioButton5.Visible)
-                        radioButton5.Checked = true;
-                    break;
-                case ((char)Keys.F9):
-                    if (radioButton6.Visible)
-                        radioButton6.Checked = true;
-                    break;
-                case ((char)Keys.F10):
-                    if (radioButton7.Visible)
-                        radioButton7.Checked = true;
-                    //F10會呼叫出控制列視窗，需要按兩次ESC做取消
-                    SendKeys.SendWait("{ESC}");
-                    SendKeys.SendWait("{ESC}");
-                    break;
-                case ((char)Keys.F11):
-                    if (radioButton11.Visible)
-                        radioButton11.Checked = true;
-                    break;
-                case ((char)Keys.F12):
-                    if (comboBox1.Visible)
-                    {
-                        comboBox1.Focus();
-                        panel2.BackColor = Color.DodgerBlue;
-                        return;
-                    }
-                    break;
-                case ((char)Keys.Space):
-                    break;
-                default:
-                    break;
+                switch (e.KeyCode)
+                {
+                    case (Keys.F11):
+                        if (radioButton12.Visible)
+                            radioButton12.Checked = true;
+                        break;
+                    case (Keys.F12):
+                        if (radioButton13.Visible)
+                            radioButton13.Checked = true;
+                        break;
+                }
             }
+            else
+            {
+                Boolean isCheck = false;
+                //單一按鍵
+                switch (e.KeyValue)
+                {
+                    case ((char)Keys.Left):
+                        for (int i = 0; i < groupBox1.Controls.Count; i++)
+                        {
+                            if (groupBox1.Controls[i].GetType().Name == "RadioButton")
+                            {
+                                if (((RadioButton)groupBox1.Controls[i]).Checked)
+                                {
+                                    isCheck = true;
+                                    if ((i + 1) >= 0 && (i + 1) < groupBox1.Controls.Count)
+                                        if (((RadioButton)groupBox1.Controls[i + 1]).Enabled)
+                                            ((RadioButton)groupBox1.Controls[i + 1]).Checked = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!isCheck) ((RadioButton)groupBox1.Controls[groupBox1.Controls.Count - 1]).Checked = true;
+                        break;
+                    case ((char)Keys.Right):
+                        for (int i = 0; i < groupBox1.Controls.Count; i++)
+                        {
+                            if (groupBox1.Controls[i].GetType().Name == "RadioButton")
+                            {
+                                if (((RadioButton)groupBox1.Controls[i]).Checked)
+                                {
+                                    isCheck = true;
+                                    if ((i - 1) >= 0 && (i - 1) < groupBox1.Controls.Count)
+                                        if (((RadioButton)groupBox1.Controls[i - 1]).Enabled)
+                                            ((RadioButton)groupBox1.Controls[i - 1]).Checked = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!isCheck) ((RadioButton)groupBox1.Controls[groupBox1.Controls.Count - 1]).Checked = true;
+                        break;
+                    case ((char)Keys.PageUp):
+                        if (comboBox2.SelectedIndex - 1 < 0)
+                            comboBox2.SelectedIndex = 0;
+                        else
+                            comboBox2.SelectedIndex = comboBox2.SelectedIndex - 1;
+                        break;
+                    case ((char)Keys.PageDown):
+                        if (comboBox2.SelectedIndex >= comboBox2.Items.Count - 1)
+                            comboBox2.SelectedIndex = comboBox2.Items.Count - 1;
+                        else
+                            comboBox2.SelectedIndex = comboBox2.SelectedIndex + 1;
+                        break;
+                    case ((char)Keys.F1):
+                        if (radioButton8.Visible)
+                            radioButton8.Checked = true;
+                        break;
+                    case ((char)Keys.F2):
+                        if (radioButton9.Visible)
+                            radioButton9.Checked = true;
+                        break;
+                    case ((char)Keys.F3):
+                        if (radioButton10.Visible)
+                            radioButton10.Checked = true;
+                        break;
+                    case ((char)Keys.F4):
+                        if (radioButton1.Visible)
+                            radioButton1.Checked = true;
+                        break;
+                    case ((char)Keys.F5):
+                        if (radioButton2.Visible)
+                            radioButton2.Checked = true;
+                        break;
+                    case ((char)Keys.F6):
+                        if (radioButton3.Visible)
+                            radioButton3.Checked = true;
+                        break;
+                    case ((char)Keys.F7):
+                        if (radioButton4.Visible)
+                            radioButton4.Checked = true;
+                        break;
+                    case ((char)Keys.F8):
+                        if (radioButton5.Visible)
+                            radioButton5.Checked = true;
+                        break;
+                    case ((char)Keys.F9):
+                        if (radioButton6.Visible)
+                            radioButton6.Checked = true;
+                        break;
+                    case ((char)Keys.F10):
+                        if (radioButton7.Visible)
+                            radioButton7.Checked = true;
+                        //F10會呼叫出控制列視窗，需要按兩次ESC做取消
+                        SendKeys.SendWait("{ESC}");
+                        SendKeys.SendWait("{ESC}");
+                        break;
+                    case ((char)Keys.F11):
+                        if (radioButton11.Visible)
+                            radioButton11.Checked = true;
+                        break;
+                    case ((char)Keys.F12):
+                        if (comboBox1.Visible)
+                        {
+                            comboBox1.Focus();
+                            panel2.BackColor = Color.DodgerBlue;
+                            return;
+                        }
+                        break;
+                    case ((char)Keys.Space):
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             textBox1.Focus();
         }
 
@@ -824,6 +818,12 @@ namespace 簡易倉儲系統
             {
                 MessageBox.Show("請輸入數字");
                 textBox1.Text = "";
+            }
+            if (_buffDouble > 99)
+            {
+                //MessageBox.Show("數量已超出99");
+                textBox1.Text = (_buffDouble / 10).ToString();
+                textBox1.SelectionStart = 4;
             }
             if (!Int32.TryParse((_buffDouble * 100).ToString(), out Int32 _buffInt))
             {

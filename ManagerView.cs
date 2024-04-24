@@ -47,9 +47,9 @@ namespace 簡易倉儲系統
         public static string Setting_Path = @".\";          //設定檔路徑
         public static string VersionNumber = "";            //程式版號
         public static string DB_Path = "";    //DB路徑
-        public static string[][] type = { new string[] { "", "", "", "", "", "", "", "" }
-                                        , new string[] { "", "", "", "", "", "", "", "" }
-                                        , new string[] { "", "", "", "", "", "", "", "" } };
+        public static string[][] type = { new string[] { "", "", "", "", "", "", "", "", "", "" }
+                                        , new string[] { "", "", "", "", "", "", "", "", "", "" }
+                                        , new string[] { "", "", "", "", "", "", "", "", "", "" } };
 
         public ManagerView()
         {
@@ -106,7 +106,8 @@ namespace 簡易倉儲系統
                     , new Control[] { panel2, label2 }, new Control[] { panel3, label3 }
                     , new Control[] { panel4, label4 }, new Control[] { panel5, label5 }
                     , new Control[] { panel6, label6 }, new Control[] { panel7, label7 }
-                    , new Control[] { panel22, label27 } };
+                    , new Control[] { panel22, label27 }, new Control[] { panel29, label35 }
+                    , new Control[] { panel31, label37 } };
                 if (ConvectTypeText(_Type, _LabelList, dataGridView1))
                     LogMessage += tabPage1.Text + $@"：{_Type}";
 
@@ -116,7 +117,8 @@ namespace 簡易倉儲系統
                     , new Control[] { panel9, label9 }, new Control[] { panel10, label10 }
                     , new Control[] { panel11, label11 }, new Control[] { panel12, label12 }
                     , new Control[] { panel13, label13 }, new Control[] { panel14, label14 }
-                    , new Control[] { panel23, label29 } };
+                    , new Control[] { panel23, label29 }, new Control[] { panel28, label34 }
+                    , new Control[] { panel30, label36 } };
                 if (ConvectTypeText(_Type, _LabelList, dataGridView2))
                     LogMessage += " / " + tabPage2.Text + $@"：{_Type}";
 
@@ -126,7 +128,8 @@ namespace 簡易倉儲系統
                     , new Control[] { panel16, label16 }, new Control[] { panel17, label17 }
                     , new Control[] { panel18, label18 }, new Control[] { panel19, label19 }
                     , new Control[] { panel20, label20 }, new Control[] { panel24, label30 }
-                    , new Control[] { panel25, label31 } };
+                    , new Control[] { panel25, label31 }, new Control[] { panel26, label32 }
+                    , new Control[] { panel27, label33 } };
                 if (ConvectTypeText(_Type, _LabelList, dataGridView3))
                     LogMessage += " / " + tabPage3.Text + $@"：{_Type}";
 
@@ -172,17 +175,20 @@ namespace 簡易倉儲系統
 
                     // 建立資料表 外銷韓國 ExportKoreaUnitPrice
                     createtablestring = @"CREATE TABLE ExportKoreaUnitPrice (Date DateTime, Type1 double, Type2 double
-                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double);";
+                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double, Type9 double
+                    , Type10 double);";
                     dB_SQLite.CreateTable(DB_Path, createtablestring);
 
                     // 建立資料表 外銷日本 ExportJapanUnitPrice
                     createtablestring = @"CREATE TABLE ExportJapanUnitPrice (Date DateTime, Type1 double, Type2 double
-                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double);";
+                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double, Type9 double
+                    , Type10 double);";
                     dB_SQLite.CreateTable(DB_Path, createtablestring);
 
                     // 建立資料表 超市 ExportSupermarketUnitPrice
                     createtablestring = @"CREATE TABLE ExportSupermarketUnitPrice (Date DateTime, Type1 double, Type2 double
-                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double);";
+                    , Type3 double, Type4 double, Type5 double, Type6 double, Type7 double, Type8 double, Type9 double
+                    , Type10 double);";
                     dB_SQLite.CreateTable(DB_Path, createtablestring);
 
                     log.LogMessage("建立資料庫 成功。", enumLogType.Debug);
@@ -368,8 +374,8 @@ namespace 簡易倉儲系統
         private bool ConvectTypeText(string TypeText, List<Control[]> labelList, DataGridView dataGridView)
         {
             int _TypeCount = TypeText.Split('/').Count();
-            #region 8個類型的位置調整
-            for (int i = 0; i < 8; i++)
+            #region 10個類型的位置調整
+            for (int i = 0; i < 10; i++)
             {
                 if (_TypeCount > i)
                 {
@@ -445,15 +451,16 @@ namespace 簡易倉儲系統
             _SelectDT = new DataTable();
 
             //清空暫存
-            type = new string[][] { new string[] { "", "", "", "", "", "", "", "" }
-                                  , new string[] { "", "", "", "", "", "", "", "" }
-                                  , new string[] { "", "", "", "", "", "", "", "" } };
+            type = new string[][] { new string[] { "", "", "", "", "", "", "", "", "", "" }
+                                  , new string[] { "", "", "", "", "", "", "", "", "", "" }
+                                  , new string[] { "", "", "", "", "", "", "", "", "", "" } };
 
             //要清空的TextBox元件
             System.Windows.Forms.TextBox[] _textBoxes = { textBox1, textBox2, textBox3, textBox4, textBox5
                     , textBox6, textBox7, textBox8, textBox9, textBox10, textBox11, textBox12, textBox13
                     , textBox14, textBox15, textBox16, textBox17, textBox18, textBox19, textBox20, textBox21
-                    , textBox22, textBox23, textBox24, textBox25, textBox26};
+                    , textBox22, textBox23, textBox24, textBox25, textBox26, textBox30, textBox32, textBox29
+                    , textBox31, textBox27, textBox28};
             foreach (var _textBox in _textBoxes)
             {
                 _textBox.Text = "";
@@ -656,8 +663,11 @@ namespace 簡易倉儲系統
                     return;
                 for (int i = 1; i < ((DataGridView)sender).Rows[((DataGridView)sender).CurrentRow.Index].Cells.Count; i++)
                 {
-                    control.Controls[i - 1].Controls[1].Text =
-                        ((DataGridView)sender).Rows[((DataGridView)sender).CurrentRow.Index].Cells[i].Value.ToString();
+                    if (((DataGridView)sender).Rows[((DataGridView)sender).CurrentRow.Index].Cells[i].Value != null)
+                    {
+                        control.Controls[i - 1].Controls[1].Text =
+                            ((DataGridView)sender).Rows[((DataGridView)sender).CurrentRow.Index].Cells[i].Value.ToString();
+                    }
                 }
 
                 log.LogMessage("dataGridView轉出 成功", enumLogType.Trace);
