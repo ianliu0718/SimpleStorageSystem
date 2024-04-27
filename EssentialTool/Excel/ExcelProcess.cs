@@ -159,8 +159,20 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                     excelCells.Add(excelCell);
                     excelCells.Add(excelCell2);
                 }
-                //空一行
-                excelCells.Add(new List<MExcelCell>());
+                ////空一行
+                //excelCells.Add(new List<MExcelCell>());
+                excelCell = new List<MExcelCell>();
+                excelCell.Add(new MExcelCell() { Content = "" });
+                excelCell.Add(new MExcelCell() { Content = "" });
+                excelCell.Add(new MExcelCell() { Content = "" });
+                excelCell.Add(new MExcelCell() { Content = "" });
+                excelCell.Add(new MExcelCell() { Content = "" });
+                excelCell.Add(new MExcelCell() { Content = "" });
+                excelCell.Add(new MExcelCell() { Content = "" });
+                excelCell.Add(new MExcelCell() { Content = "總重" });
+                excelCell.Add(new MExcelCell() { Content = typeModels.Sum(s => s._ALLCount) });
+                excelCells.Add(excelCell);
+
                 excelCell = new List<MExcelCell>();
                 excelCell.Add(new MExcelCell() { Content = "民智自動化有限公司" });
                 excelCell.Add(new MExcelCell() { Content = "" });

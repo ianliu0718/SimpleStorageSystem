@@ -163,9 +163,9 @@ namespace 簡易倉儲系統
                     createtablestring = @"CREATE TABLE Setting (SettingName TEXT, SettingValue TEXT);";
                     dB_SQLite.CreateTable(DB_Path, createtablestring);
                     dB_SQLite.Manipulate(DB_Path, $@"
-                        INSERT INTO Setting (SettingName, SettingValue) VALUES ('ShowMoney_ExportKorea', 'False');
-                        INSERT INTO Setting (SettingName, SettingValue) VALUES ('ShowMoney_ExportJapan', 'False');
-                        INSERT INTO Setting (SettingName, SettingValue) VALUES ('ShowMoney_ExportSupermarket', 'False');
+                        INSERT INTO Setting (SettingName, SettingValue) VALUES ('ShowMoney_ExportKorea', 'True');
+                        INSERT INTO Setting (SettingName, SettingValue) VALUES ('ShowMoney_ExportJapan', 'True');
+                        INSERT INTO Setting (SettingName, SettingValue) VALUES ('ShowMoney_ExportSupermarket', 'True');
                     ");
 
                     // 建立資料表 販售紀錄 SalesRecord
@@ -920,8 +920,8 @@ namespace 簡易倉儲系統
                     label23.Text = _ALLUnitPrice.ToString();
                     label25.Text = _ALLCount.ToString();
 
-                    log.LogMessage("確認搜尋 成功 總金額：" + label23.Text + "\r\n語法：" + _SQL, enumLogType.Info);
-                    log.LogMessage("確認搜尋 成功 總金額：" + label23.Text + "\r\n語法：" + _SQL, enumLogType.Trace);
+                    log.LogMessage("確認" + Inquire + "搜尋 成功 總金額：" + label23.Text + "\r\n語法：" + _SQL, enumLogType.Info);
+                    log.LogMessage("確認" + Inquire + "搜尋 成功 總金額：" + label23.Text + "\r\n語法：" + _SQL, enumLogType.Trace);
                 }
                 catch (Exception ee)
                 {
@@ -1288,7 +1288,10 @@ namespace 簡易倉儲系統
                 //選取指定的資料夾
                 FolderBrowserDialog folder = new FolderBrowserDialog();
                 if (folder.ShowDialog() != DialogResult.OK)
+                {
+                    button8.Enabled = true;
                     return;
+                }
 
                 DataGridView view = dataGridView4;
                 if (view.Rows.Count <= 0)
@@ -1421,7 +1424,7 @@ namespace 簡易倉儲系統
             {
                 MessageBox.Show("匯出Excel 失敗：\r\n" + ee.Message);
                 log.LogMessage("匯出Excel 失敗：\r\n" + ee.Message, enumLogType.Error);
-                button1.Enabled = true;
+                button8.Enabled = true;
                 return;
             }
             #endregion

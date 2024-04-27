@@ -954,6 +954,7 @@ namespace 簡易倉儲系統
                     printDocument.DefaultPageSettings.Margins = margin;
                     //印表機事件設定
                     printDocument.PrintPage += PrintDocument_PrintPage;
+                    printDocument.EndPrint += PrintDocument_EndPrint;
                     printDocument.PrinterSettings.PrinterName = Settings.印表機名稱;
                     //printDocument.DefaultPageSettings.Landscape = true;           //此处更改页面为横向打印 
                     printDocument.Print();   //列印
@@ -979,6 +980,7 @@ namespace 簡易倉儲系統
             comboBox1.SelectedIndex = -1;
             label5.Text = _No;
         }
+
         int _Page = 1;
         int _PageHeight = 0;
         private void PrintDocument_PrintPage(object sender, PrintPageEventArgs e)
@@ -1042,6 +1044,10 @@ namespace 簡易倉儲系統
                     button1.Enabled = true;
             }
             #endregion
+        }
+        private void PrintDocument_EndPrint(object sender, PrintEventArgs e)
+        {
+            button1.Enabled = true;
         }
 
         string _comboBoxSelectText = "";
