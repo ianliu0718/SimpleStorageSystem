@@ -1438,7 +1438,7 @@ namespace 簡易倉儲系統
             string[] _TypeGradation1 = Settings.類型1.Split('/');
             string[] _TypeGradation2 = Settings.類型2.Split('/');
             string[] _TypeGradation3 = Settings.類型3.Split('/');
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 10; i++)
             {
                 if (i < _TypeGradation1.Length)
                 {
