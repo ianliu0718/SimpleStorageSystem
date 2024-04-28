@@ -207,7 +207,7 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                     excelCellsBuff.Add(excelCell);
                 }
                 //拉出上下中間的間隔
-                int _X = 23;
+                int _X = 21;
                 for (int i = excelCells.Count; i < _X; i++)
                 {
                     excelCells.Add(new List<MExcelCell>());
@@ -374,6 +374,10 @@ namespace 簡易倉儲系統.EssentialTool.Excel
                         ePPlus.ExcelCenterCell(9 + _X + ((i + i) / 2), 7, OfficeOpenXml.Style.ExcelHorizontalAlignment.Center);
                     }
                 }
+                ePPlus.FontSize(excelCellsBuff.Count - 1, 8, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                ePPlus.FontSize(excelCellsBuff.Count - 1, 9, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                ePPlus.FontSize(ePPlus.EndCell - 1, 8, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
+                ePPlus.FontSize(ePPlus.EndCell - 1, 9, 13, false, OfficeOpenXml.Style.ExcelBorderStyle.Thin);
 
                 ePPlus.MergeColumn(excelCellsBuff.Count, 1, excelCellsBuff.Count, 3);
                 ePPlus.FontSize(excelCellsBuff.Count, 1, 11, false, OfficeOpenXml.Style.ExcelBorderStyle.None);
