@@ -35,6 +35,8 @@ namespace 簡易倉儲系統
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserView));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioButton13 = new System.Windows.Forms.RadioButton();
+            this.radioButton12 = new System.Windows.Forms.RadioButton();
             this.radioButton11 = new System.Windows.Forms.RadioButton();
             this.radioButton7 = new System.Windows.Forms.RadioButton();
             this.radioButton6 = new System.Windows.Forms.RadioButton();
@@ -73,8 +75,6 @@ namespace 簡易倉儲系統
             this.timer_FocusTextBox1 = new System.Windows.Forms.Timer(this.components);
             this.button2 = new System.Windows.Forms.Button();
             this.timer_detection = new System.Windows.Forms.Timer(this.components);
-            this.radioButton12 = new System.Windows.Forms.RadioButton();
-            this.radioButton13 = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -116,7 +116,7 @@ namespace 簡易倉儲系統
             this.radioButton13.Name = "radioButton13";
             this.radioButton13.Size = new System.Drawing.Size(140, 31);
             this.radioButton13.TabIndex = 9;
-            this.radioButton13.Tag = "8";
+            this.radioButton13.Tag = "10";
             this.radioButton13.Text = "小小(F11)";
             this.radioButton13.UseVisualStyleBackColor = true;
             this.radioButton13.CheckedChanged += new System.EventHandler(this.radioButton_type_CheckedChanged);
@@ -130,7 +130,7 @@ namespace 簡易倉儲系統
             this.radioButton12.Name = "radioButton12";
             this.radioButton12.Size = new System.Drawing.Size(140, 31);
             this.radioButton12.TabIndex = 8;
-            this.radioButton12.Tag = "8";
+            this.radioButton12.Tag = "9";
             this.radioButton12.Text = "小小(F11)";
             this.radioButton12.UseVisualStyleBackColor = true;
             this.radioButton12.CheckedChanged += new System.EventHandler(this.radioButton_type_CheckedChanged);
