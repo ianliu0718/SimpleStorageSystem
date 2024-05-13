@@ -305,7 +305,14 @@ namespace 簡易倉儲系統
             "A6_車2號",
             "A7_車3號",
             "A8_車4號",
-            "A9_車5號"});
+            "A9_車5號",
+            "韓國1號",
+            "韓國2號",
+            "韓國3號",
+            "韓國4號",
+            "韓國5號",
+            "韓國6號",
+            "韓國7號"});
             this.comboBox2.Location = new System.Drawing.Point(621, 33);
             this.comboBox2.Margin = new System.Windows.Forms.Padding(2);
             this.comboBox2.Name = "comboBox2";

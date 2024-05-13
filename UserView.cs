@@ -871,6 +871,7 @@ namespace 簡易倉儲系統
                     printDocument.DefaultPageSettings.Margins = margin;
                     //印表機事件設定
                     printDocument.PrintPage += PrintDocument_PrintPage;
+                    printDocument.EndPrint += PrintDocument_EndPrint;
                     printDocument.PrinterSettings.PrinterName = Settings.印表機名稱;
                     printDocument.Print();   //列印
 
@@ -941,7 +942,7 @@ namespace 簡易倉儲系統
             #endregion
 
             ExcelProcess excel = new ExcelProcess(log);
-            if (excel.ExcelExportImage_3(dataGridView1, $@"{Settings.Excel路徑}{_No}_{Name}.xlsx", _Now, _No, _Name, _Unit, _SalesArea, panel1.Visible))
+            if (excel.ExcelExportImage_3(dataGridView1, $@"{Settings.Excel路徑}{_No}_{_Name}.xlsx", _Now, _No, _Name, _Unit, _SalesArea, panel1.Visible))
             {
                 try
                 {
