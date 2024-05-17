@@ -312,7 +312,19 @@ namespace 簡易倉儲系統
             "韓國4號",
             "韓國5號",
             "韓國6號",
-            "韓國7號"});
+            "韓國7號",
+            "盈全韓國1號",
+            "盈全韓國2號",
+            "盈全韓國3號",
+            "盈全韓國4號",
+            "盈全韓國5號",
+            "盈全韓國6號",
+            "大琳韓國1號",
+            "大琳韓國2號",
+            "大琳韓國3號",
+            "大琳韓國4號",
+            "大琳韓國5號",
+            "大琳韓國6號"});
             this.comboBox2.Location = new System.Drawing.Point(621, 33);
             this.comboBox2.Margin = new System.Windows.Forms.Padding(2);
             this.comboBox2.Name = "comboBox2";
