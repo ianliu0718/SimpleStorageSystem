@@ -533,6 +533,7 @@ namespace 簡易倉儲系統
                         _Text = Settings.販售地區2.Split('/')[0];
                         unit = Settings.販售地區2.Split('/')[1];
                         _Type = Settings.類型2;
+                        comboBox2.SelectedIndex = 0;
                     }
                     else if (((ButtonBase)sender).Text.Contains("F3"))
                     {
