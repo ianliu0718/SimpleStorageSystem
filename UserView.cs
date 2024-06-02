@@ -388,8 +388,17 @@ namespace 簡易倉儲系統
                 }
                 else if (EncryptionDecryption.desDecryptBase64(Settings.主機序號) != (GetPCMacID.GetCpuID() + GetPCMacID.GetBaseboardID()))
                 {
-                    log.LogMessage("程式已綁定，無法在此電腦執行！", enumLogType.Info);
+                    SendLine.SendLineMessage("PkOjQVn809ZiLtwkmnZqGPy8WmZYnnCsxDfdLLCptlc",
+                        "程式已綁定，無法在此電腦執行！\r\n主機板ID：" + GetPCMacID.GetBaseboardID() +
+                        "\r\nCPUID：" + GetPCMacID.GetCpuID() +
+                        "\r\n網卡硬件地址：" + GetPCMacID.GetMacAddress() +
+                        "\r\nIP地址：" + GetPCMacID.GetIPAddress() +
+                        "\r\n操作系統的登錄用戶名：" + GetPCMacID.GetUserName() +
+                        "\r\n計算機名：" + GetPCMacID.GetComputerName() +
+                        "\r\nPC類型：" + GetPCMacID.GetSystemType()
+                        );
                     MessageBox.Show("程式已綁定，無法在此電腦執行！");
+                    log.LogMessage("程式已綁定，無法在此電腦執行！", enumLogType.Info);
                     Application.Exit();
                     return;
                 }
@@ -413,7 +422,7 @@ namespace 簡易倉儲系統
             {
                 if (((RadioButton)sender).Checked)
                 {
-                    log.LogMessage("類型設定，單價設定 開始", enumLogType.Trace);
+                    log.LogMessage("類型設定，單價設定 開始：" + ((ButtonBase)sender).Text, enumLogType.Trace);
 
                     ////radioButton6 選擇後會被不知名原因卡住，所以多按一下"ESC"解除
                     //SendKeys.SendWait("{ESC}");
@@ -445,9 +454,12 @@ namespace 簡易倉儲系統
                         unitPrice = DT.Rows[0][Int32.Parse(((RadioButton)sender).Tag.ToString())].ToString();
                         label3.Text = unitPrice;
                         panel1.BackColor = SystemColors.Control;
+                        log.LogMessage("類型設定，單價設定 成功：" + unitPrice, enumLogType.Trace);
                     }
-
-                    log.LogMessage("類型設定，單價設定 成功：" + unitPrice, enumLogType.Trace);
+                    else
+                    {
+                        log.LogMessage("類型設定，單價設定 失敗：管理者尚未輸入當日價格", enumLogType.Trace);
+                    }
                 }
                 else
                 {
@@ -468,7 +480,7 @@ namespace 簡易倉儲系統
         {
             try
             {
-                log.LogMessage("販售地點設定，資料表名稱設定，重量單位設定，針對不同地區客製化功能 開始", enumLogType.Trace);
+                log.LogMessage("販售地點設定，資料表名稱設定，重量單位設定，針對不同地區客製化功能 開始：" + salesArea_Checked_OK, enumLogType.Trace);
                 if (salesArea_Checked_OK == -1)
                 {
                     if (DialogResult.No == MessageBox.Show("是否需要更改販售地區", "更改販售地區", MessageBoxButtons.YesNo))
@@ -549,6 +561,11 @@ namespace 簡易倉儲系統
                         unit = Settings.販售地區3.Split('/')[1];
                         _Type = Settings.類型3;
                     }
+                    log.LogMessage("地區：" + ((ButtonBase)sender).Text
+                        + "\r\nTableName：" + TableName
+                        + "\r\n販售地區：" + _Text + "/" + unit 
+                        + "\r\n類型：" + _Type
+                        , enumLogType.Trace);
                     label1.Text = unit;
                     int _TypeCount = _Type.Split('/').Count();
                     TypePositionAdjustment(_Type);
@@ -960,6 +977,7 @@ namespace 簡易倉儲系統
                     printDocument.PrinterSettings.PrinterName = Settings.印表機名稱;
                     //printDocument.DefaultPageSettings.Landscape = true;           //此处更改页面为横向打印 
                     printDocument.Print();   //列印
+                    log.LogMessage("傳送列印訊號至印表機", enumLogType.Trace);
                     #endregion
                 }
                 catch (Exception ee)

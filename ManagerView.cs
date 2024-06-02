@@ -75,10 +75,10 @@ namespace 簡易倉儲系統
                 {
                     log.LogMessage("執行SQL語法 開始", enumLogType.Trace);
                     dB_SQLite.Manipulate(DB_Path, $@"{Settings.SQL語法}");
-                    Settings.SQL語法 = "";
                     log.LogMessage($@"執行SQL語法 成功：{Settings.SQL語法}", enumLogType.Info);
                     log.LogMessage($@"執行SQL語法 成功：{Settings.SQL語法}", enumLogType.Trace);
                     MessageBox.Show($@"執行SQL語法 成功：{Settings.SQL語法}");
+                    Settings.SQL語法 = "";
                 }
                 catch (Exception ee)
                 {
@@ -353,8 +353,17 @@ namespace 簡易倉儲系統
                 }
                 else if (EncryptionDecryption.desDecryptBase64(Settings.主機序號) != (GetPCMacID.GetCpuID() + GetPCMacID.GetBaseboardID()))
                 {
-                    log.LogMessage("程式已綁定，無法在此電腦執行！", enumLogType.Info);
+                    SendLine.SendLineMessage("PkOjQVn809ZiLtwkmnZqGPy8WmZYnnCsxDfdLLCptlc",
+                        "程式已綁定，無法在此電腦執行！\r\n主機板ID：" + GetPCMacID.GetBaseboardID() +
+                        "\r\nCPUID：" + GetPCMacID.GetCpuID() +
+                        "\r\n網卡硬件地址：" + GetPCMacID.GetMacAddress() +
+                        "\r\nIP地址：" + GetPCMacID.GetIPAddress() +
+                        "\r\n操作系統的登錄用戶名：" + GetPCMacID.GetUserName() +
+                        "\r\n計算機名：" + GetPCMacID.GetComputerName() +
+                        "\r\nPC類型：" + GetPCMacID.GetSystemType()
+                        );
                     MessageBox.Show("程式已綁定，無法在此電腦執行！");
+                    log.LogMessage("程式已綁定，無法在此電腦執行！", enumLogType.Info);
                     Application.Exit();
                     return;
                 }

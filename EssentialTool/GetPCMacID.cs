@@ -152,12 +152,9 @@ namespace 簡易倉儲系統.EssentialTool
         /// <returns></returns>
         public static string GetUserName()
         {
-            string st;
             try
             {
-                string un = "";
-                st = Environment.UserName;
-                return un;
+                return Environment.UserName;
             }
             catch
             {
