@@ -488,8 +488,10 @@ namespace 簡易倉儲系統
                         salesArea_Checked_OK = -2;
                         ((RadioButton)sender).Checked = !((RadioButton)sender).Checked;
                         salesArea_Checked_OK = 0;
+                        log.LogMessage("販售地區：No", enumLogType.Trace);
                         return;
                     }
+                    log.LogMessage("販售地區：Yes", enumLogType.Trace);
                     salesArea_Checked_OK = 1;
                 }
                 else if (salesArea_Checked_OK == -2)
@@ -682,13 +684,21 @@ namespace 簡易倉儲系統
                 dataGridView1.Rows[0].Selected = true;
                 dataGridView1.CurrentCell = dataGridView1.Rows[0].Cells[0];
 
-                textBox1.Text = "";
-                textBox1.Focus();
 
+                log.LogMessage("確認後寫入DataGridView 成功：('"
+                    + comboBox1.Text
+                    + "','" + type
+                    + "','" + ((TextBox)sender).Text
+                    + "','" + unitPrice
+                    + "','" + unit
+                    + "','" + salesArea
+                    + "')"
+                    , enumLogType.Trace);
                 log.LogMessage("確認_DB新增 成功", enumLogType.Info);
                 #endregion
 
-                log.LogMessage("確認後寫入DataGridView 成功", enumLogType.Trace);
+                textBox1.Text = "";
+                textBox1.Focus();
             }
         }
         //快捷鍵指向
@@ -1159,10 +1169,14 @@ namespace 簡易倉儲系統
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox2.SelectedIndex == 0)
-                salesArea = radioButton9.Text.Split('(')[0];
-            else if (salesArea.Split('_')[0] == radioButton9.Text.Split('(')[0])
-                salesArea = radioButton9.Text.Split('(')[0] + "_" + comboBox2.Text;
+            if (salesArea.Split('_')[0] == radioButton9.Text.Split('(')[0])
+            {
+                if (comboBox2.SelectedIndex == 0)
+                    salesArea = radioButton9.Text.Split('(')[0];
+                else
+                    salesArea = radioButton9.Text.Split('(')[0] + "_" + comboBox2.Text;
+                log.LogMessage("下拉選單選擇：" + comboBox2.Text, enumLogType.Trace);
+            }
             textBox1.Focus();
         }
 
